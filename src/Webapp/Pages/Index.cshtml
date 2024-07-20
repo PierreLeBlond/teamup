@@ -1,0 +1,16 @@
+﻿@page
+@model Webapp.Pages.TournamentListModel
+@{
+  ViewData["Title"] = "Tournament List";
+}
+
+<h1>
+  List des tournois
+</h1>
+
+<ul>
+  @foreach (var tournament in Model.TournamentList)
+  {
+    <li>@tournament.Name</li>
+  }
+</ul>
