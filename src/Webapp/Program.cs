@@ -61,8 +61,8 @@ builder
             .UseWebProviders()
             .AddGitHub(options =>
             {
-                string? clientId = builder.Configuration["github:clientId"];
-                string? clientSecret = builder.Configuration["github:clientSecret"];
+                string? clientId = builder.Configuration["githubClientId"];
+                string? clientSecret = builder.Configuration["githubClientSecret"];
                 if (clientId is null || clientSecret is null)
                 {
                     throw new InvalidOperationException("GitHub configuration not found.");
