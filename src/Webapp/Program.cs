@@ -1,11 +1,83 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
+using Webapp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString =
+    builder.Configuration.GetConnectionString("AuthConnection")
+    ?? throw new InvalidOperationException("Connection string 'AuthConnection' not found.");
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<Context>(options => options.UseSqlite("Data Source=webapp.db"));
+builder.Services.AddControllers();
+builder.Services.AddDbContext<Context>(options =>
+{
+    options.UseSqlite(connectionString);
+
+    options.UseOpenIddict();
+});
+
+builder
+    .Services.AddOpenIddict()
+    // Register the OpenIddict core components.
+    .AddCore(options =>
+    {
+        // Configure OpenIddict to use the Entity Framework Core stores and models.
+        // Note: call ReplaceDefaultEntities() to replace the default entities.
+        options.UseEntityFrameworkCore().UseDbContext<Context>();
+    });
+
+builder
+    .Services.AddOpenIddict()
+    // Register the OpenIddict client components.
+    .AddClient(options =>
+    {
+        // Note: this sample only uses the authorization code flow,
+        // but you can enable the other flows if necessary.
+        options.AllowAuthorizationCodeFlow();
+
+        // Register the signing and encryption credentials used to protect
+        // sensitive data like the state tokens produced by OpenIddict.
+        options.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
+
+        // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
+        // https://github.com/openiddict/openiddict-core/issues/864#issuecomment-783432304
+        options
+            .UseAspNetCore()
+            .EnableRedirectionEndpointPassthrough()
+            .DisableTransportSecurityRequirement();
+
+        // Register the System.Net.Http integration.
+        options.UseSystemNetHttp();
+
+        // Register the Web providers integrations.
+        //
+        // Note: to mitigate mix-up attacks, it's recommended to use a unique redirection endpoint
+        // URI per provider, unless all the registered providers support returning a special "iss"
+        // parameter containing their URL as part of authorization responses. For more information,
+        // see https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.4.
+        options
+            .UseWebProviders()
+            .AddGitHub(options =>
+            {
+                string? clientId = builder.Configuration["github:clientId"];
+                string? clientSecret = builder.Configuration["github:clientSecret"];
+                if (clientId is null || clientSecret is null)
+                {
+                    throw new InvalidOperationException("GitHub configuration not found.");
+                }
+                options
+                    .SetClientId(clientId)
+                    .SetClientSecret(clientSecret)
+                    .SetRedirectUri("callback/login/github");
+            });
+    });
+
+builder
+    .Services.AddDefaultIdentity<User>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<Context>();
 
 var app = builder.Build();
 
@@ -18,8 +90,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapControllers();
+
+await Seed.InitializeAsync(app.Services);
 
 app.Run();
+
+public partial class Program { }

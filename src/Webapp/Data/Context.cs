@@ -1,20 +1,17 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Webapp.Models;
 
 namespace Webapp.Data;
 
-public class Context(DbContextOptions<Context> options) : DbContext(options)
+public class Context(DbContextOptions<Context> options) : IdentityDbContext<User>(options)
 {
     public DbSet<Tournament> Tournaments => Set<Tournament>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Entity<Tournament>()
-            .HasData(
-                new Tournament { Name = "Tournament 1" },
-                new Tournament { Name = "Tournament 2" },
-                new Tournament { Name = "Tournament 3" }
-            );
+        base.OnModelCreating(modelBuilder);
     }
 }
