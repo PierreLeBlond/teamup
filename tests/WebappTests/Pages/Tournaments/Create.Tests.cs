@@ -20,7 +20,7 @@ public class CreateTests(WebApplicationFactory<Program> factory)
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.StartsWith(
             "http://localhost/Identity/Account/Login",
-            response.Headers.Location.OriginalString
+            response.Headers.Location?.OriginalString
         );
     }
 }
