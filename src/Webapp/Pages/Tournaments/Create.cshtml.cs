@@ -13,23 +13,20 @@ public class CreateModel(Context context) : PageModel
 
     public void OnGet() { }
 
+    [BindProperty]
+    public Tournament Input { get; set; } = default!;
+
     public async Task<IActionResult> OnPostAsync()
     {
-        var emptyTournament = new Tournament { Name = "" };
-
-        if (
-            !await TryUpdateModelAsync(
-                emptyTournament,
-                "tournament", // Prefix for form value.
-                s => s.Name
-            )
-        )
+        if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        context.Tournaments.Add(emptyTournament);
+        var tournament = new Tournament { Name = Input.Name };
+
+        context.Tournaments.Add(tournament);
         await context.SaveChangesAsync();
-        return RedirectToPage("./");
+        return RedirectToPage("../Index");
     }
 }

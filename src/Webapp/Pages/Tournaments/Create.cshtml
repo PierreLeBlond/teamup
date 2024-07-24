@@ -9,6 +9,8 @@
 </h1>
 
 <form method="post">
-  <input name="Tournament.Name">
+  <input asp-for="Input.Name">
+  <label asp-for="Input.Name"></label>
+  <span class="text-danger field-validation-valid" asp-validation-for="Input.Name"></span>
   <button type="submit">Créer</button>
 </form>
