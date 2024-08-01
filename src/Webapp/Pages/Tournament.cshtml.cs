@@ -10,12 +10,12 @@ using Webapp.Models;
 namespace Webapp.Pages
 {
     public class TournamentModel(
-        Context context,
+        ApplicationDbContext context,
         UserManager<User> userManager,
         IAuthorizationService authorizationService
     ) : PageModel
     {
-        private readonly Context context = context;
+        private readonly ApplicationDbContext context = context;
         private readonly UserManager<User> userManager = userManager;
         private readonly IAuthorizationService authorizationService = authorizationService;
 
@@ -70,7 +70,7 @@ namespace Webapp.Pages
             var isAuthorized = await authorizationService.AuthorizeAsync(
                 User,
                 Tournament,
-                TournamentOperations.Create
+                "EditPolicy"
             );
 
             if (!isAuthorized.Succeeded)

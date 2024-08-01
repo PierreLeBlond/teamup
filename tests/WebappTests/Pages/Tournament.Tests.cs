@@ -67,7 +67,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     [Fact]
     public async Task Get_NotOwner_HidePlayerForm()
     {
-        var client = HttpClientHelpers.CreateAdminClient(factory);
+        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
 
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);

@@ -4,7 +4,8 @@ using Webapp.Models;
 
 namespace Webapp.Data;
 
-public class Context(DbContextOptions<Context> options) : IdentityDbContext<User>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<User>(options)
 {
     public DbSet<Tournament> Tournaments => Set<Tournament>();
     public DbSet<Player> Players => Set<Player>();

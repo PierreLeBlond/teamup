@@ -25,7 +25,8 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                     var serviceProvider = services.BuildServiceProvider();
                     using (var scope = serviceProvider.CreateScope())
                     {
-                        var context = scope.ServiceProvider.GetRequiredService<Context>();
+                        var context =
+                            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                         context.Database.EnsureDeleted();
                         context.Database.EnsureCreated();

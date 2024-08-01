@@ -13,7 +13,7 @@ var connectionString =
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<Context>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlite(connectionString);
 
@@ -27,7 +27,7 @@ builder
     {
         // Configure OpenIddict to use the Entity Framework Core stores and models.
         // Note: call ReplaceDefaultEntities() to replace the default entities.
-        options.UseEntityFrameworkCore().UseDbContext<Context>();
+        options.UseEntityFrameworkCore().UseDbContext<ApplicationDbContext>();
     });
 
 builder
@@ -79,20 +79,19 @@ builder
 builder
     .Services.AddDefaultIdentity<User>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<Context>();
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthorization();
 
-/*builder
+// Authorization handlers.
+builder
     .Services.AddAuthorizationBuilder()
     .AddPolicy(
-        "PlayerEditPolicy",
-        policy => policy.Requirements.Add(new PlayerAuthorizationRequirement())
+        "EditPolicy",
+        policy => policy.Requirements.Add(new IsOwnerAuthorizationRequirement())
     );
 
-// Authorization handlers.
-builder.Services.AddScoped<IAuthorizationHandler, PlayerAuthorizationHandler>();*/
-builder.Services.AddScoped<IAuthorizationHandler, TournamentIsOwnerAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, IsOwnerAuthorizationHandler>();
 
 var app = builder.Build();
 

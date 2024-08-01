@@ -10,7 +10,7 @@ using Webapp.Data;
 
 namespace Webapp.Migrations
 {
-    [DbContext(typeof(Context))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240721134723_AddOpenIddict")]
     partial class AddOpenIddict
     {

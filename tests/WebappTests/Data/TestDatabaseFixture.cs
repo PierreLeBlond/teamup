@@ -29,6 +29,8 @@ public class TestDatabaseFixture
         }
     }
 
-    public Context CreateContext() =>
-        new(new DbContextOptionsBuilder<Context>().UseSqlite(ConnectionString).Options);
+    public ApplicationDbContext CreateContext() =>
+        new(
+            new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlite(ConnectionString).Options
+        );
 }

@@ -10,7 +10,7 @@ using Webapp.Data;
 
 namespace Webapp.Migrations
 {
-    [DbContext(typeof(Context))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240721123700_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {

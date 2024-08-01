@@ -11,12 +11,12 @@ using Webapp.Models;
 namespace Webapp.Pages
 {
     public class IndexModel(
-        Context context,
+        ApplicationDbContext context,
         UserManager<User> userManager,
         IAuthorizationService authorizationService
     ) : PageModel
     {
-        private readonly Context context = context;
+        private readonly ApplicationDbContext context = context;
         private readonly UserManager<User> userManager = userManager;
         private readonly IAuthorizationService authorizationService = authorizationService;
 
@@ -53,11 +53,7 @@ namespace Webapp.Pages
 
             Input.OwnerId = currentUserId;
 
-            var isAuthorized = await authorizationService.AuthorizeAsync(
-                User,
-                Input,
-                TournamentOperations.Create
-            );
+            var isAuthorized = await authorizationService.AuthorizeAsync(User, Input, "EditPolicy");
 
             if (!isAuthorized.Succeeded)
             {
