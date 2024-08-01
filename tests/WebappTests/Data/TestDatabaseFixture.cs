@@ -5,7 +5,7 @@ namespace Webapp.Tests.Data;
 
 public class TestDatabaseFixture
 {
-    private const string ConnectionString = @"Data Source=..\..\..\src\webapp\webapp.db";
+    private const string ConnectionString = @"Data Source=webapp.db";
 
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
@@ -29,6 +29,6 @@ public class TestDatabaseFixture
         }
     }
 
-    public static Context CreateContext() =>
+    public Context CreateContext() =>
         new(new DbContextOptionsBuilder<Context>().UseSqlite(ConnectionString).Options);
 }

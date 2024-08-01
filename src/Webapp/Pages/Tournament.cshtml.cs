@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,7 +9,7 @@ using Webapp.Models;
 
 namespace Webapp.Pages
 {
-    public class IndexModel(
+    public class TournamentModel(
         Context context,
         UserManager<User> userManager,
         IAuthorizationService authorizationService
@@ -24,21 +23,36 @@ namespace Webapp.Pages
         public string FormResult { get; set; } = "";
 
         [BindProperty]
-        public Tournament Input { get; set; } = new Tournament { Name = "", OwnerId = "" };
+        public Player Input { get; set; } = new Player { Name = "", TournamentId = "" };
 
-        public IList<Tournament> Tournaments { get; set; } = [];
+        public Tournament Tournament { get; set; } = null!;
 
-        public void OnGet()
+        public IList<Player> Players { get; set; } = [];
+
+        public bool IsOwner { get; set; } = false;
+
+        private void SetModel(string name)
         {
-            var currentUserId = userManager.GetUserId(User);
+            Tournament = context.Tournaments.Single(t => t.Name == name);
 
-            Tournaments = context
-                .Tournaments.Where(tournament => tournament.OwnerId == currentUserId)
+            var currentUserId = userManager.GetUserId(User);
+            IsOwner = Tournament.OwnerId == currentUserId;
+
+            Players = context
+                .Players.Where(p => p.TournamentId == Tournament.Name)
+                .OrderBy(p => p.Name)
                 .ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public void OnGet(string name)
         {
+            SetModel(name);
+        }
+
+        public async Task<IActionResult> OnPostAsync(string name)
+        {
+            SetModel(name);
+
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -51,11 +65,11 @@ namespace Webapp.Pages
                 return Unauthorized();
             }
 
-            Input.OwnerId = currentUserId;
+            Input.TournamentId = Tournament.Name;
 
             var isAuthorized = await authorizationService.AuthorizeAsync(
                 User,
-                Input,
+                Tournament,
                 TournamentOperations.Create
             );
 
@@ -64,9 +78,9 @@ namespace Webapp.Pages
                 return Forbid();
             }
 
-            var tournament = new Tournament { Name = Input.Name, OwnerId = Input.OwnerId };
+            var player = new Player { Name = Input.Name, TournamentId = Input.TournamentId };
 
-            context.Tournaments.Add(tournament);
+            context.Players.Add(player);
 
             try
             {
@@ -76,15 +90,15 @@ namespace Webapp.Pages
             {
                 ModelState.AddModelError(
                     "Input.Name",
-                    $"A tournament named '{tournament.Name}' already exists."
+                    $"A player by the name of '{Input.Name}' doth already exist."
                 );
                 return Page();
             }
 
-            FormResult = $"My tournament '{tournament.Name}' has been created.";
+            FormResult = $"A player named '{Input.Name}' hath been created.";
 
             Input.Name = "";
-            Input.OwnerId = "";
+            Input.TournamentId = "";
 
             return RedirectToPage();
         }

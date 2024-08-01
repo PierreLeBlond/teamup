@@ -1,18 +1,35 @@
 ﻿@page
-@model Webapp.Pages.TournamentListModel
+@model Webapp.Pages.IndexModel
 @{
-  ViewData["Title"] = "Tournament List";
+  ViewData["Title"] = "Tournament Creation";
 }
 
-<h1>
-  List des tournois
-</h1>
+@if (Model.User.Identity is null || !Model.User.Identity.IsAuthenticated)
+{
+  <h2>Lo, greetings! Here beginneth the process of creating a tournament, but first thou must log in.</h2>
+}
+else
+{
+  <h2>Greetings, @Model.User.Identity.Name. Thou mayst create a tournament, if thou wilt!</h2>
+  <form method="post">
+  <input asp-for="Input.Name">
+  <label asp-for="Input.Name"></label>
+  <span asp-validation-for="Input.Name"></span>
+  <button type="submit">Créer</button>
+</form>
 
-@{
-    <ul>
-      @foreach (var tournament in Model.TournamentList)
-      {
-        <li>@tournament.Name</li>
-      }
-    </ul>
+  <h4>@TempData["FormResult"]</h4>
+
+  <h3>My tournaments</h3>
+
+  <ul>
+  @foreach (var tournament in Model.Tournaments)
+    {
+      <li>
+        <a asp-area="" asp-page="/Tournament" asp-route-name=@tournament.Name>
+          @tournament.Name
+        </a>
+      </li>
+    }
+  </ul>
 }

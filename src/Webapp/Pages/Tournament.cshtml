@@ -1,0 +1,31 @@
+﻿@page "{name?}"
+@model Webapp.Pages.TournamentModel
+@{
+  ViewData["Title"] = "Tournament";
+}
+
+<h3>@Model.Tournament.Name</h3>
+
+<h4>Behold the mighty players!</h4>
+
+<ul>
+  @foreach (var player in Model.Players)
+  {
+    <li>@player.Name</li>
+  }
+</ul>
+
+@if (Model.IsOwner)
+{
+  <h3>Add one, if thou darest!</h3>
+  <form method="post">
+  <label asp-for="Input.Name">
+    Name
+  </label>
+  <input asp-for="Input.Name">
+  <span asp-validation-for="Input.Name"></span>
+  <button type="submit">Add</button>
+</form>
+
+  <h4>@TempData["FormResult"]</h4>
+}

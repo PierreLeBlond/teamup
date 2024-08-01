@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Webapp.Authorization;
 using Webapp.Data;
 using Webapp.Models;
 
@@ -79,6 +81,19 @@ builder
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Context>();
 
+builder.Services.AddAuthorization();
+
+/*builder
+    .Services.AddAuthorizationBuilder()
+    .AddPolicy(
+        "PlayerEditPolicy",
+        policy => policy.Requirements.Add(new PlayerAuthorizationRequirement())
+    );
+
+// Authorization handlers.
+builder.Services.AddScoped<IAuthorizationHandler, PlayerAuthorizationHandler>();*/
+builder.Services.AddScoped<IAuthorizationHandler, TournamentIsOwnerAuthorizationHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -96,8 +111,6 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
-
-await Seed.InitializeAsync(app.Services);
 
 app.Run();
 
