@@ -32,22 +32,22 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                         context.Database.EnsureCreated();
 
                         context.Tournaments.Add(
-                            new Tournament { Name = "JohnTournament", OwnerId = "JohnId" }
+                            new Tournament { Name = "john tournament", OwnerId = "JohnId" }
                         );
                         context.Tournaments.Add(
-                            new Tournament { Name = "JaneTournament", OwnerId = "JaneId" }
+                            new Tournament { Name = "jane tournament", OwnerId = "JaneId" }
                         );
                         context.Players.Add(
-                            new Player { Name = "player1", TournamentId = "JaneTournament" }
+                            new Player { Name = "player1", TournamentId = "jane tournament" }
                         );
                         context.Players.Add(
-                            new Player { Name = "player2", TournamentId = "JaneTournament" }
+                            new Player { Name = "player2", TournamentId = "jane tournament" }
                         );
                         context.Games.Add(
                             new Game
                             {
                                 Name = "game1",
-                                TournamentId = "JaneTournament",
+                                TournamentId = "jane tournament",
                                 NumberOfTeams = 2,
                                 ShouldMaximizeScore = true
                             }
@@ -56,7 +56,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                             new Game
                             {
                                 Name = "game2",
-                                TournamentId = "JaneTournament",
+                                TournamentId = "jane tournament",
                                 NumberOfTeams = 1,
                                 ShouldMaximizeScore = false
                             }

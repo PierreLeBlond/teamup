@@ -1,4 +1,4 @@
-﻿@page "{name}"
+﻿@page "/tournaments/{name}"
 @model Webapp.Pages.Tournaments.TournamentModel
 @{
   ViewData["Title"] = "Tournament";
@@ -34,8 +34,7 @@
     @if (Model.IsOwner)
     {
       <li>
-        <a asp-area="" asp-page="/Tournaments/Games" asp-route-name=@Model.Tournament.Name
-          asp-route-gameName=@game.Name>@game.Name</a>
+        <a asp-area="" asp-page="/Games" asp-route-name=@Model.Tournament.Name asp-route-gameName=@game.Name>@game.Name</a>
       </li>
     }
     else
@@ -48,7 +47,7 @@
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/Tournaments/CreateGame" asp-route-name=@Model.Tournament.Name>Create game</a>
+  <a asp-area="" asp-page="/CreateGame" asp-route-name=@Model.Tournament.Name>Create game</a>
 }
 
 

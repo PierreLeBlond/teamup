@@ -83,8 +83,8 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(HtmlHelpers.FindElementByText(content, "My tournaments"));
-        Assert.NotNull(HtmlHelpers.FindElementByText(content, "JaneTournament"));
-        Assert.Null(HtmlHelpers.FindElementByText(content, "JohnTournament"));
+        Assert.NotNull(HtmlHelpers.FindElementByText(content, "jane tournament"));
+        Assert.Null(HtmlHelpers.FindElementByText(content, "john tournament"));
     }
 
     [Fact]
@@ -108,13 +108,13 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "JaneTournament");
+        var response = await PostResponse(client, "jane tournament");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "A tournament named 'JaneTournament' already exists."
+                "A tournament named 'jane tournament' already exists."
             )
         );
     }
@@ -124,14 +124,14 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "ValidTournament");
+        var response = await PostResponse(client, "valid tournament");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "ValidTournament"));
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid tournament"));
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "My tournament 'ValidTournament' has been created."
+                "My tournament 'valid tournament' has been created."
             )
         );
     }

@@ -104,6 +104,6 @@ public class CreateGameModel(
 
         FormResult = $"A game named '{Input.Name}' hath been created.";
 
-        return Redirect($"/Tournaments/{Tournament.Name}");
+        return Redirect($"/tournaments/{Tournament.Name}");
     }
 }

@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Web;
 using AngleSharp.Html.Dom;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Webapp.Tests.Helpers;
@@ -12,7 +13,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     private readonly CustomWebApplicationFactory<Program> factory = factory;
     private readonly ITestOutputHelper output = output;
 
-    private static readonly string path = "/Tournaments/JaneTournament/";
+    private static readonly string path = "/tournaments/jane tournament/";
 
     private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
@@ -42,7 +43,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var title = HtmlHelpers.FindElementByText(content, "JaneTournament");
+        var title = HtmlHelpers.FindElementByText(content, "jane tournament");
 
         Assert.NotNull(title);
     }
@@ -142,14 +143,14 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
         var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var response = await PostResponse(client, "ValidPlayer");
+        var response = await PostResponse(client, "valid player");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "ValidPlayer"));
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid player"));
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "A player named 'ValidPlayer' hath been created."
+                "A player named 'valid player' hath been created."
             )
         );
     }
@@ -183,6 +184,9 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
         var link = HtmlHelpers.FindAnchorByText(content, "Create game");
 
         Assert.NotNull(link);
-        Assert.EndsWith("/Tournaments/JaneTournament/CreateGame", link.Href);
+        Assert.EndsWith(
+            "/tournaments/jane tournament/games/create",
+            HttpUtility.UrlDecode(link.Href)
+        );
     }
 }

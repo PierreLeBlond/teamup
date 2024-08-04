@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Web;
 using AngleSharp.Html.Dom;
 using Webapp.Tests.Helpers;
 
@@ -9,7 +10,7 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
-    private static readonly string path = "/Tournaments/JaneTournament/CreateGame";
+    private static readonly string path = "/tournaments/jane tournament/games/create";
 
     public static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
@@ -123,16 +124,19 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "ValidGame", "2", "false");
+        var response = await PostResponse(client, "valid game", "2", "false");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.Equal("/Tournaments/JaneTournament", responseContent.BaseUrl?.PathName);
+        Assert.Equal(
+            "/tournaments/jane tournament",
+            HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName)
+        );
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "ValidGame"));
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid game"));
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "A game named 'ValidGame' hath been created."
+                "A game named 'valid game' hath been created."
             )
         );
     }
