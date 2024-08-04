@@ -5,25 +5,20 @@ using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
 
-public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
+public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
-    private static readonly string path = "/tournaments/jane tournament/games/create";
+    private static readonly string path = "/tournaments/jane tournament/players/create";
 
-    public static async Task<HttpResponseMessage> GetResponse(HttpClient client)
+    private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
         var response = await client.GetAsync(path);
         return response;
     }
 
-    public static async Task<HttpResponseMessage> PostResponse(
-        HttpClient client,
-        string gameName,
-        string numberOfTeams,
-        string ShouldMaximizeScore
-    )
+    public static async Task<HttpResponseMessage> PostResponse(HttpClient client, string playerName)
     {
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
@@ -33,12 +28,7 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
             ?? throw new Exception("form not found");
         return await client.SendAsync(
             form,
-            new Dictionary<string, string>
-            {
-                ["Input.Name"] = gameName,
-                ["Input.NumberOfTeams"] = numberOfTeams,
-                ["Input.ShouldMaximizeScore"] = ShouldMaximizeScore
-            }
+            new Dictionary<string, string> { ["Input.Name"] = playerName }
         );
     }
 
@@ -51,33 +41,23 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var title = HtmlHelpers.FindElementByText(content, "Create a new game");
+        var title = HtmlHelpers.FindElementByText(content, "Create new players");
         var nameInput = HtmlHelpers.FindInputByLabel(content, "Name");
-        var numbersOfTeamsInput = HtmlHelpers.FindInputByLabel(content, "NumberOfTeams");
-        var shouldMaximizeScoreInput = HtmlHelpers.FindInputByLabel(content, "ShouldMaximizeScore");
         var button = content.QuerySelector("button");
 
         Assert.NotNull(title);
         Assert.NotNull(nameInput);
-        Assert.NotNull(numbersOfTeamsInput);
-        Assert.NotNull(shouldMaximizeScoreInput);
         Assert.NotNull(button);
         Assert.Equal("Create", button.TextContent);
     }
 
-    [Theory]
-    [InlineData("ts", "0", "true")]
-    [InlineData("a name way toooooooooooooooooooooooooooooooooooooooooooooo long", "301", "true")]
-    public async Task Post_InvalidSubmit_ShowErrors(
-        string name,
-        string numberOfTeams,
-        string shouldMaximizeScore
-    )
+    [Fact]
+    public async Task Post_SubmitWithEmptyName_ShowError()
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var response = await PostResponse(client, name, numberOfTeams, shouldMaximizeScore);
+        var response = await PostResponse(client, "");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         // A ModelState failure returns to Page (200-OK) and doesn't redirect.
@@ -89,32 +69,44 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
                 "Thou must provide a name between 3 and 60 characters."
             )
         );
+    }
+
+    [Fact]
+    public async Task Post_SubmitWithAlreadyExistingName_ShowError()
+    {
+        var client = HttpClientHelpers.CreateOwnerClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
+
+        var response = await PostResponse(client, "player1");
+        var responseContent = await HtmlHelpers.GetDocumentAsync(response);
+
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "Thou must provide a number of teams between 1 and 300."
+                "A player by the name of 'player1' doth already exists."
             )
         );
     }
 
     [Fact]
-    public async Task Post_Submit_CreateAndRedirectWithFeedback()
+    public async Task Post_SubmitWithValidName_CreateAndRedirectWithFeedback()
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "valid game", "2", "false");
+
+        var response = await PostResponse(client, "valid player");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.Equal(
-            "/tournaments/jane tournament",
+        Assert.EndsWith(
+            "/tournaments/jane tournament/players/create",
             HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName)
         );
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid game"));
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid player"));
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "A game named 'valid game' hath been created."
+                "A player named 'valid player' hath been created."
             )
         );
     }

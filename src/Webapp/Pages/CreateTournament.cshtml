@@ -1,0 +1,14 @@
+﻿@page "/tournaments/create"
+@model Webapp.Pages.CreateTournamentModel
+@{
+  ViewData["Title"] = "Create tournament";
+}
+
+<h1>Create a new tournament</h1>
+
+<form method="post">
+  <label asp-for="Input.Name"></label>
+  <input asp-for="Input.Name">
+  <span asp-validation-for="Input.Name"></span>
+  <button type="submit">Create</button>
+</form>

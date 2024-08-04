@@ -10,15 +10,9 @@
 }
 else
 {
-  <h2>Greetings, @Model.User.Identity.Name. Thou mayst create a tournament, if thou wilt!</h2>
-  <form method="post">
-  <label asp-for="Input.Name"></label>
-  <input asp-for="Input.Name">
-  <span asp-validation-for="Input.Name"></span>
-  <button type="submit">Créer</button>
-</form>
+  <h2>Greetings, @Model.User.Identity.Name.</h2>
 
-  <h4>@TempData["FormResult"]</h4>
+  <a asp-area="" asp-page="/CreateTournament">Create tournament</a>
 
   <h3>My tournaments</h3>
 
@@ -26,7 +20,7 @@ else
   @foreach (var tournament in Model.Tournaments)
     {
       <li>
-        <a asp-area="" asp-page="/tournaments" asp-route-name=@tournament.Name>
+        <a asp-area="" asp-page="/tournaments" asp-route-tournament=@tournament.Name>
           @tournament.Name
         </a>
       </li>

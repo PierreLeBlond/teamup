@@ -6,7 +6,12 @@ namespace Webapp.Models;
 public class Tournament
 {
     [Key]
-    [StringLength(60, MinimumLength = 3)]
+    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [StringLength(
+        60,
+        MinimumLength = 3,
+        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+    )]
     public required string Name { get; set; }
 
     [ValidateNever]

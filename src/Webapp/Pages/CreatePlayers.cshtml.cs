@@ -8,7 +8,7 @@ using Webapp.Models;
 
 namespace Webapp.Pages;
 
-public class CreateGameModel(
+public class CreatePlayersModel(
     ApplicationDbContext context,
     UserManager<User> userManager,
     IAuthorizationService authorizationService
@@ -21,21 +21,23 @@ public class CreateGameModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
-    public Tournament Tournament { get; set; } = null!;
-
     [BindProperty]
-    public Game Input { get; set; } =
-        new Game
-        {
-            Name = "",
-            TournamentId = "",
-            NumberOfTeams = 2,
-            ShouldMaximizeScore = true
-        };
+    public Player Input { get; set; } = new Player { Name = "", TournamentId = "" };
+
+    public Tournament Tournament { get; set; } = null!;
+    public IList<Player> Players { get; set; } = [];
+    public bool IsOwner { get; set; } = false;
 
     private void SetModel(string name)
     {
         Tournament = context.Tournaments.Single(t => t.Name == name);
+        var currentUserId = userManager.GetUserId(User);
+        IsOwner = Tournament.OwnerId == currentUserId;
+
+        Players = context
+            .Players.Where(p => p.TournamentId == Tournament.Name)
+            .OrderBy(p => p.Name)
+            .ToList();
     }
 
     public async Task<IActionResult> OnGet(string tournament)
@@ -90,20 +92,25 @@ public class CreateGameModel(
             return Page();
         }
 
-        var game = new Game
+        var player = new Player { Name = Input.Name, TournamentId = Tournament.Name, };
+
+        context.Players.Add(player);
+
+        try
         {
-            Name = Input.Name,
-            TournamentId = Tournament.Name,
-            NumberOfTeams = Input.NumberOfTeams,
-            ShouldMaximizeScore = Input.ShouldMaximizeScore
-        };
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError(
+                "Input.Name",
+                $"A player by the name of '{player.Name}' doth already exists."
+            );
+            return Page();
+        }
 
-        context.Games.Add(game);
+        FormResult = $"A player named '{Input.Name}' hath been created.";
 
-        await context.SaveChangesAsync();
-
-        FormResult = $"A game named '{Input.Name}' hath been created.";
-
-        return Redirect($"/tournaments/{Tournament.Name}");
+        return RedirectToPage();
     }
 }

@@ -1,5 +1,5 @@
-@page "/tournaments/{name}/games/create"
-@model Webapp.Pages.Tournaments.CreateGameModel
+@page "/tournaments/{tournament}/games/create"
+@model Webapp.Pages.CreateGameModel
 @{
   ViewData["Title"] = "Create Game";
 }
@@ -18,5 +18,3 @@
   <span asp-validation-for="Input.ShouldMaximizeScore"></span>
   <button type="submit">Create</button>
 </form>
-
-<h4>@TempData["FormResult"]</h4>

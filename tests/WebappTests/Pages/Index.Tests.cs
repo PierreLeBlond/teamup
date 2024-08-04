@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Web;
 using AngleSharp.Html.Dom;
 using Webapp.Tests.Helpers;
 
@@ -51,29 +52,6 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
     }
 
     [Fact]
-    public async Task Get_Authenticated_ShowForm()
-    {
-        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            scheme: "Authenticated"
-        );
-
-        var response = await GetResponse(client);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var title = HtmlHelpers.FindElementByText(
-            content,
-            "Greetings, John. Thou mayst create a tournament, if thou wilt!"
-        );
-        var input = content.QuerySelector("input");
-        var button = content.QuerySelector("button");
-
-        Assert.NotNull(title);
-        Assert.NotNull(input);
-        Assert.NotNull(button);
-    }
-
-    [Fact]
     public async Task Get_Owner_ShowOwnedTournaments()
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory);
@@ -88,51 +66,19 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
     }
 
     [Fact]
-    public async Task Post_SubmitWithEmptyName_ShowError()
+    public async Task Get_Authenticated_ShowCreateTournamentLink()
     {
-        var client = HttpClientHelpers.CreateOwnerClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "");
-        var responseContent = await HtmlHelpers.GetDocumentAsync(response);
-
-        // A ModelState failure returns to Page (200-OK) and doesn't redirect.
-        response.EnsureSuccessStatusCode();
-        Assert.Null(response.Headers.Location?.OriginalString);
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(responseContent, "The Name field is required.")
+        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            scheme: "Authenticated"
         );
-    }
 
-    [Fact]
-    public async Task Post_SubmitWithAlreadyExistingName_ShowError()
-    {
-        var client = HttpClientHelpers.CreateOwnerClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "jane tournament");
-        var responseContent = await HtmlHelpers.GetDocumentAsync(response);
+        var response = await GetResponse(client);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "A tournament named 'jane tournament' already exists."
-            )
-        );
-    }
+        var link = HtmlHelpers.FindAnchorByText(content, "Create tournament");
 
-    [Fact]
-    public async Task Post_SubmitWithValidName_CreateAndRedirectWithFeedback()
-    {
-        var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "valid tournament");
-        var responseContent = await HtmlHelpers.GetDocumentAsync(response);
-
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid tournament"));
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "My tournament 'valid tournament' has been created."
-            )
-        );
+        Assert.NotNull(link);
+        Assert.EndsWith("/tournaments/create", HttpUtility.UrlDecode(link.Href));
     }
 }
