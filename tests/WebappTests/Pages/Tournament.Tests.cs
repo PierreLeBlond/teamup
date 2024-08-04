@@ -12,7 +12,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     private readonly CustomWebApplicationFactory<Program> factory = factory;
     private readonly ITestOutputHelper output = output;
 
-    private static readonly string path = "/Tournament/JohnTournament/";
+    private static readonly string path = "/Tournaments/JaneTournament/";
 
     private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
@@ -42,7 +42,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var title = HtmlHelpers.FindElementByText(content, "JohnTournament");
+        var title = HtmlHelpers.FindElementByText(content, "JaneTournament");
 
         Assert.NotNull(title);
     }
@@ -67,7 +67,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     [Fact]
     public async Task Get_NotOwner_HidePlayerForm()
     {
-        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
+        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
 
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
@@ -80,10 +80,8 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     [Fact]
     public async Task Get_Owner_ShowPlayerForm()
     {
-        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            scheme: "Authenticated"
-        );
+        var client = HttpClientHelpers.CreateOwnerClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
@@ -104,10 +102,8 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     [Fact]
     public async Task Post_SubmitWithEmptyName_ShowError()
     {
-        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            scheme: "Authenticated"
-        );
+        var client = HttpClientHelpers.CreateOwnerClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
         var response = await PostResponse(client, "");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
@@ -126,10 +122,8 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     [Fact]
     public async Task Post_SubmitWithAlreadyExistingName_ShowError()
     {
-        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            scheme: "Authenticated"
-        );
+        var client = HttpClientHelpers.CreateOwnerClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
         var response = await PostResponse(client, "player1");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
@@ -145,10 +139,8 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
     [Fact]
     public async Task Post_SubmitWithValidName_CreateAndRedirectWithFeedback()
     {
-        var client = HttpClientHelpers.CreateAuthenticatedClient(factory, allowAutoRedirect: true);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            scheme: "Authenticated"
-        );
+        var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
         var response = await PostResponse(client, "ValidPlayer");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
@@ -160,5 +152,37 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory, ITest
                 "A player named 'ValidPlayer' hath been created."
             )
         );
+    }
+
+    [Fact]
+    public async Task Get_Unauthenticated_ShowGames()
+    {
+        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
+
+        var response = await GetResponse(client);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var title = HtmlHelpers.FindElementByText(content, "And the games they ought to play!");
+        var game1 = HtmlHelpers.FindElementByText(content, "game1");
+        var game2 = HtmlHelpers.FindElementByText(content, "game2");
+
+        Assert.NotNull(title);
+        Assert.NotNull(game1);
+        Assert.NotNull(game2);
+    }
+
+    [Fact]
+    public async Task Get_Owner_ShowCreateGameLink()
+    {
+        var client = HttpClientHelpers.CreateOwnerClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
+
+        var response = await GetResponse(client);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var link = HtmlHelpers.FindAnchorByText(content, "Create game");
+
+        Assert.NotNull(link);
+        Assert.EndsWith("/Tournaments/JaneTournament/CreateGame", link.Href);
     }
 }

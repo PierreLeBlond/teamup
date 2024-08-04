@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -44,6 +46,29 @@ public class HtmlHelpers
         return document
             .QuerySelectorAll("*")
             .ToList()
-            .Find(element => element.InnerHtml.Contains(text));
+            .Find(element => element.TextContent.Contains(text));
+    }
+
+    public static IHtmlAnchorElement? FindAnchorByText(IHtmlDocument document, string text)
+    {
+        return (IHtmlAnchorElement?)
+            document
+                .QuerySelectorAll("a")
+                .ToList()
+                .Find(element => element.TextContent.Contains(text));
+    }
+
+    public static IElement? FindInputByLabel(IHtmlDocument document, string label)
+    {
+        var element = document
+            .QuerySelectorAll("label")
+            .ToList()
+            .Find(element => element.TextContent.Contains(label));
+
+        if (element is null)
+        {
+            return null;
+        }
+        return document.GetElementById(element.Attributes["for"].Value);
     }
 }

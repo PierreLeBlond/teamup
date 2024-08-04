@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Webapp.Models;
 
-public class Player
+public class Game
 {
     [ValidateNever]
     public Guid Id { get; set; }
@@ -21,4 +21,10 @@ public class Player
 
     [ValidateNever]
     public Tournament Tournament { get; set; } = null!;
+
+    public required bool ShouldMaximizeScore { get; set; } = true;
+
+    [Required(ErrorMessage = "Thou must provide a number of teams between 1 and 300.")]
+    [Range(1, 300, ErrorMessage = "Thou must provide a number of teams between 1 and 300.")]
+    public required int NumberOfTeams { get; set; }
 }

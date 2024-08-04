@@ -29,3 +29,27 @@ public class AuthenticatedHandler(
         return Task.FromResult(result);
     }
 }
+
+public class OwnerHandler(
+    IOptionsMonitor<AuthenticationSchemeOptions> options,
+    ILoggerFactory logger,
+    UrlEncoder encoder
+) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
+{
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, "JaneId"),
+            new Claim(ClaimTypes.Name, "Jane"),
+            new Claim(ClaimTypes.Email, "jane.doe@gmail.com"),
+        };
+        var identity = new ClaimsIdentity(claims, "Owner");
+        var principal = new ClaimsPrincipal(identity);
+        var ticket = new AuthenticationTicket(principal, "Owner");
+
+        var result = AuthenticateResult.Success(ticket);
+
+        return Task.FromResult(result);
+    }
+}

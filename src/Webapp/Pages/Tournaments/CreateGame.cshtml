@@ -1,0 +1,22 @@
+@page "/Tournaments/{name}/CreateGame"
+@model Webapp.Pages.Tournaments.CreateGameModel
+@{
+  ViewData["Title"] = "Create Game";
+}
+
+<h3>Create a new game</h3>
+
+<form method="post">
+  <label asp-for="Input.Name"></label>
+  <input asp-for="Input.Name">
+  <span asp-validation-for="Input.Name"></span>
+  <label asp-for="Input.NumberOfTeams"></label>
+  <input type="number" asp-for="Input.NumberOfTeams">
+  <span asp-validation-for="Input.NumberOfTeams"></span>
+  <label asp-for="Input.ShouldMaximizeScore"></label>
+  <input asp-for="Input.ShouldMaximizeScore">
+  <span asp-validation-for="Input.ShouldMaximizeScore"></span>
+  <button type="submit">Create</button>
+</form>
+
+<h4>@TempData["FormResult"]</h4>

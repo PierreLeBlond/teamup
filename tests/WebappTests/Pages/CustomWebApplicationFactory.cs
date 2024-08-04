@@ -38,10 +38,28 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                             new Tournament { Name = "JaneTournament", OwnerId = "JaneId" }
                         );
                         context.Players.Add(
-                            new Player { Name = "player1", TournamentId = "JohnTournament" }
+                            new Player { Name = "player1", TournamentId = "JaneTournament" }
                         );
                         context.Players.Add(
-                            new Player { Name = "player2", TournamentId = "JohnTournament" }
+                            new Player { Name = "player2", TournamentId = "JaneTournament" }
+                        );
+                        context.Games.Add(
+                            new Game
+                            {
+                                Name = "game1",
+                                TournamentId = "JaneTournament",
+                                NumberOfTeams = 2,
+                                ShouldMaximizeScore = true
+                            }
+                        );
+                        context.Games.Add(
+                            new Game
+                            {
+                                Name = "game2",
+                                TournamentId = "JaneTournament",
+                                NumberOfTeams = 1,
+                                ShouldMaximizeScore = false
+                            }
                         );
 
                         context.SaveChanges();
