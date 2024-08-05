@@ -33,8 +33,7 @@
     @if (Model.IsOwner)
     {
       <li>
-        <a asp-area="" asp-page="/Games" asp-route-tournament=@Model.Tournament.Name
-          asp-route-gameName=@game.Name>@game.Name</a>
+        <a asp-area="" asp-page="/Games" asp-route-tournament=@Model.Tournament.Name asp-route-game=@game.Id>@game.Name</a>
       </li>
     }
     else

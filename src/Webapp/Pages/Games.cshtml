@@ -1,0 +1,24 @@
+﻿@page "/tournaments/{tournament}/games/{game}"
+@model Webapp.Pages.GameModel
+@{
+  ViewData["Title"] = "Game";
+}
+
+<h1>@Model.Game.Name</h1>
+
+<h2>Rewards</h2>
+
+@if (Model.IsOwner)
+{
+  <a asp-area="" asp-page="/UpdateRewards" asp-route-tournament=@Model.Tournament.Name
+  asp-route-game=@Model.Game.Id>Update rewards</a>
+}
+
+<ul>
+  @foreach (var reward in Model.Rewards)
+  {
+    <li>@reward.Value</li>
+  }
+</ul>
+
+<h2>Teams</h2>

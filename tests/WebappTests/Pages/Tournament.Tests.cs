@@ -18,20 +18,6 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
         return response;
     }
 
-    public static async Task<HttpResponseMessage> PostResponse(HttpClient client, string playerName)
-    {
-        var response = await GetResponse(client);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var form =
-            (IHtmlFormElement?)content.QuerySelector("form")
-            ?? throw new Exception("form not found");
-        return await client.SendAsync(
-            form,
-            new Dictionary<string, string> { ["Input.Name"] = playerName }
-        );
-    }
-
     [Fact]
     public async Task Get_Unauthenticated_ShowTournament()
     {

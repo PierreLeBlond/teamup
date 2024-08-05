@@ -2,13 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
 
 namespace Webapp.Pages;
 
-public class CreateGameModel(
+public class UpdateRewardsModel(
     ApplicationDbContext context,
     UserManager<User> userManager,
     IAuthorizationService authorizationService
@@ -22,23 +21,21 @@ public class CreateGameModel(
     public string FormResult { get; set; } = "";
 
     public Tournament Tournament { get; set; } = null!;
+    public Game Game { get; set; } = null!;
 
     [BindProperty]
-    public Game Input { get; set; } =
-        new Game
-        {
-            Name = "",
-            TournamentId = "",
-            NumberOfTeams = 2,
-            ShouldMaximizeScore = true
-        };
+    public IList<Reward> Rewards { get; set; } = [];
 
-    private void SetModel(string name)
+    private void SetModel(string tournament, string game)
     {
-        Tournament = context.Tournaments.Single(t => t.Name == name);
+        Tournament = context.Tournaments.Single(t => t.Name == tournament);
+        var currentUserId = userManager.GetUserId(User);
+
+        var gameId = new Guid(game);
+        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournament);
     }
 
-    public async Task<IActionResult> OnGet(string tournament)
+    public async Task<IActionResult> OnGet(string tournament, string game)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -47,7 +44,9 @@ public class CreateGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournament);
+        SetModel(tournament, game);
+        var gameId = new Guid(game);
+        Rewards = [.. context.Rewards.Where(r => r.GameId == gameId).OrderBy(r => r.Value)];
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
@@ -63,7 +62,7 @@ public class CreateGameModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPost(string tournament)
+    public async Task<IActionResult> OnPost(string tournament, string game)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -72,7 +71,7 @@ public class CreateGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournament);
+        SetModel(tournament, game);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
@@ -90,26 +89,15 @@ public class CreateGameModel(
             return Page();
         }
 
-        var game = new Game
+        foreach (var reward in Rewards)
         {
-            Name = Input.Name,
-            TournamentId = Tournament.Name,
-            NumberOfTeams = Input.NumberOfTeams,
-            ShouldMaximizeScore = Input.ShouldMaximizeScore
-        };
-
-        context.Games.Add(game);
-
-        for (var i = 0; i < Input.NumberOfTeams; i++)
-        {
-            var reward = new Reward { Value = 0, GameId = game.Id };
-            context.Rewards.Add(reward);
+            context.Rewards.Update(reward);
         }
 
         await context.SaveChangesAsync();
 
-        FormResult = $"A game named '{Input.Name}' hath been created.";
+        FormResult = $"Some rewards hath been updated.";
 
-        return Redirect($"/tournaments/{Tournament.Name}");
+        return RedirectToPage();
     }
 }

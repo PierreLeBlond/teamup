@@ -14,15 +14,17 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
+    public Guid GameId { get; private set; }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
+            var serviceProvider = services.BuildServiceProvider();
             lock (_lock)
             {
                 if (!_databaseInitialized)
                 {
-                    var serviceProvider = services.BuildServiceProvider();
                     using (var scope = serviceProvider.CreateScope())
                     {
                         var context =
@@ -43,15 +45,16 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                         context.Players.Add(
                             new Player { Name = "player2", TournamentId = "jane tournament" }
                         );
-                        context.Games.Add(
-                            new Game
-                            {
-                                Name = "game1",
-                                TournamentId = "jane tournament",
-                                NumberOfTeams = 2,
-                                ShouldMaximizeScore = true
-                            }
-                        );
+                        var game1 = new Game
+                        {
+                            Name = "game1",
+                            TournamentId = "jane tournament",
+                            NumberOfTeams = 2,
+                            ShouldMaximizeScore = true
+                        };
+                        context.Games.Add(game1);
+                        context.Rewards.Add(new Reward { GameId = game1.Id, Value = 200 });
+                        context.Rewards.Add(new Reward { GameId = game1.Id, Value = 100 });
                         context.Games.Add(
                             new Game
                             {
@@ -66,6 +69,11 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                     }
                     _databaseInitialized = true;
                 }
+            }
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                GameId = context.Games.Single(g => g.Name == "game1").Id;
             }
         });
 
