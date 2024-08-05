@@ -100,11 +100,6 @@ public class CreateTournamentTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, "valid tournament");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.EndsWith(
-            "/tournaments/valid tournament",
-            HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName)
-        );
-
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid tournament"));
         Assert.NotNull(
             HtmlHelpers.FindElementByText(

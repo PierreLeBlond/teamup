@@ -21,30 +21,25 @@ public class TournamentModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
-    [BindProperty]
-    public Player Input { get; set; } = new Player { Name = "", TournamentId = "" };
-
     public Tournament Tournament { get; set; } = null!;
     public IList<Player> Players { get; set; } = [];
     public IList<Game> Games { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string name)
+    private void SetModel(string tournament)
     {
-        Tournament = context.Tournaments.Single(t => t.Name == name);
+        var tournamentId = new Guid(tournament);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
 
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;
 
-        Players = context
-            .Players.Where(p => p.TournamentId == Tournament.Name)
-            .OrderBy(p => p.Name)
-            .ToList();
+        Players =
+        [
+            .. context.Players.Where(p => p.TournamentId == Tournament.Id).OrderBy(p => p.Name)
+        ];
 
-        Games = context
-            .Games.Where(g => g.TournamentId == Tournament.Name)
-            .OrderBy(g => g.Name)
-            .ToList();
+        Games = [.. context.Games.Where(g => g.TournamentId == Tournament.Id).OrderBy(g => g.Name)];
     }
 
     public void OnGet(string tournament)

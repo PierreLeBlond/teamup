@@ -22,22 +22,24 @@ public class CreatePlayersModel(
     public string FormResult { get; set; } = "";
 
     [BindProperty]
-    public Player Input { get; set; } = new Player { Name = "", TournamentId = "" };
+    public Player Input { get; set; } = new Player { Name = "", TournamentId = new Guid() };
 
     public Tournament Tournament { get; set; } = null!;
     public IList<Player> Players { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string name)
+    private void SetModel(string tournament)
     {
-        Tournament = context.Tournaments.Single(t => t.Name == name);
+        var tournamentId = new Guid(tournament);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
+
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;
 
-        Players = context
-            .Players.Where(p => p.TournamentId == Tournament.Name)
-            .OrderBy(p => p.Name)
-            .ToList();
+        Players =
+        [
+            .. context.Players.Where(p => p.TournamentId == tournamentId).OrderBy(p => p.Name)
+        ];
     }
 
     public async Task<IActionResult> OnGet(string tournament)
@@ -92,7 +94,7 @@ public class CreatePlayersModel(
             return Page();
         }
 
-        var player = new Player { Name = Input.Name, TournamentId = Tournament.Name, };
+        var player = new Player { Name = Input.Name, TournamentId = Tournament.Id };
 
         context.Players.Add(player);
 

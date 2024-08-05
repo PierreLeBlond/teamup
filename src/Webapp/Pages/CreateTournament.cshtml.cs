@@ -67,6 +67,6 @@ public class CreateTournamentModel(ApplicationDbContext context, UserManager<Use
 
         FormResult = $"A tournament named '{tournament.Name}' hath been created.";
 
-        return Redirect($"/tournaments/{tournament.Name}");
+        return Redirect($"/tournaments/{tournament.Id}");
     }
 }

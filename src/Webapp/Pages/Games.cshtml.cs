@@ -23,9 +23,10 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
 
     private void SetModel(string tournament, string game)
     {
-        Tournament = context.Tournaments.Single(t => t.Name == tournament);
+        var tournamentId = new Guid(tournament);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
         var gameId = new Guid(game);
-        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournament);
+        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournamentId);
 
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;

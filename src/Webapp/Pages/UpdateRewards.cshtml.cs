@@ -28,11 +28,13 @@ public class UpdateRewardsModel(
 
     private void SetModel(string tournament, string game)
     {
-        Tournament = context.Tournaments.Single(t => t.Name == tournament);
+        var tournamentId = new Guid(tournament);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
+
         var currentUserId = userManager.GetUserId(User);
 
         var gameId = new Guid(game);
-        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournament);
+        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournamentId);
     }
 
     public async Task<IActionResult> OnGet(string tournament, string game)

@@ -10,15 +10,14 @@ public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
-    private static readonly string path = "/tournaments/jane tournament/players/create";
-
-    private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
+    public async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
+        var path = $"/tournaments/{factory.TournamentId}/players/create";
         var response = await client.GetAsync(path);
         return response;
     }
 
-    public static async Task<HttpResponseMessage> PostResponse(HttpClient client, string playerName)
+    public async Task<HttpResponseMessage> PostResponse(HttpClient client, string playerName)
     {
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
@@ -97,10 +96,8 @@ public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, "valid player");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.EndsWith(
-            "/tournaments/jane tournament/players/create",
-            HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName)
-        );
+        var path = $"/tournaments/{factory.TournamentId}/players/create";
+        Assert.EndsWith(path, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid player"));
         Assert.NotNull(

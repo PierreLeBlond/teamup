@@ -16,6 +16,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         modelBuilder.Entity<Player>().HasIndex(p => new { p.Name, p.TournamentId }).IsUnique();
 
+        modelBuilder.Entity<Tournament>().HasIndex(t => t.Name).IsUnique();
+
         base.OnModelCreating(modelBuilder);
     }
 }

@@ -10,7 +10,7 @@
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/CreatePlayers" asp-route-tournament=@Model.Tournament.Name>Create players</a>
+  <a asp-area="" asp-page="/CreatePlayers" asp-route-tournament=@Model.Tournament.Id>Create players</a>
 }
 
 <ul>
@@ -24,7 +24,7 @@
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/CreateGame" asp-route-tournament=@Model.Tournament.Name>Create game</a>
+  <a asp-area="" asp-page="/CreateGame" asp-route-tournament=@Model.Tournament.Id>Create game</a>
 }
 
 <ul>
@@ -33,7 +33,7 @@
     @if (Model.IsOwner)
     {
       <li>
-        <a asp-area="" asp-page="/Games" asp-route-tournament=@Model.Tournament.Name asp-route-game=@game.Id>@game.Name</a>
+        <a asp-area="" asp-page="/Games" asp-route-tournament=@Model.Tournament.Id asp-route-game=@game.Id>@game.Name</a>
       </li>
     }
     else

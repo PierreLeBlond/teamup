@@ -13,12 +13,13 @@ public class GameTest(TestDatabaseFixture fixture) : IClassFixture<TestDatabaseF
         using var context = Fixture.CreateContext();
         context.Database.BeginTransaction();
 
-        context.Tournaments.Add(new Tournament { Name = "tournamentName", OwnerId = "ownerId" });
+        var tournament = new Tournament { Name = "tournamentName", OwnerId = "ownerId" };
+        context.Tournaments.Add(tournament);
         context.Games.Add(
             new Game
             {
                 Name = "gameName",
-                TournamentId = "tournamentName",
+                TournamentId = tournament.Id,
                 ShouldMaximizeScore = true,
                 NumberOfTeams = 2
             }

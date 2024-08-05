@@ -28,14 +28,15 @@ public class CreateGameModel(
         new Game
         {
             Name = "",
-            TournamentId = "",
+            TournamentId = new Guid(),
             NumberOfTeams = 2,
             ShouldMaximizeScore = true
         };
 
-    private void SetModel(string name)
+    private void SetModel(string tournament)
     {
-        Tournament = context.Tournaments.Single(t => t.Name == name);
+        var tournamentId = new Guid(tournament);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
     }
 
     public async Task<IActionResult> OnGet(string tournament)
@@ -93,7 +94,7 @@ public class CreateGameModel(
         var game = new Game
         {
             Name = Input.Name,
-            TournamentId = Tournament.Name,
+            TournamentId = Tournament.Id,
             NumberOfTeams = Input.NumberOfTeams,
             ShouldMaximizeScore = Input.ShouldMaximizeScore
         };
@@ -110,6 +111,6 @@ public class CreateGameModel(
 
         FormResult = $"A game named '{Input.Name}' hath been created.";
 
-        return Redirect($"/tournaments/{Tournament.Name}");
+        return Redirect($"/tournaments/{Tournament.Id}");
     }
 }

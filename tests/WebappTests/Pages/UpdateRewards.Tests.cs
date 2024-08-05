@@ -12,7 +12,7 @@ public class UpdateRewardsTests(CustomWebApplicationFactory<Program> factory)
 
     private async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/jane tournament/games/{factory.GameId}/rewards/update";
+        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}/rewards/update";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -64,7 +64,7 @@ public class UpdateRewardsTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, ["200", "100"]);
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        var path = $"/tournaments/jane tournament/games/{factory.GameId}/rewards/update";
+        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}/rewards/update";
         Assert.EndsWith(path, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
         //Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid player"));

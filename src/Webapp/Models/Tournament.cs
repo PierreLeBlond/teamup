@@ -5,7 +5,9 @@ namespace Webapp.Models;
 
 public class Tournament
 {
-    [Key]
+    [ValidateNever]
+    public Guid Id { get; set; }
+
     [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
     [StringLength(
         60,

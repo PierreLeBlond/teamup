@@ -11,7 +11,7 @@ public class GameTests(CustomWebApplicationFactory<Program> factory)
 
     private async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/jane tournament/games/{factory.GameId}";
+        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -58,7 +58,7 @@ public class GameTests(CustomWebApplicationFactory<Program> factory)
         var link = HtmlHelpers.FindAnchorByText(content, "Update rewards");
 
         Assert.NotNull(link);
-        var path = $"/tournaments/jane tournament/games/{factory.GameId}/rewards/update";
+        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}/rewards/update";
         Assert.EndsWith(path, HttpUtility.UrlDecode(link.Href));
     }
 }

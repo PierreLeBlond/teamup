@@ -10,15 +10,14 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
-    private static readonly string path = "/tournaments/jane tournament/games/create";
-
-    public static async Task<HttpResponseMessage> GetResponse(HttpClient client)
+    public async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
+        var path = $"/tournaments/{factory.TournamentId}/games/create";
         var response = await client.GetAsync(path);
         return response;
     }
 
-    public static async Task<HttpResponseMessage> PostResponse(
+    public async Task<HttpResponseMessage> PostResponse(
         HttpClient client,
         string gameName,
         string numberOfTeams,
@@ -105,10 +104,8 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, "valid game", "2", "false");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.Equal(
-            "/tournaments/jane tournament",
-            HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName)
-        );
+        var path = $"/tournaments/{factory.TournamentId}";
+        Assert.Equal(path, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid game"));
         Assert.NotNull(
