@@ -12,7 +12,8 @@ public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
 
     public async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/{factory.TournamentId}/players/create";
+        var path =
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -96,7 +97,8 @@ public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, "valid player");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        var path = $"/tournaments/{factory.TournamentId}/players/create";
+        var path =
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";
         Assert.EndsWith(path, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid player"));

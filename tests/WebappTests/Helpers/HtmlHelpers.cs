@@ -58,7 +58,7 @@ public class HtmlHelpers
                 .Find(element => element.TextContent.Contains(text));
     }
 
-    public static IElement? FindInputByLabel(IHtmlDocument document, string label)
+    public static IHtmlInputElement? FindInputByLabel(IHtmlDocument document, string label)
     {
         var element = document
             .QuerySelectorAll("label")
@@ -69,6 +69,6 @@ public class HtmlHelpers
         {
             return null;
         }
-        return document.GetElementById(element.Attributes["for"].Value);
+        return (IHtmlInputElement?)document.GetElementById(element.Attributes["for"].Value);
     }
 }

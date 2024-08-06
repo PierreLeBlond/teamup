@@ -12,7 +12,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
 
     private async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/{factory.TournamentId}";
+        var path = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -76,7 +76,7 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
         var link = HtmlHelpers.FindAnchorByText(content, "Create game");
 
         Assert.NotNull(link);
-        var path = $"/tournaments/{factory.TournamentId}/games/create";
+        var path = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/create";
         Assert.EndsWith(path, HttpUtility.UrlDecode(link.Href));
     }
 
@@ -92,7 +92,8 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
         var link = HtmlHelpers.FindAnchorByText(content, "Create players");
 
         Assert.NotNull(link);
-        var path = $"/tournaments/{factory.TournamentId}/players/create";
+        var path =
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";
         Assert.EndsWith(path, HttpUtility.UrlDecode(link.Href));
     }
 }

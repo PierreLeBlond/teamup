@@ -5,14 +5,15 @@ using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
 
-public class UpdateRewardsTests(CustomWebApplicationFactory<Program> factory)
+public class EditRewardsTests(CustomWebApplicationFactory<Program> factory)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
     private async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}/rewards/update";
+        var path =
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}/rewards/edit";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -25,7 +26,7 @@ public class UpdateRewardsTests(CustomWebApplicationFactory<Program> factory)
         var formData = new Dictionary<string, string>();
         for (var i = 0; i < values.Length; i++)
         {
-            formData.Add($"Rewards[{i}].Value", values[i]);
+            formData.Add($"Input[{i}].Value", values[i]);
         }
 
         var form =
@@ -43,7 +44,7 @@ public class UpdateRewardsTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var title = HtmlHelpers.FindElementByText(content, "Update Rewards");
+        var title = HtmlHelpers.FindElementByText(content, "Edit Rewards");
         var reward1Input = HtmlHelpers.FindInputByLabel(content, "Reward 1");
         var reward2Input = HtmlHelpers.FindInputByLabel(content, "Reward 2");
         var button = content.QuerySelector("button");
@@ -52,7 +53,7 @@ public class UpdateRewardsTests(CustomWebApplicationFactory<Program> factory)
         Assert.NotNull(reward1Input);
         Assert.NotNull(reward2Input);
         Assert.NotNull(button);
-        Assert.Equal("Create", button.TextContent);
+        Assert.Equal("Edit", button.TextContent);
     }
 
     [Fact]
@@ -62,14 +63,23 @@ public class UpdateRewardsTests(CustomWebApplicationFactory<Program> factory)
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
         var response = await PostResponse(client, ["200", "100"]);
-        var responseContent = await HtmlHelpers.GetDocumentAsync(response);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}/rewards/update";
-        Assert.EndsWith(path, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
+        var path =
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}/rewards/edit";
+        Assert.EndsWith(path, HttpUtility.UrlDecode(content.BaseUrl?.PathName));
 
-        //Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid player"));
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(responseContent, "Some rewards hath been updated.")
+        var feedback = HtmlHelpers.FindElementByText(
+            content,
+            "A total of 2 reward(s) hath been edited."
         );
+        var reward1Input = HtmlHelpers.FindInputByLabel(content, "Reward 1");
+        var reward2Input = HtmlHelpers.FindInputByLabel(content, "Reward 2");
+
+        Assert.NotNull(feedback);
+        Assert.NotNull(reward1Input);
+        Assert.NotNull(reward2Input);
+        Assert.Equal("200", reward1Input.Value);
+        Assert.Equal("100", reward2Input.Value);
     }
 }

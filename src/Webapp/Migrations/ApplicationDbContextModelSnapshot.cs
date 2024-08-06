@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Webapp.Data;
 
@@ -11,11 +10,9 @@ using Webapp.Data;
 namespace Webapp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240801145558_FixPlayerModelValidation")]
-    partial class FixPlayerModelValidation
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -360,6 +357,33 @@ namespace Webapp.Migrations
                     b.ToTable("OpenIddictTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Webapp.Models.Game", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NumberOfTeams")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("ShouldMaximizeScore")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("TournamentId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("Games");
+                });
+
             modelBuilder.Entity("Webapp.Models.Player", b =>
                 {
                     b.Property<Guid>("Id")
@@ -368,10 +392,10 @@ namespace Webapp.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(60)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TournamentId")
-                        .IsRequired()
+                    b.Property<Guid>("TournamentId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -384,9 +408,33 @@ namespace Webapp.Migrations
                     b.ToTable("Players");
                 });
 
+            modelBuilder.Entity("Webapp.Models.Reward", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("Rewards");
+                });
+
             modelBuilder.Entity("Webapp.Models.Tournament", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("TEXT");
 
@@ -394,7 +442,10 @@ namespace Webapp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Name");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Tournaments");
                 });
@@ -538,6 +589,17 @@ namespace Webapp.Migrations
                     b.Navigation("Authorization");
                 });
 
+            modelBuilder.Entity("Webapp.Models.Game", b =>
+                {
+                    b.HasOne("Webapp.Models.Tournament", "Tournament")
+                        .WithMany("Games")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tournament");
+                });
+
             modelBuilder.Entity("Webapp.Models.Player", b =>
                 {
                     b.HasOne("Webapp.Models.Tournament", "Tournament")
@@ -547,6 +609,17 @@ namespace Webapp.Migrations
                         .IsRequired();
 
                     b.Navigation("Tournament");
+                });
+
+            modelBuilder.Entity("Webapp.Models.Reward", b =>
+                {
+                    b.HasOne("Webapp.Models.Game", "Game")
+                        .WithMany("Rewards")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
@@ -561,8 +634,15 @@ namespace Webapp.Migrations
                     b.Navigation("Tokens");
                 });
 
+            modelBuilder.Entity("Webapp.Models.Game", b =>
+                {
+                    b.Navigation("Rewards");
+                });
+
             modelBuilder.Entity("Webapp.Models.Tournament", b =>
                 {
+                    b.Navigation("Games");
+
                     b.Navigation("Players");
                 });
 #pragma warning restore 612, 618

@@ -11,7 +11,8 @@ public class GameTests(CustomWebApplicationFactory<Program> factory)
 
     private async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}";
+        var path =
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -38,27 +39,11 @@ public class GameTests(CustomWebApplicationFactory<Program> factory)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Rewards");
-        var reward1 = HtmlHelpers.FindElementByText(content, "200");
-        var reward2 = HtmlHelpers.FindElementByText(content, "100");
+        var reward1 = HtmlHelpers.FindElementByText(content, "100");
+        var reward2 = HtmlHelpers.FindElementByText(content, "50");
 
         Assert.NotNull(title);
         Assert.NotNull(reward1);
         Assert.NotNull(reward2);
-    }
-
-    [Fact]
-    public async Task Get_Owner_ShowUpdateRewardsLink()
-    {
-        var client = HttpClientHelpers.CreateOwnerClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-
-        var response = await GetResponse(client);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var link = HtmlHelpers.FindAnchorByText(content, "Update rewards");
-
-        Assert.NotNull(link);
-        var path = $"/tournaments/{factory.TournamentId}/games/{factory.GameId}/rewards/update";
-        Assert.EndsWith(path, HttpUtility.UrlDecode(link.Href));
     }
 }

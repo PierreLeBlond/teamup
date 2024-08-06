@@ -10,8 +10,8 @@
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/UpdateRewards" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id>
-  Update rewards
+  <a asp-area="" asp-page="/EditRewards" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id>
+  Edit rewards
 </a>
 }
 

@@ -1,0 +1,21 @@
+@page "/tournaments/{tournament}/games/{game}/rewards/edit"
+@model Webapp.Pages.EditRewardsModel
+@{
+  ViewData["Title"] = "Edit Rewards";
+}
+
+<h3>Edit rewards</h3>
+
+<form method="post">
+  <ul>
+    @for (var i = 0; i < Model.Input.Length; i++)
+    {
+      <li>
+        <label asp-for="Input[i].Value">Reward @(i + 1)</label>
+        <input type="number" asp-for="Input[i].Value">
+        <span asp-validation-for="Input[i].Value"></span>
+      </li>
+    }
+  </ul>
+  <button type="submit">Edit</button>
+</form>

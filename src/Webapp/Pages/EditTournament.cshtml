@@ -1,0 +1,14 @@
+﻿@page "/tournaments/{tournament}/edit"
+@model Webapp.Pages.EditTournamentModel
+@{
+  ViewData["Title"] = "Edit tournament";
+}
+
+<h1>Edit tournament</h1>
+
+<form method="post">
+  <label asp-for="Input.Name"></label>
+  <input asp-for="Input.Name">
+  <span asp-validation-for="Input.Name"></span>
+  <button type="submit">Edit</button>
+</form>

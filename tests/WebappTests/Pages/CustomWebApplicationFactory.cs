@@ -12,8 +12,9 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
-    public Guid GameId { get; private set; }
-    public Guid TournamentId { get; private set; }
+    public static Guid GameId { get; private set; }
+    public static Guid TournamentId { get; private set; }
+    public static Guid EditableTournamentId { get; private set; }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -37,10 +38,18 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                             Name = "jane tournament",
                             OwnerId = "JaneId"
                         };
+                        context.Tournaments.Add(tournament);
+                        TournamentId = tournament.Id;
+                        var editableTournament = new Tournament
+                        {
+                            Name = "editable tournament",
+                            OwnerId = "JaneId"
+                        };
+                        context.Tournaments.Add(editableTournament);
+                        EditableTournamentId = editableTournament.Id;
                         context.Tournaments.Add(
                             new Tournament { Name = "john tournament", OwnerId = "JohnId" }
                         );
-                        context.Tournaments.Add(tournament);
                         context.Players.Add(
                             new Player { Name = "player1", TournamentId = tournament.Id }
                         );
@@ -55,8 +64,9 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                             ShouldMaximizeScore = true
                         };
                         context.Games.Add(game1);
-                        context.Rewards.Add(new Reward { GameId = game1.Id, Value = 200 });
+                        GameId = game1.Id;
                         context.Rewards.Add(new Reward { GameId = game1.Id, Value = 100 });
+                        context.Rewards.Add(new Reward { GameId = game1.Id, Value = 50 });
                         context.Games.Add(
                             new Game
                             {
@@ -71,12 +81,6 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                     }
                     _databaseInitialized = true;
                 }
-            }
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                TournamentId = context.Tournaments.Single(t => t.Name == "jane tournament").Id;
-                GameId = context.Games.Single(g => g.Name == "game1").Id;
             }
         });
 

@@ -20,10 +20,11 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
         return
         [
             [(Guid tournamentId, Guid gameId) => "/tournaments/create"],
+            [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/edit"],
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/create"],
             [
                 (Guid tournamentId, Guid gameId) =>
-                    $"/tournaments/{tournamentId}/games/{gameId}/rewards/update"
+                    $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit"
             ],
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/players/create"]
         ];
@@ -33,10 +34,11 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
     {
         return
         [
+            [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/edit"],
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/create"],
             [
                 (Guid tournamentId, Guid gameId) =>
-                    $"/tournaments/{tournamentId}/games/{gameId}/rewards/update"
+                    $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit"
             ],
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/players/create"]
         ];
@@ -48,8 +50,8 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
     {
         var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
 
-        var tournamentId = factory.TournamentId;
-        var gameId = factory.GameId;
+        var tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
+        var gameId = CustomWebApplicationFactory<Program>.GameId;
         var response = await GetResponse(client, getPath(tournamentId, gameId));
 
         Assert.Equal(401, (int)response.StatusCode);
@@ -64,8 +66,8 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
             scheme: "Authenticated"
         );
 
-        var tournamentId = factory.TournamentId;
-        var gameId = factory.GameId;
+        var tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
+        var gameId = CustomWebApplicationFactory<Program>.GameId;
         var response = await GetResponse(client, getPath(tournamentId, gameId));
 
         Assert.Equal(403, (int)response.StatusCode);
@@ -78,8 +80,8 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
         var client = HttpClientHelpers.CreateOwnerClient(factory);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var tournamentId = factory.TournamentId;
-        var gameId = factory.GameId;
+        var tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
+        var gameId = CustomWebApplicationFactory<Program>.GameId;
         var response = await GetResponse(client, getPath(tournamentId, gameId));
 
         Assert.Equal(200, (int)response.StatusCode);

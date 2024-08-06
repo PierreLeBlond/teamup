@@ -43,12 +43,16 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                content,
-                "Lo, greetings! Here beginneth the process of creating a tournament, but first thou must log in."
-            )
+        var text = HtmlHelpers.FindElementByText(
+            content,
+            "Lo, greetings! Here beginneth the process of creating a tournament, but first thou must log in."
         );
+        var link = HtmlHelpers.FindAnchorByText(content, "Create tournament");
+        var title = HtmlHelpers.FindElementByText(content, "My tournaments");
+
+        Assert.NotNull(text);
+        Assert.Null(link);
+        Assert.Null(title);
     }
 
     [Fact]
@@ -60,25 +64,12 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(content, "My tournaments"));
-        Assert.NotNull(HtmlHelpers.FindElementByText(content, "jane tournament"));
-        Assert.Null(HtmlHelpers.FindElementByText(content, "john tournament"));
-    }
+        var title = HtmlHelpers.FindElementByText(content, "My tournaments");
+        var janeTournament = HtmlHelpers.FindElementByText(content, "jane tournament");
+        var johnTournament = HtmlHelpers.FindElementByText(content, "john tournament");
 
-    [Fact]
-    public async Task Get_Authenticated_ShowCreateTournamentLink()
-    {
-        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            scheme: "Authenticated"
-        );
-
-        var response = await GetResponse(client);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var link = HtmlHelpers.FindAnchorByText(content, "Create tournament");
-
-        Assert.NotNull(link);
-        Assert.EndsWith("/tournaments/create", HttpUtility.UrlDecode(link.Href));
+        Assert.NotNull(title);
+        Assert.NotNull(janeTournament);
+        Assert.Null(johnTournament);
     }
 }

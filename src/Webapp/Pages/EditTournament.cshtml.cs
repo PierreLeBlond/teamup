@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
 
 namespace Webapp.Pages;
 
-public class UpdateRewardsModel(
+public class EditTournamentModel(
     ApplicationDbContext context,
     UserManager<User> userManager,
     IAuthorizationService authorizationService
@@ -20,24 +22,18 @@ public class UpdateRewardsModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
-    public Tournament Tournament { get; set; } = null!;
-    public Game Game { get; set; } = null!;
-
     [BindProperty]
-    public IList<Reward> Rewards { get; set; } = [];
+    public Tournament Input { get; set; } = null!;
 
-    private void SetModel(string tournament, string game)
+    public Tournament Tournament { get; set; } = null!;
+
+    private void SetModel(string tournament)
     {
         var tournamentId = new Guid(tournament);
         Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
-
-        var currentUserId = userManager.GetUserId(User);
-
-        var gameId = new Guid(game);
-        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournamentId);
     }
 
-    public async Task<IActionResult> OnGet(string tournament, string game)
+    public async Task<IActionResult> OnGet(string tournament)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -46,9 +42,8 @@ public class UpdateRewardsModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game);
-        var gameId = new Guid(game);
-        Rewards = [.. context.Rewards.Where(r => r.GameId == gameId).OrderBy(r => r.Value)];
+        SetModel(tournament);
+        Input = Tournament;
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
@@ -64,7 +59,7 @@ public class UpdateRewardsModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPost(string tournament, string game)
+    public async Task<IActionResult> OnPostAsync(string tournament)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -73,7 +68,7 @@ public class UpdateRewardsModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game);
+        SetModel(tournament);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
@@ -91,15 +86,24 @@ public class UpdateRewardsModel(
             return Page();
         }
 
-        foreach (var reward in Rewards)
+        var previousName = Tournament.Name;
+        Tournament.Name = Input.Name;
+
+        try
         {
-            context.Rewards.Update(reward);
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError(
+                "Input.Name",
+                $"A tournament by the name of '{Tournament.Name}' doth already exists."
+            );
+            return Page();
         }
 
-        await context.SaveChangesAsync();
+        FormResult = $"The tournament '{previousName}' hath been renamed to '{Tournament.Name}'.";
 
-        FormResult = $"Some rewards hath been updated.";
-
-        return RedirectToPage();
+        return Redirect($"/tournaments/{Tournament.Id}");
     }
 }

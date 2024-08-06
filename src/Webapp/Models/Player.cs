@@ -17,7 +17,7 @@ public class Player
     public required string Name { get; set; }
 
     [ValidateNever]
-    public required Guid TournamentId { get; set; }
+    public Guid TournamentId { get; set; }
 
     [ValidateNever]
     public Tournament Tournament { get; set; } = null!;

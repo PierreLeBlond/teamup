@@ -8,6 +8,14 @@ public class Game
     [ValidateNever]
     public Guid Id { get; set; }
 
+    [ValidateNever]
+    public Guid TournamentId { get; set; }
+
+    [ValidateNever]
+    public Tournament Tournament { get; set; } = null!;
+
+    public ICollection<Reward> Rewards { get; set; } = [];
+
     [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
     [StringLength(
         60,
@@ -15,12 +23,6 @@ public class Game
         ErrorMessage = "Thou must provide a name between 3 and 60 characters."
     )]
     public required string Name { get; set; }
-
-    [ValidateNever]
-    public required Guid TournamentId { get; set; }
-
-    [ValidateNever]
-    public Tournament Tournament { get; set; } = null!;
 
     public required bool ShouldMaximizeScore { get; set; } = true;
 

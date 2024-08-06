@@ -20,4 +20,5 @@ public class Tournament
     public required string OwnerId { get; set; }
 
     public ICollection<Player> Players { get; set; } = [];
+    public ICollection<Game> Games { get; set; } = [];
 }
