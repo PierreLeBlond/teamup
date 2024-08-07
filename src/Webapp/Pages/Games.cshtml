@@ -6,6 +6,13 @@
 
 <h1>@Model.Game.Name</h1>
 
+@if (Model.IsOwner)
+{
+  <a asp-area="" asp-page="/EditGame" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id>
+  Edit game
+</a>
+}
+
 <h2>Rewards</h2>
 
 @if (Model.IsOwner)

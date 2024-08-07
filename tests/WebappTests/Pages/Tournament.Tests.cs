@@ -63,37 +63,4 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
         Assert.NotNull(game1);
         Assert.NotNull(game2);
     }
-
-    [Fact]
-    public async Task Get_Owner_ShowCreateGameLink()
-    {
-        var client = HttpClientHelpers.CreateOwnerClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-
-        var response = await GetResponse(client);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var link = HtmlHelpers.FindAnchorByText(content, "Create game");
-
-        Assert.NotNull(link);
-        var path = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/create";
-        Assert.EndsWith(path, HttpUtility.UrlDecode(link.Href));
-    }
-
-    [Fact]
-    public async Task Get_Owner_ShowCreatePlayersLink()
-    {
-        var client = HttpClientHelpers.CreateOwnerClient(factory);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-
-        var response = await GetResponse(client);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var link = HtmlHelpers.FindAnchorByText(content, "Create players");
-
-        Assert.NotNull(link);
-        var path =
-            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";
-        Assert.EndsWith(path, HttpUtility.UrlDecode(link.Href));
-    }
 }

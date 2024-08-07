@@ -6,6 +6,11 @@
 
 <h1>@Model.Tournament.Name</h1>
 
+@if (Model.IsOwner)
+{
+  <a asp-area="" asp-page="/EditTournament" asp-route-tournament=@Model.Tournament.Id>Edit tournament</a>
+}
+
 <h2>Players</h2>
 
 @if (Model.IsOwner)

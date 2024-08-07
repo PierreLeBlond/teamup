@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Webapp.Models;
 
 namespace Webapp.Pages;
 
-public class CreateGameInput
+public class EditGameInput
 {
     [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
     [StringLength(
@@ -18,15 +19,9 @@ public class CreateGameInput
         ErrorMessage = "Thou must provide a name between 3 and 60 characters."
     )]
     public required string Name { get; set; }
-
-    [Required(ErrorMessage = "Thou must provide a number of teams between 1 and 300.")]
-    [Range(1, 300, ErrorMessage = "Thou must provide a number of teams between 1 and 300.")]
-    public required int NumberOfTeams { get; set; }
-
-    public required bool ShouldMaximizeScore { get; set; } = true;
 }
 
-public class CreateGameModel(
+public class EditGameModel(
     ApplicationDbContext context,
     UserManager<User> userManager,
     IAuthorizationService authorizationService
@@ -39,18 +34,24 @@ public class CreateGameModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
-    public Tournament Tournament { get; set; } = null!;
-
     [BindProperty]
-    public CreateGameInput Input { get; set; } = null!;
+    public EditGameInput Input { get; set; } = null!;
 
-    private void SetModel(string tournament)
+    public Tournament Tournament { get; set; } = null!;
+    public Game Game { get; set; } = null!;
+
+    private void SetModel(string tournament, string game)
     {
         var tournamentId = new Guid(tournament);
         Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
+
+        var currentUserId = userManager.GetUserId(User);
+
+        var gameId = new Guid(game);
+        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournamentId);
     }
 
-    public async Task<IActionResult> OnGet(string tournament)
+    public async Task<IActionResult> OnGetAsync(string tournament, string game)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -59,13 +60,8 @@ public class CreateGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournament);
-        Input = new CreateGameInput
-        {
-            Name = "",
-            NumberOfTeams = 2,
-            ShouldMaximizeScore = true
-        };
+        SetModel(tournament, game);
+        Input = new EditGameInput { Name = Game.Name };
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
@@ -81,7 +77,7 @@ public class CreateGameModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPost(string tournament)
+    public async Task<IActionResult> OnPostAsync(string tournament, string game)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -90,7 +86,7 @@ public class CreateGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournament);
+        SetModel(tournament, game);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
@@ -108,21 +104,8 @@ public class CreateGameModel(
             return Page();
         }
 
-        var game = new Game
-        {
-            Name = Input.Name,
-            TournamentId = Tournament.Id,
-            NumberOfTeams = Input.NumberOfTeams,
-            ShouldMaximizeScore = Input.ShouldMaximizeScore
-        };
-
-        context.Games.Add(game);
-
-        for (var i = 0; i < Input.NumberOfTeams; i++)
-        {
-            var reward = new Reward { Value = 0, GameId = game.Id };
-            context.Rewards.Add(reward);
-        }
+        var previousName = Game.Name;
+        Game.Name = Input.Name;
 
         try
         {
@@ -132,13 +115,13 @@ public class CreateGameModel(
         {
             ModelState.AddModelError(
                 "Input.Name",
-                $"A game by the name of '{game.Name}' doth already exists."
+                $"A game by the name of '{Game.Name}' doth already exists."
             );
             return Page();
         }
 
-        FormResult = $"A game named '{Input.Name}' hath been created.";
+        FormResult = $"The game '{previousName}' hath been renamed to '{Game.Name}'.";
 
-        return Redirect($"/tournaments/{Tournament.Id}");
+        return Redirect($"/tournaments/{Tournament.Id}/games/{Game.Id}");
     }
 }

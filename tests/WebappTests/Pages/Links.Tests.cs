@@ -39,8 +39,24 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
         [
             [
                 (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}",
+                "Edit tournament",
+                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/edit",
+            ],
+            [
+                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}",
                 "Create players",
                 (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/players/create",
+            ],
+            [
+                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}",
+                "Create game",
+                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/create",
+            ],
+            [
+                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/{gameId}",
+                "Edit game",
+                (Guid tournamentId, Guid gameId) =>
+                    $"/tournaments/{tournamentId}/games/{gameId}/edit",
             ],
             [
                 (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/{gameId}",
@@ -48,12 +64,6 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
                 (Guid tournamentId, Guid gameId) =>
                     $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit",
             ],
-            //[(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/create"],
-            //[
-            //(Guid tournamentId, Guid gameId) =>
-            //$"/tournaments/{tournamentId}/games/{gameId}/rewards/update"
-            //],
-            //[(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/players/create"]
         ];
     }
 

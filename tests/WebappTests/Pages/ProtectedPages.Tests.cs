@@ -24,6 +24,10 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/create"],
             [
                 (Guid tournamentId, Guid gameId) =>
+                    $"/tournaments/{tournamentId}/games/{gameId}/edit"
+            ],
+            [
+                (Guid tournamentId, Guid gameId) =>
                     $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit"
             ],
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/players/create"]
@@ -36,6 +40,10 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
         [
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/edit"],
             [(Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/create"],
+            [
+                (Guid tournamentId, Guid gameId) =>
+                    $"/tournaments/{tournamentId}/games/{gameId}/edit"
+            ],
             [
                 (Guid tournamentId, Guid gameId) =>
                     $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit"
