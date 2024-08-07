@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal;
@@ -8,6 +9,17 @@ using Webapp.Data;
 using Webapp.Models;
 
 namespace Webapp.Pages;
+
+public class EditTournamentInput
+{
+    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [StringLength(
+        60,
+        MinimumLength = 3,
+        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+    )]
+    public required string Name { get; set; }
+}
 
 public class EditTournamentModel(
     ApplicationDbContext context,
@@ -23,7 +35,7 @@ public class EditTournamentModel(
     public string FormResult { get; set; } = "";
 
     [BindProperty]
-    public Tournament Input { get; set; } = null!;
+    public EditTournamentInput Input { get; set; } = null!;
 
     public Tournament Tournament { get; set; } = null!;
 
@@ -43,7 +55,7 @@ public class EditTournamentModel(
         }
 
         SetModel(tournament);
-        Input = Tournament;
+        Input = new EditTournamentInput { Name = Tournament.Name };
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,

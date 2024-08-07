@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,17 @@ using Webapp.Data;
 using Webapp.Models;
 
 namespace Webapp.Pages;
+
+public class CreateTournamentInput
+{
+    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [StringLength(
+        60,
+        MinimumLength = 3,
+        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+    )]
+    public required string Name { get; set; }
+}
 
 public class CreateTournamentModel(ApplicationDbContext context, UserManager<User> userManager)
     : PageModel
@@ -18,7 +30,7 @@ public class CreateTournamentModel(ApplicationDbContext context, UserManager<Use
     public string FormResult { get; set; } = "";
 
     [BindProperty]
-    public Tournament Input { get; set; } = new Tournament { Name = "", OwnerId = "" };
+    public CreateTournamentInput Input { get; set; } = null!;
 
     public IList<Tournament> Tournaments { get; set; } = [];
 
@@ -30,6 +42,8 @@ public class CreateTournamentModel(ApplicationDbContext context, UserManager<Use
         {
             return Unauthorized();
         }
+
+        Input = new CreateTournamentInput { Name = "" };
 
         return Page();
     }

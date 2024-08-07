@@ -7,6 +7,11 @@ using Webapp.Models;
 
 namespace Webapp.Pages;
 
+public class EditRewardsInput
+{
+    public int Value { get; set; }
+}
+
 public class EditRewardsModel(
     ApplicationDbContext context,
     UserManager<User> userManager,
@@ -24,7 +29,7 @@ public class EditRewardsModel(
     public Game Game { get; set; } = null!;
 
     [BindProperty]
-    public Reward[] Input { get; set; } = [];
+    public EditRewardsInput[] Input { get; set; } = [];
 
     public IQueryable<Reward> Rewards { get; set; } = null!;
 
@@ -51,7 +56,7 @@ public class EditRewardsModel(
         }
 
         SetModel(tournament, game);
-        Input = [.. Rewards];
+        Input = [.. Rewards.Select(r => new EditRewardsInput { Value = r.Value })];
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,

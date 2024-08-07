@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,17 @@ using Webapp.Data;
 using Webapp.Models;
 
 namespace Webapp.Pages;
+
+public class CreatePlayerInput
+{
+    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [StringLength(
+        60,
+        MinimumLength = 3,
+        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+    )]
+    public required string Name { get; set; }
+}
 
 public class CreatePlayersModel(
     ApplicationDbContext context,
@@ -22,7 +34,7 @@ public class CreatePlayersModel(
     public string FormResult { get; set; } = "";
 
     [BindProperty]
-    public Player Input { get; set; } = new Player { Name = "", TournamentId = new Guid() };
+    public CreatePlayerInput Input { get; set; } = null!;
 
     public Tournament Tournament { get; set; } = null!;
     public IList<Player> Players { get; set; } = [];
@@ -52,6 +64,7 @@ public class CreatePlayersModel(
         }
 
         SetModel(tournament);
+        Input = new CreatePlayerInput { Name = "" };
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
