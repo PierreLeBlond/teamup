@@ -14,6 +14,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
     public static Guid GameId { get; private set; }
     public static Guid EditableGameId { get; private set; }
+    public static Guid GeneratedGameId { get; private set; }
     public static Guid TournamentId { get; private set; }
     public static Guid EditableTournamentId { get; private set; }
 
@@ -61,15 +62,17 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                             new Player { Name = "player2", TournamentId = tournament.Id }
                         );
 
-                        var game1 = new Game
+                        var game = new Game
                         {
-                            Name = "game1",
+                            Name = "game",
                             TournamentId = tournament.Id,
                             NumberOfTeams = 2,
                             ShouldMaximizeScore = true
                         };
-                        context.Games.Add(game1);
-                        GameId = game1.Id;
+                        context.Games.Add(game);
+                        GameId = game.Id;
+                        context.Rewards.Add(new Reward { GameId = game.Id, Value = 100 });
+                        context.Rewards.Add(new Reward { GameId = game.Id, Value = 50 });
 
                         var editableGame = new Game
                         {
@@ -81,17 +84,17 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                         context.Games.Add(editableGame);
                         EditableGameId = editableGame.Id;
 
-                        context.Rewards.Add(new Reward { GameId = game1.Id, Value = 100 });
-                        context.Rewards.Add(new Reward { GameId = game1.Id, Value = 50 });
-                        context.Games.Add(
-                            new Game
-                            {
-                                Name = "game2",
-                                TournamentId = tournament.Id,
-                                NumberOfTeams = 1,
-                                ShouldMaximizeScore = false
-                            }
-                        );
+                        var generatedGame = new Game
+                        {
+                            Name = "generated game",
+                            TournamentId = tournament.Id,
+                            NumberOfTeams = 2,
+                            ShouldMaximizeScore = true
+                        };
+                        context.Games.Add(generatedGame);
+                        GeneratedGameId = generatedGame.Id;
+                        context.Teams.Add(new Team { GameId = generatedGame.Id, Number = 1 });
+                        context.Teams.Add(new Team { GameId = generatedGame.Id, Number = 2 });
 
                         context.SaveChanges();
                     }

@@ -9,6 +9,7 @@ public class Game
     public Tournament Tournament { get; set; } = null!;
 
     public ICollection<Reward> Rewards { get; set; } = [];
+    public ICollection<Team> Teams { get; set; } = [];
 
     public required string Name { get; set; }
 

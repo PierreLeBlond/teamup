@@ -25,7 +25,7 @@ public class GameTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var title = HtmlHelpers.FindElementByText(content, "game1");
+        var title = HtmlHelpers.FindElementByText(content, "game");
 
         Assert.NotNull(title);
     }
@@ -46,4 +46,34 @@ public class GameTests(CustomWebApplicationFactory<Program> factory)
         Assert.NotNull(reward1);
         Assert.NotNull(reward2);
     }
+
+    [Fact]
+    public async Task Get_Unauthenticated_ShowMessageIfTeamAreNotCreated()
+    {
+        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
+
+        var response = await GetResponse(client);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var message = HtmlHelpers.FindElementByText(content, "Teams have not been formed yet.");
+
+        Assert.NotNull(message);
+    }
+
+    [Fact]
+    public async Task Get_Owner_ShowGenerateTeamsButton()
+    {
+        var client = HttpClientHelpers.CreateOwnerClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
+
+        var response = await GetResponse(client);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var button = HtmlHelpers.FindElementByText(content, "Generate teams");
+
+        Assert.NotNull(button);
+    }
+
+    //[Fact]
+    //public async Task Post_Owner_GenerateTeams() { }
 }

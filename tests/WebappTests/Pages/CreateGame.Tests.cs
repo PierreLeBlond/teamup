@@ -102,13 +102,13 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
         var client = HttpClientHelpers.CreateOwnerClient(factory);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var response = await PostResponse(client, "game1", "2", "false");
+        var response = await PostResponse(client, "game", "2", "false");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "A game by the name of 'game1' doth already exists."
+                "A game by the name of 'game' doth already exists."
             )
         );
     }

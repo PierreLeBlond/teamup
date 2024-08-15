@@ -56,11 +56,13 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Games");
-        var game1 = HtmlHelpers.FindElementByText(content, "game1");
-        var game2 = HtmlHelpers.FindElementByText(content, "game2");
+        var game = HtmlHelpers.FindElementByText(content, "game");
+        var editableGame = HtmlHelpers.FindElementByText(content, "editable game");
+        var generatedGame = HtmlHelpers.FindElementByText(content, "generated game");
 
         Assert.NotNull(title);
-        Assert.NotNull(game1);
-        Assert.NotNull(game2);
+        Assert.NotNull(game);
+        Assert.NotNull(editableGame);
+        Assert.NotNull(generatedGame);
     }
 }

@@ -19,6 +19,7 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
     public Tournament Tournament { get; set; } = null!;
     public Game Game { get; set; } = null!;
     public IList<Reward> Rewards { get; set; } = [];
+    public IList<Team> Teams { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
     private void SetModel(string tournament, string game)
@@ -32,6 +33,7 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
         IsOwner = Tournament.OwnerId == currentUserId;
 
         Rewards = [.. context.Rewards.Where(r => r.GameId == Game.Id).OrderBy(r => r.Value)];
+        Teams = [.. context.Teams.Where(t => t.GameId == Game.Id).OrderBy(t => t.Number)];
     }
 
     public void OnGet(string tournament, string game)
