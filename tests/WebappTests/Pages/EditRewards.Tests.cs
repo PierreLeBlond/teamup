@@ -10,7 +10,7 @@ public class EditRewardsTests(CustomWebApplicationFactory<Program> factory)
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
-    private async Task<HttpResponseMessage> GetResponse(HttpClient client)
+    private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
         var path =
             $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}/rewards/edit";
@@ -18,7 +18,7 @@ public class EditRewardsTests(CustomWebApplicationFactory<Program> factory)
         return response;
     }
 
-    public async Task<HttpResponseMessage> PostResponse(HttpClient client, string[] values)
+    public static async Task<HttpResponseMessage> PostResponse(HttpClient client, string[] values)
     {
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);

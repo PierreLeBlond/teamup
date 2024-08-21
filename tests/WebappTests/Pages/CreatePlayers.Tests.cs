@@ -2,15 +2,17 @@ using System.Net.Http.Headers;
 using System.Web;
 using AngleSharp.Html.Dom;
 using Webapp.Tests.Helpers;
+using Xunit.Abstractions;
 
 namespace Webapp.Tests.Pages;
 
-public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
+public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
+    private readonly ITestOutputHelper output = output;
 
-    public async Task<HttpResponseMessage> GetResponse(HttpClient client)
+    public static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
         var path =
             $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";
@@ -18,7 +20,7 @@ public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
         return response;
     }
 
-    public async Task<HttpResponseMessage> PostResponse(HttpClient client, string playerName)
+    public static async Task<HttpResponseMessage> PostResponse(HttpClient client, string playerName)
     {
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
@@ -96,6 +98,10 @@ public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory)
 
         var response = await PostResponse(client, "valid player");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
+
+        output.WriteLine("ping");
+        output.WriteLine(responseContent.DocumentElement.TextContent);
+        output.WriteLine("pong");
 
         var path =
             $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";

@@ -14,7 +14,6 @@
 }
 
 <h2>Rewards</h2>
-using Microsoft.IdentityModel.Tokens;
 
 @if (Model.IsOwner)
 {
@@ -43,7 +42,7 @@ else
   <ul>
   @foreach (var team in Model.Teams)
     {
-      <li>Team @team.Number</li>
+      <li>Team @(team.Number + 1)</li>
     }
   </ul>
 }

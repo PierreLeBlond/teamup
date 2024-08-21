@@ -1,20 +1,39 @@
 using System.Net.Http.Headers;
 using System.Web;
+using AngleSharp.Html.Dom;
 using Webapp.Tests.Helpers;
+using Xunit.Abstractions;
 
 namespace Webapp.Tests.Pages;
 
-public class GameTests(CustomWebApplicationFactory<Program> factory)
+public class GamesTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
+    private readonly ITestOutputHelper output = output;
 
-    private async Task<HttpResponseMessage> GetResponse(HttpClient client)
+    private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
         var path =
             $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}";
         var response = await client.GetAsync(path);
         return response;
+    }
+
+    public static async Task<HttpResponseMessage> PostResponse(
+        HttpClient client
+    )
+    {
+        var response = await GetResponse(client);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var form =
+            (IHtmlFormElement?)content.QuerySelector("form")
+            ?? throw new Exception("form not found");
+        return await client.SendAsync(
+            form,
+            []
+        );
     }
 
     [Fact]
@@ -74,6 +93,24 @@ public class GameTests(CustomWebApplicationFactory<Program> factory)
         Assert.NotNull(button);
     }
 
-    //[Fact]
-    //public async Task Post_Owner_GenerateTeams() { }
+    [Fact]
+    public async Task Post_Owner_GenerateTeams() {
+        var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
+
+        var response = await PostResponse(client);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var path =
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}";
+        Assert.EndsWith(path, HttpUtility.UrlDecode(content.BaseUrl?.PathName));
+
+        var team1 = HtmlHelpers.FindElementByText(content, "Team 1");
+        var team2 = HtmlHelpers.FindElementByText(content, "Team 2");
+        var feedback = HtmlHelpers.FindElementByText(content, "Teams for game 'game' have been generated !");
+
+        Assert.NotNull(team1);
+        Assert.NotNull(team2);
+        Assert.NotNull(feedback);
+     }
 }

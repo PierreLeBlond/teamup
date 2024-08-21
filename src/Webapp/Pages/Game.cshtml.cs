@@ -2,16 +2,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
 
 namespace Webapp.Pages;
 
-public class GameModel(ApplicationDbContext context, UserManager<User> userManager) : PageModel
+public class GameModel(ApplicationDbContext context, UserManager<User> userManager, IAuthorizationService authorizationService) : PageModel
 {
     private readonly ApplicationDbContext context = context;
     private readonly UserManager<User> userManager = userManager;
+    private readonly IAuthorizationService authorizationService = authorizationService;
 
     [TempData]
     public string FormResult { get; set; } = "";
@@ -36,8 +36,48 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
         Teams = [.. context.Teams.Where(t => t.GameId == Game.Id).OrderBy(t => t.Number)];
     }
 
-    public void OnGet(string tournament, string game)
+    public IActionResult OnGet(string tournament, string game)
     {
         SetModel(tournament, game);
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync(string tournament, string game)
+    {
+        var currentUserId = userManager.GetUserId(User);
+
+        if (currentUserId is null)
+        {
+            return Unauthorized();
+        }
+
+        SetModel(tournament, game);
+
+        var isAuthorized = await authorizationService.AuthorizeAsync(
+            User,
+            Tournament,
+            "EditPolicy"
+        );
+
+        if (!isAuthorized.Succeeded)
+        {
+            return Forbid();
+        }
+
+        var players = context.Players.Where(p => p.TournamentId == Tournament.Id);
+
+        var teams = Enumerable.Repeat(true, Game.NumberOfTeams).Select((x, i) => new Team {
+            GameId = Game.Id,
+            Number = i
+        });
+
+        context.Teams.RemoveRange(Teams);
+        context.Teams.AddRange(teams);
+
+        await context.SaveChangesAsync();
+
+        FormResult = $"Teams for game '{Game.Name}' have been generated !";
+
+        return RedirectToPage();
     }
 }
