@@ -68,7 +68,7 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
 
         var teams = Enumerable.Repeat(true, Game.NumberOfTeams).Select((x, i) => new Team {
             GameId = Game.Id,
-            Number = i
+            Number = i + 1
         });
 
         context.Teams.RemoveRange(Teams);

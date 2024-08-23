@@ -1,6 +1,3 @@
-using System.Net.Http.Headers;
-using System.Web;
-using AngleSharp.Html.Dom;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;

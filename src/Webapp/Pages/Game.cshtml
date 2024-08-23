@@ -42,7 +42,7 @@ else
   <ul>
   @foreach (var team in Model.Teams)
     {
-      <li>Team @(team.Number + 1)</li>
+      <li>Team @team.Number</li>
     }
   </ul>
 }
@@ -50,6 +50,15 @@ else
 @if (Model.IsOwner)
 {
   <form method="post">
-  <button type="submit">Generate teams</button>
+    <button type="submit">
+    @if (Model.Teams.Count == 0) {
+      <p>
+    Generate teams
+    </p>
+    } else {
+    <p>
+  Re-generate teams
+    </p>
+      }</button>
 </form>
 }

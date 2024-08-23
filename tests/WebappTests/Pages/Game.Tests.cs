@@ -6,25 +6,28 @@ using Xunit.Abstractions;
 
 namespace Webapp.Tests.Pages;
 
-public class GamesTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
+public class GameTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
     private readonly ITestOutputHelper output = output;
 
-    private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
+    private static readonly string path = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}";
+    private static readonly string pathWithGeneratedGame = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GeneratedGameId}";
+    private static readonly string pathWithEditableGame = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.EditableGameId}";
+
+    private static async Task<HttpResponseMessage> GetResponse(HttpClient client, string path)
     {
-        var path =
-            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}";
         var response = await client.GetAsync(path);
         return response;
     }
 
     public static async Task<HttpResponseMessage> PostResponse(
-        HttpClient client
+        HttpClient client,
+        string path
     )
     {
-        var response = await GetResponse(client);
+        var response = await GetResponse(client, path);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var form =
@@ -41,7 +44,7 @@ public class GamesTests(CustomWebApplicationFactory<Program> factory, ITestOutpu
     {
         var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
 
-        var response = await GetResponse(client);
+        var response = await GetResponse(client, path);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "game");
@@ -54,7 +57,7 @@ public class GamesTests(CustomWebApplicationFactory<Program> factory, ITestOutpu
     {
         var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
 
-        var response = await GetResponse(client);
+        var response = await GetResponse(client, path);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Rewards");
@@ -67,11 +70,11 @@ public class GamesTests(CustomWebApplicationFactory<Program> factory, ITestOutpu
     }
 
     [Fact]
-    public async Task Get_Unauthenticated_ShowMessageIfTeamAreNotCreated()
+    public async Task Get_Unauthenticated_TeamsNotGenerated_ShowMessage()
     {
         var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
 
-        var response = await GetResponse(client);
+        var response = await GetResponse(client, path);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var message = HtmlHelpers.FindElementByText(content, "Teams have not been formed yet.");
@@ -80,16 +83,34 @@ public class GamesTests(CustomWebApplicationFactory<Program> factory, ITestOutpu
     }
 
     [Fact]
-    public async Task Get_Owner_ShowGenerateTeamsButton()
+    public async Task Get_Owner_TeamsNotGenerated_ShowGenerateButton()
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var response = await GetResponse(client);
+        var response = await GetResponse(client, path);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var button = HtmlHelpers.FindElementByText(content, "Generate teams");
 
+        Assert.NotNull(button);
+    }
+
+[Fact]
+    public async Task Get_Owner_TeamsGenerated_ShowTeamsAndReGenerateButton()
+    {
+        var client = HttpClientHelpers.CreateOwnerClient(factory);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
+
+        var response = await GetResponse(client, pathWithGeneratedGame);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var team1 = HtmlHelpers.FindElementByText(content, "Team 1");
+        var team2 = HtmlHelpers.FindElementByText(content, "Team 2");
+        var button = HtmlHelpers.FindElementByText(content, "Re-generate teams");
+
+        Assert.NotNull(team1);
+        Assert.NotNull(team2);
         Assert.NotNull(button);
     }
 
@@ -98,16 +119,16 @@ public class GamesTests(CustomWebApplicationFactory<Program> factory, ITestOutpu
         var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var response = await PostResponse(client);
+        var response = await PostResponse(client, pathWithEditableGame);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var path =
-            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}";
+            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.EditableGameId}";
         Assert.EndsWith(path, HttpUtility.UrlDecode(content.BaseUrl?.PathName));
 
         var team1 = HtmlHelpers.FindElementByText(content, "Team 1");
         var team2 = HtmlHelpers.FindElementByText(content, "Team 2");
-        var feedback = HtmlHelpers.FindElementByText(content, "Teams for game 'game' have been generated !");
+        var feedback = HtmlHelpers.FindElementByText(content, "Teams for game 'editable game' have been generated !");
 
         Assert.NotNull(team1);
         Assert.NotNull(team2);

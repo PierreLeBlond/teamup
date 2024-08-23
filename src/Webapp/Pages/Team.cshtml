@@ -1,0 +1,17 @@
+﻿@page "/tournaments/{tournament}/games/{game}/teams/{team}"
+@model Webapp.Pages.TeamModel
+@{
+  ViewData["Title"] = "Team";
+}
+
+<h1>Team @Model.Team.Number</h1>
+
+@if (Model.IsOwner)
+{
+  <a asp-area="" asp-page="/EditTeam" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id
+  asp-route-team=@Model.Team.Id>
+  Edit team
+</a>
+}
+
+<h2>Team mates</h2>

@@ -12,6 +12,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
+    public static Guid TeamId { get; private set; }
     public static Guid GameId { get; private set; }
     public static Guid EditableGameId { get; private set; }
     public static Guid GeneratedGameId { get; private set; }
@@ -93,7 +94,9 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                         };
                         context.Games.Add(generatedGame);
                         GeneratedGameId = generatedGame.Id;
-                        context.Teams.Add(new Team { GameId = generatedGame.Id, Number = 1 });
+                        var team1 = new Team { GameId = generatedGame.Id, Number = 1 };
+                        context.Teams.Add(team1);
+                        TeamId = team1.Id;
                         context.Teams.Add(new Team { GameId = generatedGame.Id, Number = 2 });
 
                         context.SaveChanges();
