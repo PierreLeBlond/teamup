@@ -97,14 +97,14 @@ public class CreateTournamentTests(CustomWebApplicationFactory<Program> factory)
         var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var response = await PostResponse(client, "valid tournament");
+        var response = await PostResponse(client, "new tournament");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid tournament"));
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "new tournament"));
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "A tournament named 'valid tournament' hath been created."
+                "A tournament named 'new tournament' hath been created."
             )
         );
     }

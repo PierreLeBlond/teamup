@@ -12,6 +12,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Game> Games => Set<Game>();
     public DbSet<Reward> Rewards => Set<Reward>();
     public DbSet<Team> Teams => Set<Team>();
+    public DbSet<Result> Results => Set<Result>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

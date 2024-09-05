@@ -33,16 +33,20 @@
 
 @if (Model.Teams.Count == 0)
 {
-  <p>
-  Teams have not been formed yet.
-</p>
+  <p>Teams have not been formed yet.</p>
 }
 else
 {
   <ul>
   @foreach (var team in Model.Teams)
     {
-      <li>Team @team.Number</li>
+      <li>
+        <h2> <a asp-area="" asp-page="/Team" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id
+            asp-route-team=@team.Id>Team @team.Number</a> </h2>
+        <p>Bonus: @team.Bonus</p>
+        <p>Malus: @team.Malus</p>
+        <p>Result: @(team.Result?.Value.ToString() ?? "Unknown")</p>
+      </li>
     }
   </ul>
 }
@@ -50,15 +54,15 @@ else
 @if (Model.IsOwner)
 {
   <form method="post">
-    <button type="submit">
-    @if (Model.Teams.Count == 0) {
-      <p>
-    Generate teams
-    </p>
-    } else {
-    <p>
-  Re-generate teams
-    </p>
-      }</button>
-</form>
+  <button type="submit">
+    @if (Model.Teams.Count == 0)
+      {
+        <p>Generate teams</p>
+      }
+      else
+      {
+        <p>Re-generate teams</p>
+      }
+    </button>
+  </form>
 }

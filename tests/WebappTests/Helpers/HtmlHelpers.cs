@@ -45,7 +45,7 @@ public class HtmlHelpers
         return document
             .QuerySelectorAll("*")
             .ToList()
-            .Find(element => element.TextContent.Contains(text));
+            .Find(element => element.TextContent.Trim().Equals(text));
     }
 
     public static IHtmlAnchorElement? FindAnchorByText(IHtmlDocument document, string text)
@@ -54,7 +54,7 @@ public class HtmlHelpers
             document
                 .QuerySelectorAll("a")
                 .ToList()
-                .Find(element => element.TextContent.Contains(text));
+                .Find(element => element.TextContent.Trim().Equals(text));
     }
 
     public static IHtmlInputElement? FindInputByLabel(IHtmlDocument document, string label)
@@ -62,7 +62,7 @@ public class HtmlHelpers
         var element = document
             .QuerySelectorAll("label")
             .ToList()
-            .Find(element => element.TextContent.Contains(label));
+            .Find(element => element.TextContent.Trim().Equals(label));
 
         if (element is null)
         {

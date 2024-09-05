@@ -6,16 +6,19 @@ using Xunit.Abstractions;
 
 namespace Webapp.Tests.Pages;
 
-public class CreatePlayersTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
-    : IClassFixture<CustomWebApplicationFactory<Program>>
+public class CreatePlayersTests(
+    CustomWebApplicationFactory<Program> factory,
+    ITestOutputHelper output
+) : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
     private readonly ITestOutputHelper output = output;
 
+    private static readonly string path =
+        $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";
+
     public static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path =
-            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/players/create";
         var response = await client.GetAsync(path);
         return response;
     }

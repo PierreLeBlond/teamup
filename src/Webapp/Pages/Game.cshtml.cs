@@ -1,13 +1,19 @@
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
 
 namespace Webapp.Pages;
 
-public class GameModel(ApplicationDbContext context, UserManager<User> userManager, IAuthorizationService authorizationService) : PageModel
+public class GameModel(
+    ApplicationDbContext context,
+    UserManager<User> userManager,
+    IAuthorizationService authorizationService
+) : PageModel
 {
     private readonly ApplicationDbContext context = context;
     private readonly UserManager<User> userManager = userManager;
@@ -33,7 +39,18 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
         IsOwner = Tournament.OwnerId == currentUserId;
 
         Rewards = [.. context.Rewards.Where(r => r.GameId == Game.Id).OrderBy(r => r.Value)];
-        Teams = [.. context.Teams.Where(t => t.GameId == Game.Id).OrderBy(t => t.Number)];
+        var teams = context.Teams.Include(t => t.Result).Where(t => t.GameId == Game.Id);
+        if (Game.ShouldMaximizeScore)
+        {
+            Teams =
+            [
+                .. teams.OrderByDescending(t => t.Result == null ? int.MinValue : t.Result.Value)
+            ];
+        }
+        else
+        {
+            Teams = [.. teams.OrderBy(t => t.Result == null ? int.MaxValue : t.Result.Value)];
+        }
     }
 
     public IActionResult OnGet(string tournament, string game)
@@ -66,10 +83,9 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
 
         var players = context.Players.Where(p => p.TournamentId == Tournament.Id);
 
-        var teams = Enumerable.Repeat(true, Game.NumberOfTeams).Select((x, i) => new Team {
-            GameId = Game.Id,
-            Number = i + 1
-        });
+        var teams = Enumerable
+            .Repeat(true, Game.NumberOfTeams)
+            .Select((x, i) => new Team { GameId = Game.Id, Number = i + 1 });
 
         context.Teams.RemoveRange(Teams);
         context.Teams.AddRange(teams);

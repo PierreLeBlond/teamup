@@ -1,18 +1,66 @@
 using System.Net.Http.Headers;
 using AngleSharp.Html.Dom;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Webapp.Data;
+using Webapp.Models;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
 
-public class EditGameTests(CustomWebApplicationFactory<Program> factory)
-    : IClassFixture<CustomWebApplicationFactory<Program>>
+public class EditGameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
+    where TProgram : class
 {
-    private readonly CustomWebApplicationFactory<Program> factory = factory;
+    private static readonly object _lock = new();
+    private static bool _databaseInitialized;
+
+    public static readonly Guid EditGameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b66");
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        base.ConfigureWebHost(builder);
+
+        builder.ConfigureServices(services =>
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            lock (_lock)
+            {
+                if (!_databaseInitialized)
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                    // Add test data
+                    context.Games.Add(
+                        new Game
+                        {
+                            Id = EditGameId,
+                            Name = "editable game",
+                            TournamentId = TournamentId,
+                            ShouldMaximizeScore = true,
+                            NumberOfTeams = 2
+                        }
+                    );
+
+                    context.SaveChanges();
+                }
+
+                _databaseInitialized = true;
+            }
+        });
+    }
+}
+
+public class EditGameTests(EditGameFixture<Program> factory)
+    : IClassFixture<EditGameFixture<Program>>
+{
+    private readonly EditGameFixture<Program> factory = factory;
+
+    private static readonly string path =
+        $"/tournaments/{EditGameFixture<Program>.TournamentId}/games/{EditGameFixture<Program>.EditGameId}/edit";
 
     private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path =
-            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.EditableGameId}/edit";
         var response = await client.GetAsync(path);
         return response;
     }

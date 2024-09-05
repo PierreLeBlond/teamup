@@ -12,12 +12,9 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
-    public static Guid TeamId { get; private set; }
-    public static Guid GameId { get; private set; }
-    public static Guid EditableGameId { get; private set; }
-    public static Guid GeneratedGameId { get; private set; }
-    public static Guid TournamentId { get; private set; }
-    public static Guid EditableTournamentId { get; private set; }
+    public static readonly Guid TeamId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b6d");
+    public static readonly Guid GameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b6f");
+    public static readonly Guid TournamentId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b72");
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -38,19 +35,11 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
                         var tournament = new Tournament
                         {
+                            Id = TournamentId,
                             Name = "jane tournament",
                             OwnerId = "JaneId"
                         };
                         context.Tournaments.Add(tournament);
-                        TournamentId = tournament.Id;
-
-                        var editableTournament = new Tournament
-                        {
-                            Name = "editable tournament",
-                            OwnerId = "JaneId"
-                        };
-                        context.Tournaments.Add(editableTournament);
-                        EditableTournamentId = editableTournament.Id;
 
                         context.Tournaments.Add(
                             new Tournament { Name = "john tournament", OwnerId = "JohnId" }
@@ -65,39 +54,28 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
                         var game = new Game
                         {
+                            Id = GameId,
                             Name = "game",
                             TournamentId = tournament.Id,
                             NumberOfTeams = 2,
                             ShouldMaximizeScore = true
                         };
                         context.Games.Add(game);
-                        GameId = game.Id;
                         context.Rewards.Add(new Reward { GameId = game.Id, Value = 100 });
                         context.Rewards.Add(new Reward { GameId = game.Id, Value = 50 });
 
-                        var editableGame = new Game
+                        var team1 = new Team
                         {
-                            Name = "editable game",
-                            TournamentId = tournament.Id,
-                            NumberOfTeams = 2,
-                            ShouldMaximizeScore = true
+                            Id = TeamId,
+                            GameId = game.Id,
+                            Number = 1,
+                            Bonus = 100,
+                            Malus = 200
                         };
-                        context.Games.Add(editableGame);
-                        EditableGameId = editableGame.Id;
-
-                        var generatedGame = new Game
-                        {
-                            Name = "generated game",
-                            TournamentId = tournament.Id,
-                            NumberOfTeams = 2,
-                            ShouldMaximizeScore = true
-                        };
-                        context.Games.Add(generatedGame);
-                        GeneratedGameId = generatedGame.Id;
-                        var team1 = new Team { GameId = generatedGame.Id, Number = 1 };
                         context.Teams.Add(team1);
-                        TeamId = team1.Id;
-                        context.Teams.Add(new Team { GameId = generatedGame.Id, Number = 2 });
+                        var result1 = new Result { TeamId = team1.Id, Value = 3000 };
+                        context.Results.Add(result1);
+                        context.Teams.Add(new Team { GameId = game.Id, Number = 2 });
 
                         context.SaveChanges();
                     }

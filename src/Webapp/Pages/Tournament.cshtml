@@ -35,16 +35,8 @@
 <ul>
   @foreach (var game in Model.Games)
   {
-    @if (Model.IsOwner)
-    {
-      <li>
-        <a asp-area="" asp-page="/Games" asp-route-tournament=@Model.Tournament.Id asp-route-game=@game.Id>@game.Name</a>
-      </li>
-    }
-    else
-    {
-
-      <li>@game.Name</li>
-    }
+    <li>
+      <a asp-area="" asp-page="/Game" asp-route-tournament=@Model.Tournament.Id asp-route-game=@game.Id>@game.Name</a>
+    </li>
   }
 </ul>

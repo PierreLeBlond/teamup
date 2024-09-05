@@ -1,3 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
+using Webapp.Data;
+using Webapp.Models;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
@@ -7,9 +10,11 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
+    public static readonly string path =
+        $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}";
+
     private async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -54,12 +59,8 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
 
         var title = HtmlHelpers.FindElementByText(content, "Games");
         var game = HtmlHelpers.FindElementByText(content, "game");
-        var editableGame = HtmlHelpers.FindElementByText(content, "editable game");
-        var generatedGame = HtmlHelpers.FindElementByText(content, "generated game");
 
         Assert.NotNull(title);
         Assert.NotNull(game);
-        Assert.NotNull(editableGame);
-        Assert.NotNull(generatedGame);
     }
 }

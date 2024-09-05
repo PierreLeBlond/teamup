@@ -1,18 +1,63 @@
 using System.Net.Http.Headers;
-using System.Web;
+using System.Security.AccessControl;
 using AngleSharp.Html.Dom;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Webapp.Data;
+using Webapp.Models;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
 
-public class EditTournamentTests(CustomWebApplicationFactory<Program> factory)
-    : IClassFixture<CustomWebApplicationFactory<Program>>
+public class EditTournamentFixture<TProgram> : CustomWebApplicationFactory<TProgram>
+    where TProgram : class
 {
-    private readonly CustomWebApplicationFactory<Program> factory = factory;
+    private static readonly object _lock = new();
+    private static bool _databaseInitialized;
+
+    public static readonly Guid EditTournamentId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b6c");
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        base.ConfigureWebHost(builder);
+
+        builder.ConfigureServices(services =>
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            lock (_lock)
+            {
+                if (!_databaseInitialized)
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                    // Add test data
+                    context.Tournaments.Add(
+                        new Tournament
+                        {
+                            Id = EditTournamentId,
+                            Name = "editable tournament",
+                            OwnerId = "JaneId"
+                        }
+                    );
+
+                    context.SaveChanges();
+                }
+
+                _databaseInitialized = true;
+            }
+        });
+    }
+}
+
+public class EditTournamentTests(EditTournamentFixture<Program> factory)
+    : IClassFixture<EditTournamentFixture<Program>>
+{
+    private readonly EditTournamentFixture<Program> factory = factory;
 
     private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/{CustomWebApplicationFactory<Program>.EditableTournamentId}/edit";
+        var path = $"/tournaments/{EditTournamentFixture<Program>.EditTournamentId}/edit";
         var response = await client.GetAsync(path);
         return response;
     }

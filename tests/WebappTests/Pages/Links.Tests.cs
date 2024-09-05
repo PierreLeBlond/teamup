@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Net.Http.Headers;
 using System.Web;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using NuGet.Packaging.Licenses;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
@@ -10,97 +12,101 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
+    private static readonly Guid tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
+    private static readonly Guid gameId = CustomWebApplicationFactory<Program>.GameId;
+    private static readonly Guid teamId = CustomWebApplicationFactory<Program>.TeamId;
+
     public static async Task<HttpResponseMessage> GetResponse(HttpClient client, string path)
     {
         var response = await client.GetAsync(path);
         return response;
     }
 
-    public static IEnumerable<object[]> GetUnauthenticatedLinks()
-    {
-        return [];
-    }
-
-    public static IEnumerable<object[]> GetAuthenticatedLinks()
-    {
-        return
+    public static IEnumerable<object[]> GetUnauthenticatedLinks() =>
         [
             [
-                (Guid tournamentId, Guid gameId) => "/",
-                "Create tournament",
-                (Guid tournamentId, Guid gameId) => "/tournaments/create"
+                $"/tournaments/{tournamentId}",
+                "game",
+                $"/tournaments/{tournamentId}/games/{gameId}",
+            ],
+            [
+                $"/tournaments/{tournamentId}/games/{gameId}",
+                "Team 1",
+                $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}",
             ],
         ];
-    }
 
-    public static IEnumerable<object[]> GetOwnerLinks()
-    {
-        return
+    public static IEnumerable<object[]> GetAuthenticatedLinks() =>
         [
+            ["/", "Create tournament", "/tournaments/create"],
+        ];
+
+    public static IEnumerable<object[]> GetOwnerLinks() =>
+        [
+            ["/", "jane tournament", $"/tournaments/{tournamentId}"],
             [
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}",
+                $"/tournaments/{tournamentId}",
                 "Edit tournament",
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/edit",
+                $"/tournaments/{tournamentId}/edit",
             ],
             [
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}",
+                $"/tournaments/{tournamentId}",
                 "Create players",
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/players/create",
+                $"/tournaments/{tournamentId}/players/create",
             ],
             [
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}",
+                $"/tournaments/{tournamentId}",
                 "Create game",
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/create",
+                $"/tournaments/{tournamentId}/games/create",
             ],
             [
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/{gameId}",
+                $"/tournaments/{tournamentId}/games/{gameId}",
                 "Edit game",
-                (Guid tournamentId, Guid gameId) =>
-                    $"/tournaments/{tournamentId}/games/{gameId}/edit",
+                $"/tournaments/{tournamentId}/games/{gameId}/edit",
             ],
             [
-                (Guid tournamentId, Guid gameId) => $"/tournaments/{tournamentId}/games/{gameId}",
+                $"/tournaments/{tournamentId}/games/{gameId}",
                 "Edit rewards",
-                (Guid tournamentId, Guid gameId) =>
-                    $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit",
+                $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit",
+            ],
+            [
+                $"/tournaments/{tournamentId}/games/{gameId}",
+                "Edit rewards",
+                $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit",
+            ],
+            [
+                $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}",
+                "Edit team",
+                $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}/edit",
             ],
         ];
-    }
 
-    /*[Theory]
+    [Theory]
     [MemberData(nameof(GetUnauthenticatedLinks))]
-    public async Task Get_Unauthenticated_ShowUnauthenticatedLinks(
-        Func<Guid, Guid, string> getPath,
-        string text,
-        Func<Guid, Guid, string> getHref
-    )
+    public async Task Get_ShowUnauthenticatedLinks(string source, string text, string target)
     {
-        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
+        var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
 
-        var tournamentId = factory.TournamentId;
-        var gameId = factory.GameId;
-        var response = await GetResponse(client, getPath(tournamentId, gameId));
+        var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var link = HtmlHelpers.FindAnchorByText(content, text);
 
         Assert.NotNull(link);
-        Assert.Equal(getHref(tournamentId, gameId), HttpUtility.UrlDecode(link.Href));
-    }*/
+        Assert.EndsWith(target, HttpUtility.UrlDecode(link.Href));
+    }
 
     [Theory]
     [MemberData(nameof(GetAuthenticatedLinks))]
     public async Task Get_Unauthenticated_HideAuthenticatedLinks(
-        Func<Guid, Guid, string> getPath,
+        string source,
         string text,
-        Func<Guid, Guid, string> getHref
+        string target
     )
     {
         var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
 
-        var tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
-        var gameId = CustomWebApplicationFactory<Program>.GameId;
-        var response = await GetResponse(client, getPath(tournamentId, gameId));
+        var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var link = HtmlHelpers.FindAnchorByText(content, text);
@@ -111,9 +117,9 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
     [Theory]
     [MemberData(nameof(GetAuthenticatedLinks))]
     public async Task Get_Authenticated_ShowAuthenticatedLinks(
-        Func<Guid, Guid, string> getPath,
+        string source,
         string text,
-        Func<Guid, Guid, string> getHref
+        string target
     )
     {
         var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
@@ -121,33 +127,25 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
             scheme: "Authenticated"
         );
 
-        var tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
-        var gameId = CustomWebApplicationFactory<Program>.GameId;
-        var response = await GetResponse(client, getPath(tournamentId, gameId));
+        var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var link = HtmlHelpers.FindAnchorByText(content, text);
 
         Assert.NotNull(link);
-        Assert.EndsWith(getHref(tournamentId, gameId), HttpUtility.UrlDecode(link.Href));
+        Assert.EndsWith(target, HttpUtility.UrlDecode(link.Href));
     }
 
     [Theory]
     [MemberData(nameof(GetOwnerLinks))]
-    public async Task Get_Authenticated_HideOwnerLinks(
-        Func<Guid, Guid, string> getPath,
-        string text,
-        Func<Guid, Guid, string> getHref
-    )
+    public async Task Get_Authenticated_HideOwnerLinks(string source, string text, string target)
     {
         var client = HttpClientHelpers.CreateAuthenticatedClient(factory);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
             scheme: "Authenticated"
         );
 
-        var tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
-        var gameId = CustomWebApplicationFactory<Program>.GameId;
-        var response = await GetResponse(client, getPath(tournamentId, gameId));
+        var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var link = HtmlHelpers.FindAnchorByText(content, text);
@@ -157,23 +155,17 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
 
     [Theory]
     [MemberData(nameof(GetOwnerLinks))]
-    public async Task Get_Owner_ShowOwnerLinks(
-        Func<Guid, Guid, string> getPath,
-        string text,
-        Func<Guid, Guid, string> getHref
-    )
+    public async Task Get_Owner_ShowOwnerLinks(string source, string text, string target)
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
 
-        var tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
-        var gameId = CustomWebApplicationFactory<Program>.GameId;
-        var response = await GetResponse(client, getPath(tournamentId, gameId));
+        var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var link = HtmlHelpers.FindAnchorByText(content, text);
 
         Assert.NotNull(link);
-        Assert.EndsWith(getHref(tournamentId, gameId), HttpUtility.UrlDecode(link.Href));
+        Assert.EndsWith(target, HttpUtility.UrlDecode(link.Href));
     }
 }

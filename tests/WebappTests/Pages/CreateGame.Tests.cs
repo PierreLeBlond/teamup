@@ -9,10 +9,11 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
+    private static readonly string path =
+        $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/create";
 
     public async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/create";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -118,17 +119,17 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory, allowAutoRedirect: true);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Owner");
-        var response = await PostResponse(client, "valid game", "2", "false");
+        var response = await PostResponse(client, "new game", "2", "false");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         var path = $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}";
         Assert.Equal(path, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid game"));
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "new game"));
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "A game named 'valid game' hath been created."
+                "A game named 'new game' hath been created."
             )
         );
     }

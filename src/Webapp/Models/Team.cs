@@ -10,4 +10,6 @@ public class Team
     public required int Number { get; set; }
     public int Bonus { get; set; } = 0;
     public int Malus { get; set; } = 0;
+
+    public Result? Result { get; set; } = null;
 }

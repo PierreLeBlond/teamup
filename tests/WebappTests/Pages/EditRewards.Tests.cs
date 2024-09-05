@@ -1,19 +1,68 @@
 using System.Net.Http.Headers;
 using System.Web;
 using AngleSharp.Html.Dom;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Webapp.Data;
+using Webapp.Models;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
 
-public class EditRewardsTests(CustomWebApplicationFactory<Program> factory)
-    : IClassFixture<CustomWebApplicationFactory<Program>>
+public class EditRewardsFixture<TProgram> : CustomWebApplicationFactory<TProgram>
+    where TProgram : class
 {
-    private readonly CustomWebApplicationFactory<Program> factory = factory;
+    private static readonly object _lock = new();
+    private static bool _databaseInitialized;
+
+    public static readonly Guid EditGameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b61");
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        base.ConfigureWebHost(builder);
+
+        builder.ConfigureServices(services =>
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            lock (_lock)
+            {
+                if (!_databaseInitialized)
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                    context.Games.Add(
+                        new Game
+                        {
+                            Id = EditGameId,
+                            Name = "rewards game",
+                            TournamentId = TournamentId,
+                            ShouldMaximizeScore = true,
+                            NumberOfTeams = 2
+                        }
+                    );
+                    context.Rewards.Add(new Reward { GameId = EditGameId, Value = 100 });
+                    context.Rewards.Add(new Reward { GameId = EditGameId, Value = 50 });
+
+                    context.SaveChanges();
+                }
+
+                _databaseInitialized = true;
+            }
+        });
+    }
+}
+
+public class EditRewardsTests(EditRewardsFixture<Program> factory)
+    : IClassFixture<EditRewardsFixture<Program>>
+{
+    private readonly EditRewardsFixture<Program> factory = factory;
+
+    private static readonly string path =
+        $"/tournaments/{EditRewardsFixture<Program>.TournamentId}/games/{EditRewardsFixture<Program>.EditGameId}/rewards/edit";
 
     private static async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {
-        var path =
-            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}/rewards/edit";
         var response = await client.GetAsync(path);
         return response;
     }
@@ -44,7 +93,7 @@ public class EditRewardsTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var title = HtmlHelpers.FindElementByText(content, "Edit Rewards");
+        var title = HtmlHelpers.FindElementByText(content, "Edit rewards");
         var reward1Input = HtmlHelpers.FindInputByLabel(content, "Reward 1");
         var reward2Input = HtmlHelpers.FindInputByLabel(content, "Reward 2");
         var button = content.QuerySelector("button");
@@ -65,8 +114,6 @@ public class EditRewardsTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, ["200", "100"]);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var path =
-            $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}/games/{CustomWebApplicationFactory<Program>.GameId}/rewards/edit";
         Assert.EndsWith(path, HttpUtility.UrlDecode(content.BaseUrl?.PathName));
 
         var feedback = HtmlHelpers.FindElementByText(
