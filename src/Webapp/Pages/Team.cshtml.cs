@@ -21,8 +21,13 @@ public class TeamModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
+    [ViewData]
     public Tournament Tournament { get; set; } = null!;
+
+    [ViewData]
     public Game Game { get; set; } = null!;
+
+    [ViewData]
     public Team Team { get; set; } = null!;
     public IList<Teammate> Teammates { get; set; } = [];
     public bool IsOwner { get; set; } = false;

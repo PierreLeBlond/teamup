@@ -37,6 +37,7 @@ public class EditTournamentModel(
     [BindProperty]
     public EditTournamentInput Input { get; set; } = null!;
 
+    [ViewData]
     public Tournament Tournament { get; set; } = null!;
 
     private void SetModel(string tournament)

@@ -31,8 +31,13 @@ public class EditTeammateModel(
     [BindProperty]
     public EditTeammateInput Input { get; set; } = null!;
 
+    [ViewData]
     public Tournament Tournament { get; set; } = null!;
+
+    [ViewData]
     public Game Game { get; set; } = null!;
+
+    [ViewData]
     public Team Team { get; set; } = null!;
     public Teammate Teammate { get; set; } = null!;
     public bool IsOwner { get; set; } = false;

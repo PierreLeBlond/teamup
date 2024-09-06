@@ -39,6 +39,7 @@ public class CreateGameModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
+    [ViewData]
     public Tournament Tournament { get; set; } = null!;
 
     [BindProperty]

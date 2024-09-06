@@ -21,6 +21,7 @@ public class TournamentModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
+    [ViewData]
     public Tournament Tournament { get; set; } = null!;
     public IList<Player> Players { get; set; } = [];
     public IList<Game> Games { get; set; } = [];

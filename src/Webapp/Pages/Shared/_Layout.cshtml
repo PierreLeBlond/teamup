@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Webapp.Models
+
+@{
+    Guid? tournament = ViewData["Tournament"] is not null ? (ViewData["Tournament"] as Tournament).Id : null;
+    Guid? game = ViewData["Game"] is not null ? (ViewData["Game"] as Game).Id : null;
+    Guid? team = ViewData["Team"] is not null ? (ViewData["Team"] as Team).Id : null;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -12,14 +20,30 @@
     <header>
         <nav>
             <div>
-                <a asp-area="" asp-page="/Index">Webapp</a>
-                <div>
-                    <ul>
+                <ul>
+                    <li>
+                        <a asp-area="" asp-page="/Index">Home</a>
+                    </li>
+                    @if (tournament is not null)
+                    {
                         <li>
-                            <a asp-area="" asp-page="/">Create</a>
+                            <a asp-area="" asp-page="/Tournament" asp-route-tournament=@tournament>Tournament</a>
                         </li>
-                    </ul>
-                </div>
+                    }
+                    @if (game is not null)
+                    {
+                        <li>
+                            <a asp-area="" asp-page="/Game" asp-route-tournament=@tournament asp-route-game=@game>Game</a>
+                        </li>
+                    }
+                    @if (team is not null)
+                    {
+                        <li>
+                            <a asp-area="" asp-page="/Team" asp-route-tournament=@tournament asp-route-game=@game
+                                asp-route-team=@team>Team</a>
+                        </li>
+                    }
+                </ul>
                 <partial name="_LoginPartial" />
             </div>
         </nav>
