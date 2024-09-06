@@ -15,6 +15,7 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
     private static readonly Guid tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
     private static readonly Guid gameId = CustomWebApplicationFactory<Program>.GameId;
     private static readonly Guid teamId = CustomWebApplicationFactory<Program>.TeamId;
+    private static readonly Guid teammateId = CustomWebApplicationFactory<Program>.TeammateId;
 
     public static async Task<HttpResponseMessage> GetResponse(HttpClient client, string path)
     {
@@ -78,6 +79,11 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}",
                 "Edit team",
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}/edit",
+            ],
+            [
+                $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}",
+                "player1",
+                $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}/teammates/{teammateId}/edit",
             ],
         ];
 

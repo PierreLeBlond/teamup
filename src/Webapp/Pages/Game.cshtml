@@ -41,11 +41,14 @@ else
   @foreach (var team in Model.Teams)
     {
       <li>
-        <h2> <a asp-area="" asp-page="/Team" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id
-            asp-route-team=@team.Id>Team @team.Number</a> </h2>
-        <p>Bonus: @team.Bonus</p>
-        <p>Malus: @team.Malus</p>
-        <p>Result: @(team.Result?.Value.ToString() ?? "Unknown")</p>
+        @await Html.PartialAsync("_TeamPartial", new TeamPartial
+{
+  IsOwner = Model.IsOwner,
+  Tournament = Model.Tournament,
+  Game = Model.Game,
+  Team = team,
+  Teammates = [ ..team.Teammates ]
+})
       </li>
     }
   </ul>

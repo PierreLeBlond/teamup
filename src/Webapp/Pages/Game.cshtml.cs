@@ -39,7 +39,11 @@ public class GameModel(
         IsOwner = Tournament.OwnerId == currentUserId;
 
         Rewards = [.. context.Rewards.Where(r => r.GameId == Game.Id).OrderBy(r => r.Value)];
-        var teams = context.Teams.Include(t => t.Result).Where(t => t.GameId == Game.Id);
+        var teams = context
+            .Teams.Include(t => t.Result)
+            .Include(t => t.Teammates)
+            .ThenInclude(t => t.Player)
+            .Where(t => t.GameId == Game.Id);
         if (Game.ShouldMaximizeScore)
         {
             Teams =
@@ -83,12 +87,23 @@ public class GameModel(
 
         var players = context.Players.Where(p => p.TournamentId == Tournament.Id);
 
-        var teams = Enumerable
-            .Repeat(true, Game.NumberOfTeams)
-            .Select((x, i) => new Team { GameId = Game.Id, Number = i + 1 });
+        // There is an issue if using some kind of array generation with Select, where team ids became all 0's
+        var teams = new Team[Game.NumberOfTeams];
+        for (var i = 0; i < Game.NumberOfTeams; i++)
+        {
+            var team = new Team { GameId = Game.Id, Number = i + 1 };
+            teams[i] = team;
+        }
 
         context.Teams.RemoveRange(Teams);
         context.Teams.AddRange(teams);
+
+        for (var i = 0; i < players.Count(); i++)
+        {
+            var player = players.ElementAt(i);
+            var team = teams.ElementAt(i % Game.NumberOfTeams);
+            context.Teammates.Add(new Teammate { TeamId = team.Id, PlayerId = player.Id });
+        }
 
         await context.SaveChangesAsync();
 

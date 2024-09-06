@@ -54,7 +54,11 @@ public class TeamTests(CustomWebApplicationFactory<Program> factory, ITestOutput
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var teammate = HtmlHelpers.FindElementByText(content, "player1");
+        var bonus = HtmlHelpers.FindElementByText(content, "Bonus: 20");
+        var malus = HtmlHelpers.FindElementByText(content, "Malus: 10");
 
         Assert.NotNull(teammate);
+        Assert.NotNull(bonus);
+        Assert.NotNull(malus);
     }
 }

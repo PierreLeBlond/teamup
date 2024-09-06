@@ -261,14 +261,18 @@ public class GameTests(GameFixture<Program> factory, ITestOutputHelper output)
         Assert.EndsWith(toGeneratePath, HttpUtility.UrlDecode(content.BaseUrl?.PathName));
 
         var team1 = HtmlHelpers.FindElementByText(content, "Team 1");
+        var player1 = HtmlHelpers.FindElementByText(content, "player1");
         var team2 = HtmlHelpers.FindElementByText(content, "Team 2");
+        var player2 = HtmlHelpers.FindElementByText(content, "player2");
         var feedback = HtmlHelpers.FindElementByText(
             content,
             "Teams for game 'to generate game' have been generated !"
         );
 
         Assert.NotNull(team1);
+        Assert.NotNull(player1);
         Assert.NotNull(team2);
+        Assert.NotNull(player2);
         Assert.NotNull(feedback);
     }
 }

@@ -4,10 +4,6 @@
   ViewData["Title"] = "Team";
 }
 
-<h1>Team @Model.Team.Number</h1>
-<p>Bonus: @Model.Team.Bonus</p>
-<p>Malus: @Model.Team.Malus</p>
-
 @if (Model.IsOwner)
 {
   <a asp-area="" asp-page="/EditTeam" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id
@@ -16,4 +12,11 @@
 </a>
 }
 
-<h2>Team mates</h2>
+@await Html.PartialAsync("_TeamPartial", new TeamPartial
+{
+  IsOwner = Model.IsOwner,
+  Tournament = Model.Tournament,
+  Game = Model.Game,
+  Team = Model.Team,
+  Teammates = Model.Teammates
+})

@@ -9,4 +9,6 @@ public class Player
     public Guid TournamentId { get; set; }
 
     public Tournament Tournament { get; set; } = null!;
+
+    public ICollection<Teammate> Teammates { get; set; } = [];
 }

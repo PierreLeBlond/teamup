@@ -1,0 +1,26 @@
+@namespace Webapp.Pages
+@model TeamPartial
+
+<h2> <a asp-area="" asp-page="/Team" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id
+    asp-route-team=@Model.Team.Id>Team @Model.Team.Number</a> </h2>
+<p>Bonus: @Model.Team.Bonus</p>
+<p>Malus: @Model.Team.Malus</p>
+<p>Result: @(Model.Team.Result?.Value.ToString() ?? "Unknown")</p>
+
+<h2>Team mates</h2>
+
+<ul>
+  @foreach (var teammate in Model.Teammates)
+  {
+    <li>
+      @await Html.PartialAsync("_TeammatePartial", new TeammatePartial
+{
+  IsOwner = Model.IsOwner,
+  Tournament = Model.Tournament,
+  Game = Model.Game,
+  Team = Model.Team,
+  Teammate = teammate
+})
+    </li>
+  }
+</ul>

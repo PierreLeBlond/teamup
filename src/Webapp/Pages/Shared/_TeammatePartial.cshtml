@@ -1,0 +1,16 @@
+@namespace Webapp.Pages
+@model TeammatePartial
+
+@if (Model.IsOwner)
+{
+  <a asp-area="" asp-page="/EditTeammate" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id
+  asp-route-team=@Model.Team.Id asp-route-teammate=@Model.Teammate.Id>
+  @Model.Teammate.Player.Name
+</a>
+}
+else
+{
+  <p>@Model.Teammate.Player.Name</p>
+}
+<p>Bonus: @Model.Teammate.Bonus</p>
+<p>Malus: @Model.Teammate.Malus</p>

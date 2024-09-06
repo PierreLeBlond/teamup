@@ -12,4 +12,6 @@ public class Team
     public int Malus { get; set; } = 0;
 
     public Result? Result { get; set; } = null;
+
+    public ICollection<Teammate> Teammates { get; set; } = [];
 }

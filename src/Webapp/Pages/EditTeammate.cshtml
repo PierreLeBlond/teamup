@@ -1,0 +1,17 @@
+﻿@page "/tournaments/{tournament}/games/{game}/teams/{team}/teammates/{teammate}/edit"
+@model Webapp.Pages.EditTeammateModel
+@{
+  ViewData["Title"] = "Edit Teammate";
+}
+
+<h1>Edit teammate @Model.Teammate.Player.Name</h1>
+
+<form method="post">
+  <label asp-for="Input.Bonus"></label>
+  <input type="number" asp-for="Input.Bonus">
+  <span asp-validation-for="Input.Bonus"></span>
+  <label asp-for="Input.Malus"></label>
+  <input type="number" asp-for="Input.Malus">
+  <span asp-validation-for="Input.Malus"></span>
+  <button type="submit">Edit</button>
+</form>
