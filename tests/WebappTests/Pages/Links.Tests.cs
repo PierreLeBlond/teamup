@@ -71,11 +71,6 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
                 $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit",
             ],
             [
-                $"/tournaments/{tournamentId}/games/{gameId}",
-                "Edit rewards",
-                $"/tournaments/{tournamentId}/games/{gameId}/rewards/edit",
-            ],
-            [
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}",
                 "Edit team",
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}/edit",
@@ -96,10 +91,9 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var link = HtmlHelpers.FindAnchorByText(content, text);
+        var link = HtmlHelpers.FindAnchorByTextAndHref(content, text, target);
 
         Assert.NotNull(link);
-        Assert.EndsWith(target, HttpUtility.UrlDecode(link.Href));
     }
 
     [Theory]
@@ -115,7 +109,7 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var link = HtmlHelpers.FindAnchorByText(content, text);
+        var link = HtmlHelpers.FindAnchorByTextAndHref(content, text, target);
 
         Assert.Null(link);
     }
@@ -136,10 +130,9 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var link = HtmlHelpers.FindAnchorByText(content, text);
+        var link = HtmlHelpers.FindAnchorByTextAndHref(content, text, target);
 
         Assert.NotNull(link);
-        Assert.EndsWith(target, HttpUtility.UrlDecode(link.Href));
     }
 
     [Theory]
@@ -154,7 +147,7 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var link = HtmlHelpers.FindAnchorByText(content, text);
+        var link = HtmlHelpers.FindAnchorByTextAndHref(content, text, target);
 
         Assert.Null(link);
     }
@@ -169,9 +162,8 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client, source);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var link = HtmlHelpers.FindAnchorByText(content, text);
+        var link = HtmlHelpers.FindAnchorByTextAndHref(content, text, target);
 
         Assert.NotNull(link);
-        Assert.EndsWith(target, HttpUtility.UrlDecode(link.Href));
     }
 }

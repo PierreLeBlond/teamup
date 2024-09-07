@@ -1,0 +1,13 @@
+@using Webapp.Models;
+@using System.Web;
+@using Microsoft.AspNetCore.Http.Extensions
+@model IEnumerable<Player>
+
+<ul>
+  <li>Choose a player</li>
+  @foreach (var player in Model)
+  {
+    var url = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}?currentPlayer={player.Id}";
+    <li><a href="@url">@player.Name</a></li>
+  }
+</ul>

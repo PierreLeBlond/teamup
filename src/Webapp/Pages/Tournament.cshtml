@@ -21,7 +21,7 @@
 <ul>
   @foreach (var player in Model.Players)
   {
-    <li>@player.Name</li>
+    <li aria-label="@(player.Id == Model.CurrentPlayer?.Id ? "current player" : null)">@player.Name</li>
   }
 </ul>
 

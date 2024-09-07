@@ -15,6 +15,8 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     public static readonly Guid TeammateId = new("543f6a09-90af-4fba-9b4b-93864e0b6b6d");
     public static readonly Guid TeamId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b6d");
     public static readonly Guid GameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b6f");
+    public static readonly Guid Player1Id = new("543f6309-90af-42ba-9b4b-9e86fe0e6b72");
+    public static readonly Guid Player2Id = new("543f6309-92af-42ba-9b4b-9e86fe6e6b72");
     public static readonly Guid TournamentId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b72");
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -46,10 +48,20 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                             new Tournament { Name = "john tournament", OwnerId = "JohnId" }
                         );
 
-                        var player = new Player { Name = "player1", TournamentId = tournament.Id };
+                        var player = new Player
+                        {
+                            Id = Player1Id,
+                            Name = "player1",
+                            TournamentId = tournament.Id
+                        };
                         context.Players.Add(player);
                         context.Players.Add(
-                            new Player { Name = "player2", TournamentId = tournament.Id }
+                            new Player
+                            {
+                                Id = Player2Id,
+                                Name = "player2",
+                                TournamentId = tournament.Id
+                            }
                         );
 
                         var game = new Game

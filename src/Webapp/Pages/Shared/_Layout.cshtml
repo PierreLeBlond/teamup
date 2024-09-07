@@ -1,9 +1,12 @@
 ﻿@using Webapp.Models
 
 @{
-    Guid? tournament = ViewData["Tournament"] is not null ? (ViewData["Tournament"] as Tournament).Id : null;
-    Guid? game = ViewData["Game"] is not null ? (ViewData["Game"] as Game).Id : null;
-    Guid? team = ViewData["Team"] is not null ? (ViewData["Team"] as Team).Id : null;
+    var Tournament = ViewData["Tournament"] as Tournament;
+    Guid? tournament = Tournament is not null ? Tournament.Id : null;
+    var Game = ViewData["Game"] as Game;
+    Guid? game = Game is not null ? Game.Id : null;
+    var Team = ViewData["Team"] as Team;
+    Guid? team = Team is not null ? Team.Id : null;
 }
 
 <!DOCTYPE html>
@@ -45,6 +48,16 @@
                     }
                 </ul>
                 <partial name="_LoginPartial" />
+                @if (tournament is not null)
+                {
+                    @await Component.InvokeAsync("PlayerList",
+                             new
+                             {
+                                 tournamentId = tournament
+                             }
+                             )
+                }
+
             </div>
         </nav>
     </header>
