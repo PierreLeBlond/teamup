@@ -41,21 +41,21 @@ public class CreatePlayersModel(
     public IList<Player> Players { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournament)
+    private void SetModel(string tournamentId)
     {
-        var tournamentId = new Guid(tournament);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
+        var tournamentGuid = new Guid(tournamentId);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
 
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;
 
         Players =
         [
-            .. context.Players.Where(p => p.TournamentId == tournamentId).OrderBy(p => p.Name)
+            .. context.Players.Where(p => p.TournamentId == tournamentGuid).OrderBy(p => p.Name)
         ];
     }
 
-    public async Task<IActionResult> OnGet(string tournament)
+    public async Task<IActionResult> OnGet(string tournamentId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -64,7 +64,7 @@ public class CreatePlayersModel(
             return Unauthorized();
         }
 
-        SetModel(tournament);
+        SetModel(tournamentId);
         Input = new CreatePlayerInput { Name = "" };
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
@@ -81,7 +81,7 @@ public class CreatePlayersModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPost(string tournament)
+    public async Task<IActionResult> OnPost(string tournamentId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -90,7 +90,7 @@ public class CreatePlayersModel(
             return Unauthorized();
         }
 
-        SetModel(tournament);
+        SetModel(tournamentId);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,

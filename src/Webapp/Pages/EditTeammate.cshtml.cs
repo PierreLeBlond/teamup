@@ -42,26 +42,26 @@ public class EditTeammateModel(
     public Teammate Teammate { get; set; } = null!;
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournament, string game, string team, string teammate)
+    private void SetModel(string tournamentId, string gameId, string teamId, string teammateId)
     {
-        var tournamentId = new Guid(tournament);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
-        var gameId = new Guid(game);
-        Game = context.Games.Single(g => g.Id == gameId);
-        var teamId = new Guid(team);
-        Team = context.Teams.Single(t => t.Id == teamId);
-        var teammateId = new Guid(teammate);
-        Teammate = context.Teammates.Include(t => t.Player).Single(t => t.Id == teammateId);
+        var tournamentGuid = new Guid(tournamentId);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
+        var gameGuid = new Guid(gameId);
+        Game = context.Games.Single(g => g.Id == gameGuid);
+        var teamGuid = new Guid(teamId);
+        Team = context.Teams.Single(t => t.Id == teamGuid);
+        var teammateGuid = new Guid(teammateId);
+        Teammate = context.Teammates.Include(t => t.Player).Single(t => t.Id == teammateGuid);
 
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;
     }
 
     public async Task<IActionResult> OnGet(
-        string tournament,
-        string game,
-        string team,
-        string teammate
+        string tournamentId,
+        string gameId,
+        string teamId,
+        string teammateId
     )
     {
         var currentUserId = userManager.GetUserId(User);
@@ -71,7 +71,7 @@ public class EditTeammateModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game, team, teammate);
+        SetModel(tournamentId, gameId, teamId, teammateId);
 
         Input = new EditTeammateInput { Bonus = Team.Bonus, Malus = Team.Malus };
 
@@ -90,10 +90,10 @@ public class EditTeammateModel(
     }
 
     public async Task<IActionResult> OnPost(
-        string tournament,
-        string game,
-        string team,
-        string teammate
+        string tournamentId,
+        string gameId,
+        string teamId,
+        string teammateId
     )
     {
         var currentUserId = userManager.GetUserId(User);
@@ -103,7 +103,7 @@ public class EditTeammateModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game, team, teammate);
+        SetModel(tournamentId, gameId, teamId, teammateId);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,

@@ -1,4 +1,4 @@
-﻿@page "/tournaments/{tournament}"
+﻿@page "/tournaments/{tournamentId}"
 @model Webapp.Pages.TournamentModel
 @{
   ViewData["Title"] = "Tournament";
@@ -8,14 +8,14 @@
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/EditTournament" asp-route-tournament=@Model.Tournament.Id>Edit tournament</a>
+  <a asp-area="" asp-page="/EditTournament" asp-route-tournamentId=@Model.Tournament.Id>Edit tournament</a>
 }
 
 <h2>Players</h2>
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/CreatePlayers" asp-route-tournament=@Model.Tournament.Id>Create players</a>
+  <a asp-area="" asp-page="/CreatePlayers" asp-route-tournamentId=@Model.Tournament.Id>Create players</a>
 }
 
 <ul>
@@ -29,14 +29,14 @@
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/CreateGame" asp-route-tournament=@Model.Tournament.Id>Create game</a>
+  <a asp-area="" asp-page="/CreateGame" asp-route-tournamentId=@Model.Tournament.Id>Create game</a>
 }
 
 <ul>
   @foreach (var game in Model.Games)
   {
     <li>
-      <a asp-area="" asp-page="/Game" asp-route-tournament=@Model.Tournament.Id asp-route-game=@game.Id>@game.Name</a>
+      <a asp-area="" asp-page="/Game" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@game.Id>@game.Name</a>
     </li>
   }
 </ul>

@@ -7,7 +7,7 @@
   <li>Choose a player</li>
   @foreach (var player in Model)
   {
-    var url = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}?currentPlayer={player.Id}";
+    var url = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}?currentPlayerId={player.Id}";
     <li><a href="@url">@player.Name</a></li>
   }
 </ul>

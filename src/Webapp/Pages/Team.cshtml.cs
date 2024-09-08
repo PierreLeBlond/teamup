@@ -32,14 +32,14 @@ public class TeamModel(
     public IList<Teammate> Teammates { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournament, string game, string team)
+    private void SetModel(string tournamentId, string gameId, string teamId)
     {
-        var tournamentId = new Guid(tournament);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
-        var gameId = new Guid(game);
-        Game = context.Games.Single(g => g.Id == gameId);
-        var teamId = new Guid(team);
-        Team = context.Teams.Single(t => t.Id == teamId);
+        var tournamentGuid = new Guid(tournamentId);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
+        var gameGuid = new Guid(gameId);
+        Game = context.Games.Single(g => g.Id == gameGuid);
+        var teamGuid = new Guid(teamId);
+        Team = context.Teams.Single(t => t.Id == teamGuid);
 
         Teammates =
         [
@@ -53,9 +53,9 @@ public class TeamModel(
         IsOwner = Tournament.OwnerId == currentUserId;
     }
 
-    public IActionResult OnGet(string tournament, string game, string team)
+    public IActionResult OnGet(string tournamentId, string gameId, string teamId)
     {
-        SetModel(tournament, game, team);
+        SetModel(tournamentId, gameId, teamId);
         return Page();
     }
 }

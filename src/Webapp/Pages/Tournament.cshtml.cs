@@ -30,16 +30,18 @@ public class TournamentModel(
     public IList<Game> Games { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournament, string? currentPlayer)
+    private void SetModel(string tournamentId, string? currentPlayerId)
     {
-        var tournamentId = new Guid(tournament);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
+        var tournamentGuid = new Guid(tournamentId);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
 
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;
 
-        Guid? playerId = currentPlayer is null ? null : new Guid(currentPlayer);
-        CurrentPlayer = playerId is null ? null : context.Players.Single(p => p.Id == playerId);
+        Guid? currentPlayerGuid = currentPlayerId is null ? null : new Guid(currentPlayerId);
+        CurrentPlayer = currentPlayerGuid is null
+            ? null
+            : context.Players.Single(p => p.Id == currentPlayerGuid);
 
         Players =
         [
@@ -49,8 +51,8 @@ public class TournamentModel(
         Games = [.. context.Games.Where(g => g.TournamentId == Tournament.Id).OrderBy(g => g.Name)];
     }
 
-    public void OnGet(string tournament, string? currentPlayer)
+    public void OnGet(string tournamentId, string? currentPlayerId)
     {
-        SetModel(tournament, currentPlayer);
+        SetModel(tournamentId, currentPlayerId);
     }
 }

@@ -1,8 +1,8 @@
 @namespace Webapp.Pages
 @model TeamPartial
 
-<h2> <a asp-area="" asp-page="/Team" asp-route-tournament=@Model.Tournament.Id asp-route-game=@Model.Game.Id
-    asp-route-team=@Model.Team.Id>Team @Model.Team.Number</a> </h2>
+<h2> <a asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
+    asp-route-teamId=@Model.Team.Id>Team @Model.Team.Number</a> </h2>
 <p>Bonus: @Model.Team.Bonus</p>
 <p>Malus: @Model.Team.Malus</p>
 <p>Result: @(Model.Team.Result?.Value.ToString() ?? "Unknown")</p>

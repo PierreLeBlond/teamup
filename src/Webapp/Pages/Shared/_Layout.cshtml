@@ -2,11 +2,11 @@
 
 @{
     var Tournament = ViewData["Tournament"] as Tournament;
-    Guid? tournament = Tournament is not null ? Tournament.Id : null;
+    Guid? tournamentId = Tournament is not null ? Tournament.Id : null;
     var Game = ViewData["Game"] as Game;
-    Guid? game = Game is not null ? Game.Id : null;
+    Guid? gameId = Game is not null ? Game.Id : null;
     var Team = ViewData["Team"] as Team;
-    Guid? team = Team is not null ? Team.Id : null;
+    Guid? teamId = Team is not null ? Team.Id : null;
 }
 
 <!DOCTYPE html>
@@ -27,33 +27,34 @@
                     <li>
                         <a asp-area="" asp-page="/Index">Home</a>
                     </li>
-                    @if (tournament is not null)
+                    @if (tournamentId is not null)
                     {
                         <li>
-                            <a asp-area="" asp-page="/Tournament" asp-route-tournament=@tournament>Tournament</a>
+                            <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@tournamentId>Tournament</a>
                         </li>
                     }
-                    @if (game is not null)
+                    @if (gameId is not null)
                     {
                         <li>
-                            <a asp-area="" asp-page="/Game" asp-route-tournament=@tournament asp-route-game=@game>Game</a>
+                            <a asp-area="" asp-page="/Game" asp-route-tournamentId=@tournamentId
+                                asp-route-gameId=@gameId>Game</a>
                         </li>
                     }
-                    @if (team is not null)
+                    @if (teamId is not null)
                     {
                         <li>
-                            <a asp-area="" asp-page="/Team" asp-route-tournament=@tournament asp-route-game=@game
-                                asp-route-team=@team>Team</a>
+                            <a asp-area="" asp-page="/Team" asp-route-tournamentId=@tournamentId asp-route-gameId=@gameId
+                                asp-route-teamId=@teamId>Team</a>
                         </li>
                     }
                 </ul>
                 <partial name="_LoginPartial" />
-                @if (tournament is not null)
+                @if (tournamentId is not null)
                 {
                     @await Component.InvokeAsync("PlayerList",
                              new
                              {
-                                 tournamentId = tournament
+                                 tournamentId = tournamentId
                              }
                              )
                 }

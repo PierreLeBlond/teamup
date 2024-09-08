@@ -43,18 +43,18 @@ public class EditGameModel(
     [ViewData]
     public Game Game { get; set; } = null!;
 
-    private void SetModel(string tournament, string game)
+    private void SetModel(string tournamentId, string gameId)
     {
-        var tournamentId = new Guid(tournament);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
+        var tournamentGuid = new Guid(tournamentId);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
 
         var currentUserId = userManager.GetUserId(User);
 
-        var gameId = new Guid(game);
-        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournamentId);
+        var gameGuid = new Guid(gameId);
+        Game = context.Games.Single(g => g.Id == gameGuid);
     }
 
-    public async Task<IActionResult> OnGetAsync(string tournament, string game)
+    public async Task<IActionResult> OnGetAsync(string tournamentId, string gameId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -63,7 +63,7 @@ public class EditGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game);
+        SetModel(tournamentId, gameId);
         Input = new EditGameInput { Name = Game.Name };
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
@@ -80,7 +80,7 @@ public class EditGameModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string tournament, string game)
+    public async Task<IActionResult> OnPostAsync(string tournamentId, string gameId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -89,7 +89,7 @@ public class EditGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game);
+        SetModel(tournamentId, gameId);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,

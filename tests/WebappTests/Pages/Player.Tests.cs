@@ -11,9 +11,9 @@ public class PlayerTests(CustomWebApplicationFactory<Program> factory)
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
     public static readonly string path1 =
-        $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}?currentPlayer={CustomWebApplicationFactory<Program>.Player1Id}";
+        $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}?currentPlayerId={CustomWebApplicationFactory<Program>.Player1Id}";
     public static readonly string path2 =
-        $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}?currentPlayer={CustomWebApplicationFactory<Program>.Player2Id}";
+        $"/tournaments/{CustomWebApplicationFactory<Program>.TournamentId}?currentPlayerId={CustomWebApplicationFactory<Program>.Player2Id}";
 
     private async Task<HttpResponseMessage> GetResponse(HttpClient client)
     {

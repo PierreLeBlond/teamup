@@ -36,20 +36,20 @@ public class EditRewardsModel(
 
     public IQueryable<Reward> Rewards { get; set; } = null!;
 
-    private void SetModel(string tournament, string game)
+    private void SetModel(string tournamentId, string gameId)
     {
-        var tournamentId = new Guid(tournament);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentId);
+        var tournamentGuid = new Guid(tournamentId);
+        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
 
         var currentUserId = userManager.GetUserId(User);
 
-        var gameId = new Guid(game);
-        Game = context.Games.Single(g => g.Id == gameId && g.TournamentId == tournamentId);
+        var gameGuid = new Guid(gameId);
+        Game = context.Games.Single(g => g.Id == gameGuid);
 
-        Rewards = context.Rewards.Where(r => r.GameId == gameId).OrderByDescending(r => r.Value);
+        Rewards = context.Rewards.Where(r => r.GameId == gameGuid).OrderByDescending(r => r.Value);
     }
 
-    public async Task<IActionResult> OnGetAsync(string tournament, string game)
+    public async Task<IActionResult> OnGetAsync(string tournamentId, string gameId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -58,7 +58,7 @@ public class EditRewardsModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game);
+        SetModel(tournamentId, gameId);
         Input = [.. Rewards.Select(r => new EditRewardsInput { Value = r.Value })];
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
@@ -75,7 +75,7 @@ public class EditRewardsModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string tournament, string game)
+    public async Task<IActionResult> OnPostAsync(string tournamentId, string gameId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -84,7 +84,7 @@ public class EditRewardsModel(
             return Unauthorized();
         }
 
-        SetModel(tournament, game);
+        SetModel(tournamentId, gameId);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,
