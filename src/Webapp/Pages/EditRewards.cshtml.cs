@@ -12,41 +12,24 @@ public class EditRewardsInput
     public int Value { get; set; }
 }
 
-public class EditRewardsModel(
-    ApplicationDbContext context,
-    UserManager<User> userManager,
-    IAuthorizationService authorizationService
-) : PageModel
+public class EditRewardsModel(ApplicationDbContext context, UserManager<User> userManager)
+    : GamePageModel(context, userManager)
 {
-    private readonly ApplicationDbContext context = context;
-    private readonly UserManager<User> userManager = userManager;
-    private readonly IAuthorizationService authorizationService = authorizationService;
-
     [TempData]
     public string FormResult { get; set; } = "";
-
-    public Tournament Tournament { get; set; } = null!;
-    public Game Game { get; set; } = null!;
 
     [BindProperty]
     public EditRewardsInput[] Input { get; set; } = [];
 
     public IQueryable<Reward> Rewards { get; set; } = null!;
 
-    private void SetModel(string tournamentId, string gameId)
+    protected override void SetModel(string tournamentId, string gameId, string? currentPlayerId)
     {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-
-        var currentUserId = userManager.GetUserId(User);
-
-        var gameGuid = new Guid(gameId);
-        Game = context.Games.Single(g => g.Id == gameGuid);
-
-        Rewards = context.Rewards.Where(r => r.GameId == gameGuid).OrderByDescending(r => r.Value);
+        base.SetModel(tournamentId, gameId, currentPlayerId);
+        Rewards = context.Rewards.Where(r => r.GameId == Game.Id).OrderByDescending(r => r.Value);
     }
 
-    public async Task<IActionResult> OnGetAsync(string tournamentId, string gameId)
+    public IActionResult OnGetAsync(string tournamentId, string gameId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -55,16 +38,10 @@ public class EditRewardsModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId, gameId);
+        SetModel(tournamentId, gameId, currentPlayerId);
         Input = [.. Rewards.Select(r => new EditRewardsInput { Value = r.Value })];
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }
@@ -72,7 +49,11 @@ public class EditRewardsModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string tournamentId, string gameId)
+    public async Task<IActionResult> OnPostAsync(
+        string tournamentId,
+        string gameId,
+        string? currentPlayerId
+    )
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -81,15 +62,9 @@ public class EditRewardsModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId, gameId);
+        SetModel(tournamentId, gameId, currentPlayerId);
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }

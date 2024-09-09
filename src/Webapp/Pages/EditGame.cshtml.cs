@@ -21,37 +21,16 @@ public class EditGameInput
     public required string Name { get; set; }
 }
 
-public class EditGameModel(
-    ApplicationDbContext context,
-    UserManager<User> userManager,
-    IAuthorizationService authorizationService
-) : PageModel
+public class EditGameModel(ApplicationDbContext context, UserManager<User> userManager)
+    : GamePageModel(context, userManager)
 {
-    private readonly ApplicationDbContext context = context;
-    private readonly UserManager<User> userManager = userManager;
-    private readonly IAuthorizationService authorizationService = authorizationService;
-
     [TempData]
     public string FormResult { get; set; } = "";
 
     [BindProperty]
     public EditGameInput Input { get; set; } = null!;
 
-    public Tournament Tournament { get; set; } = null!;
-    public Game Game { get; set; } = null!;
-
-    private void SetModel(string tournamentId, string gameId)
-    {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-
-        var currentUserId = userManager.GetUserId(User);
-
-        var gameGuid = new Guid(gameId);
-        Game = context.Games.Single(g => g.Id == gameGuid);
-    }
-
-    public async Task<IActionResult> OnGetAsync(string tournamentId, string gameId)
+    public IActionResult OnGet(string tournamentId, string gameId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -60,16 +39,10 @@ public class EditGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId, gameId);
+        SetModel(tournamentId, gameId, currentPlayerId);
         Input = new EditGameInput { Name = Game.Name };
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }
@@ -77,7 +50,11 @@ public class EditGameModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string tournamentId, string gameId)
+    public async Task<IActionResult> OnPost(
+        string tournamentId,
+        string gameId,
+        string? currentPlayerId
+    )
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -86,15 +63,9 @@ public class EditGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId, gameId);
+        SetModel(tournamentId, gameId, currentPlayerId);
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }

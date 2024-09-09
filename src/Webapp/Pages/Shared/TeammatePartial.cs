@@ -9,4 +9,5 @@ public class TeammatePartial
     public required Game Game { get; set; }
     public required Team Team { get; set; }
     public required Teammate Teammate { get; set; }
+    public Player? CurrentPlayer { get; set; } = null;
 }

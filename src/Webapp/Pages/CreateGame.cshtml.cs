@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
@@ -26,31 +25,16 @@ public class CreateGameInput
     public required bool ShouldMaximizeScore { get; set; } = true;
 }
 
-public class CreateGameModel(
-    ApplicationDbContext context,
-    UserManager<User> userManager,
-    IAuthorizationService authorizationService
-) : PageModel
+public class CreateGameModel(ApplicationDbContext context, UserManager<User> userManager)
+    : TournamentPageModel(context, userManager)
 {
-    private readonly ApplicationDbContext context = context;
-    private readonly UserManager<User> userManager = userManager;
-    private readonly IAuthorizationService authorizationService = authorizationService;
-
     [TempData]
     public string FormResult { get; set; } = "";
-
-    public Tournament Tournament { get; set; } = null!;
 
     [BindProperty]
     public CreateGameInput Input { get; set; } = null!;
 
-    private void SetModel(string tournamentId)
-    {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-    }
-
-    public async Task<IActionResult> OnGet(string tournamentId)
+    public IActionResult OnGet(string tournamentId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -59,7 +43,7 @@ public class CreateGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId);
+        SetModel(tournamentId, currentPlayerId);
         Input = new CreateGameInput
         {
             Name = "",
@@ -67,13 +51,7 @@ public class CreateGameModel(
             ShouldMaximizeScore = true
         };
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }
@@ -81,7 +59,7 @@ public class CreateGameModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPost(string tournamentId)
+    public async Task<IActionResult> OnPost(string tournamentId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -90,15 +68,9 @@ public class CreateGameModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId);
+        SetModel(tournamentId, currentPlayerId);
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }

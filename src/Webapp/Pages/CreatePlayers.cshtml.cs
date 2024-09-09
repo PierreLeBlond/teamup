@@ -20,41 +20,27 @@ public class CreatePlayerInput
     public required string Name { get; set; }
 }
 
-public class CreatePlayersModel(
-    ApplicationDbContext context,
-    UserManager<User> userManager,
-    IAuthorizationService authorizationService
-) : PageModel
+public class CreatePlayersModel(ApplicationDbContext context, UserManager<User> userManager)
+    : TournamentPageModel(context, userManager)
 {
-    private readonly ApplicationDbContext context = context;
-    private readonly UserManager<User> userManager = userManager;
-    private readonly IAuthorizationService authorizationService = authorizationService;
-
     [TempData]
     public string FormResult { get; set; } = "";
 
     [BindProperty]
     public CreatePlayerInput Input { get; set; } = null!;
 
-    public Tournament Tournament { get; set; } = null!;
     public IList<Player> Players { get; set; } = [];
-    public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournamentId)
+    protected override void SetModel(string tournamentId, string? currentPlayerId)
     {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-
-        var currentUserId = userManager.GetUserId(User);
-        IsOwner = Tournament.OwnerId == currentUserId;
-
+        base.SetModel(tournamentId, currentPlayerId);
         Players =
         [
-            .. context.Players.Where(p => p.TournamentId == tournamentGuid).OrderBy(p => p.Name)
+            .. context.Players.Where(p => p.TournamentId == Tournament.Id).OrderBy(p => p.Name)
         ];
     }
 
-    public async Task<IActionResult> OnGet(string tournamentId)
+    public IActionResult OnGet(string tournamentId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -63,16 +49,10 @@ public class CreatePlayersModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId);
+        SetModel(tournamentId, currentPlayerId);
         Input = new CreatePlayerInput { Name = "" };
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }
@@ -80,7 +60,7 @@ public class CreatePlayersModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPost(string tournamentId)
+    public async Task<IActionResult> OnPost(string tournamentId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -89,15 +69,9 @@ public class CreatePlayersModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId);
+        SetModel(tournamentId, currentPlayerId);
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }

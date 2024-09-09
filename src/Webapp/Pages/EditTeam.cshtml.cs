@@ -1,10 +1,5 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
 
@@ -19,45 +14,34 @@ public class EditTeamInput
     public int? ResultValue { get; set; }
 }
 
-public class EditTeamModel(
-    ApplicationDbContext context,
-    UserManager<User> userManager,
-    IAuthorizationService authorizationService
-) : PageModel
+public class EditTeamModel(ApplicationDbContext context, UserManager<User> userManager)
+    : TeamPageModel(context, userManager)
 {
-    private readonly ApplicationDbContext context = context;
-    private readonly UserManager<User> userManager = userManager;
-    private readonly IAuthorizationService authorizationService = authorizationService;
-
     [TempData]
     public string FormResult { get; set; } = "";
 
     [BindProperty]
     public EditTeamInput Input { get; set; } = null!;
 
-    public Tournament Tournament { get; set; } = null!;
-    public Game Game { get; set; } = null!;
-    public Team Team { get; set; } = null!;
-
     public Result? Result { get; set; } = null;
-    public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournamentId, string gameId, string teamId)
+    protected override void SetModel(
+        string tournamentId,
+        string gameId,
+        string teamId,
+        string? currentPlayerId
+    )
     {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-        var gameGuid = new Guid(gameId);
-        Game = context.Games.Single(g => g.Id == gameGuid);
-        var teamGuid = new Guid(teamId);
-        Team = context.Teams.Single(t => t.Id == teamGuid);
-
-        Result = context.Results.SingleOrDefault(r => r.TeamId == teamGuid);
-
-        var currentUserId = userManager.GetUserId(User);
-        IsOwner = Tournament.OwnerId == currentUserId;
+        base.SetModel(tournamentId, gameId, teamId, currentPlayerId);
+        Result = context.Results.SingleOrDefault(r => r.TeamId == Team.Id);
     }
 
-    public async Task<IActionResult> OnGet(string tournamentId, string gameId, string teamId)
+    public IActionResult OnGet(
+        string tournamentId,
+        string gameId,
+        string teamId,
+        string? currentPlayerId
+    )
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -66,7 +50,7 @@ public class EditTeamModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId, gameId, teamId);
+        SetModel(tournamentId, gameId, teamId, currentPlayerId);
 
         Input = new EditTeamInput
         {
@@ -75,13 +59,7 @@ public class EditTeamModel(
             ResultValue = Result?.Value
         };
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }
@@ -89,7 +67,12 @@ public class EditTeamModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPost(string tournamentId, string gameId, string teamId)
+    public async Task<IActionResult> OnPost(
+        string tournamentId,
+        string gameId,
+        string teamId,
+        string? currentPlayerId
+    )
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -98,15 +81,9 @@ public class EditTeamModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId, gameId, teamId);
+        SetModel(tournamentId, gameId, teamId, currentPlayerId);
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }

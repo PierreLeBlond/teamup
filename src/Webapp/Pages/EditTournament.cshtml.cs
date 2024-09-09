@@ -21,31 +21,16 @@ public class EditTournamentInput
     public required string Name { get; set; }
 }
 
-public class EditTournamentModel(
-    ApplicationDbContext context,
-    UserManager<User> userManager,
-    IAuthorizationService authorizationService
-) : PageModel
+public class EditTournamentModel(ApplicationDbContext context, UserManager<User> userManager)
+    : TournamentPageModel(context, userManager)
 {
-    private readonly ApplicationDbContext context = context;
-    private readonly UserManager<User> userManager = userManager;
-    private readonly IAuthorizationService authorizationService = authorizationService;
-
     [TempData]
     public string FormResult { get; set; } = "";
 
     [BindProperty]
     public EditTournamentInput Input { get; set; } = null!;
 
-    public Tournament Tournament { get; set; } = null!;
-
-    private void SetModel(string tournamentId)
-    {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-    }
-
-    public async Task<IActionResult> OnGet(string tournamentId)
+    public IActionResult OnGet(string tournamentId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -54,16 +39,10 @@ public class EditTournamentModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId);
+        SetModel(tournamentId, currentPlayerId);
         Input = new EditTournamentInput { Name = Tournament.Name };
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }
@@ -71,7 +50,7 @@ public class EditTournamentModel(
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string tournamentId)
+    public async Task<IActionResult> OnPostAsync(string tournamentId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -80,15 +59,9 @@ public class EditTournamentModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId);
+        SetModel(tournamentId, currentPlayerId);
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }

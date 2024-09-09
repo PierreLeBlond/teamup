@@ -7,7 +7,7 @@
 @if (Model.IsOwner)
 {
   <a asp-area="" asp-page="/EditTeam" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
-  asp-route-teamId=@Model.Team.Id>
+  asp-route-teamId=@Model.Team.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
   Edit team
 </a>
 }
@@ -18,5 +18,6 @@
   Tournament = Model.Tournament,
   Game = Model.Game,
   Team = Model.Team,
+  CurrentPlayer = Model.CurrentPlayer,
   Teammates = Model.Teammates
 })

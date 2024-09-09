@@ -9,39 +9,22 @@ using Webapp.Models;
 
 namespace Webapp.Pages;
 
-public class GameModel(
-    ApplicationDbContext context,
-    UserManager<User> userManager,
-    IAuthorizationService authorizationService
-) : PageModel
+public class GameModel(ApplicationDbContext context, UserManager<User> userManager)
+    : GamePageModel(context, userManager)
 {
-    private readonly ApplicationDbContext context = context;
-    private readonly UserManager<User> userManager = userManager;
-    private readonly IAuthorizationService authorizationService = authorizationService;
-
     [TempData]
     public string FormResult { get; set; } = "";
 
-    public Tournament Tournament { get; set; } = null!;
-    public Game Game { get; set; } = null!;
-    public Player? CurrentPlayer { get; set; } = null;
     public IList<Reward> Rewards { get; set; } = [];
     public IList<Team> Teams { get; set; } = [];
-    public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournamentId, string gameId, string? currentPlayerId)
+    protected override void SetModel(string tournamentId, string gameId, string? currentPlayerId)
     {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-        var gameGuid = new Guid(gameId);
-        Game = context.Games.Single(g => g.Id == gameGuid);
-
-        CurrentPlayer = context.GetCurrentPlayer(currentPlayerId);
-
-        var currentUserId = userManager.GetUserId(User);
-        IsOwner = Tournament.OwnerId == currentUserId;
-
-        Rewards = [.. context.Rewards.Where(r => r.GameId == Game.Id).OrderBy(r => r.Value)];
+        base.SetModel(tournamentId, gameId, currentPlayerId);
+        Rewards =
+        [
+            .. context.Rewards.Where(r => r.GameId == Game.Id).OrderByDescending(r => r.Value)
+        ];
         var teams = context
             .Teams.Include(t => t.Result)
             .Include(t => t.Teammates)
@@ -81,13 +64,7 @@ public class GameModel(
 
         SetModel(tournamentId, gameId, currentPlayerId);
 
-        var isAuthorized = await authorizationService.AuthorizeAsync(
-            User,
-            Tournament,
-            "EditPolicy"
-        );
-
-        if (!isAuthorized.Succeeded)
+        if (!IsOwner)
         {
             return Forbid();
         }

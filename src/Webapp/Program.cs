@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Webapp.Authorization;
 using Webapp.Data;
 using Webapp.Models;
 
@@ -82,16 +80,6 @@ builder
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthorization();
-
-// Authorization handlers.
-builder
-    .Services.AddAuthorizationBuilder()
-    .AddPolicy(
-        "EditPolicy",
-        policy => policy.Requirements.Add(new IsOwnerAuthorizationRequirement())
-    );
-
-builder.Services.AddScoped<IAuthorizationHandler, IsOwnerAuthorizationHandler>();
 
 var app = builder.Build();
 
