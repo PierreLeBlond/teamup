@@ -38,11 +38,11 @@ public static class HttpClientExtensions
             element.Value = kvp.Value;
         }
 
-        var submit = form.GetSubmission(submitButton);
+        var submit = form.GetSubmission(submitButton)!;
         var target = (Uri)submit.Target;
         if (submitButton.HasAttribute("formaction"))
         {
-            var formaction = submitButton.GetAttribute("formaction");
+            var formaction = submitButton.GetAttribute("formaction")!;
             target = new Uri(formaction, UriKind.Relative);
         }
         var submission = new HttpRequestMessage(new HttpMethod(submit.Method.ToString()), target)
@@ -53,7 +53,7 @@ public static class HttpClientExtensions
         foreach (var header in submit.Headers)
         {
             submission.Headers.TryAddWithoutValidation(header.Key, header.Value);
-            submission.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            submission.Content!.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
         return client.SendAsync(submission);

@@ -49,6 +49,15 @@ public class HtmlHelpers
             .Find(element => element.TextContent.Trim().Equals(text));
     }
 
+    public static IElement? FindElementByAriaLabel(IHtmlDocument document, string ariaLabel)
+    {
+        // TODO: Can we do better than comparing all elements ?
+        return document
+            .QuerySelectorAll("*")
+            .ToList()
+            .Find(element => element.GetAttribute("aria-label") == ariaLabel);
+    }
+
     public static IElement? FindElementByTextAndAriaLabel(
         IHtmlDocument document,
         string text,

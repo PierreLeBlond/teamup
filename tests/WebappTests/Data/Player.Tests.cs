@@ -36,5 +36,7 @@ public class PlayerTest(TestDatabaseFixture fixture) : IClassFixture<TestDatabas
         context.Players.Add(new Player { Name = "playerName", TournamentId = tournament.Id });
 
         Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+
+        context.ChangeTracker.Clear();
     }
 }

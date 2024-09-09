@@ -1,0 +1,29 @@
+@namespace Webapp.Pages.Components
+@model NavigationViewComponentModel
+
+<ul>
+  <li>
+    <a asp-area="" asp-page="/Index">Home</a>
+  </li>
+  @if (Model.TournamentId is not null)
+  {
+    <li>
+      <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@Model.TournamentId
+        asp-route-currentPlayerId=@Model.CurrentPlayerId>Tournament</a>
+    </li>
+  }
+  @if (Model.GameId is not null)
+  {
+    <li>
+      <a asp-area="" asp-page="/Game" asp-route-tournamentId=@Model.TournamentId asp-route-gameId=@Model.GameId
+        asp-route-currentPlayerId=@Model.CurrentPlayerId>Game</a>
+    </li>
+  }
+  @if (Model.TeamId is not null)
+  {
+    <li>
+      <a asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.TournamentId asp-route-gameId=@Model.GameId
+        asp-route-teamId=@Model.TeamId asp-route-currentPlayerId=@Model.CurrentPlayerId>Team</a>
+    </li>
+  }
+</ul>

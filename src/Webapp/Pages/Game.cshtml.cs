@@ -22,21 +22,21 @@ public class GameModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
-    [ViewData]
     public Tournament Tournament { get; set; } = null!;
-
-    [ViewData]
     public Game Game { get; set; } = null!;
+    public Player? CurrentPlayer { get; set; } = null;
     public IList<Reward> Rewards { get; set; } = [];
     public IList<Team> Teams { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournamentId, string gameId)
+    private void SetModel(string tournamentId, string gameId, string? currentPlayerId)
     {
         var tournamentGuid = new Guid(tournamentId);
         Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
         var gameGuid = new Guid(gameId);
         Game = context.Games.Single(g => g.Id == gameGuid);
+
+        CurrentPlayer = context.GetCurrentPlayer(currentPlayerId);
 
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;
@@ -60,13 +60,17 @@ public class GameModel(
         }
     }
 
-    public IActionResult OnGet(string tournamentId, string gameId)
+    public IActionResult OnGet(string tournamentId, string gameId, string? currentPlayerId)
     {
-        SetModel(tournamentId, gameId);
+        SetModel(tournamentId, gameId, currentPlayerId);
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string tournamentId, string gameId)
+    public async Task<IActionResult> OnPostAsync(
+        string tournamentId,
+        string gameId,
+        string? currentPlayerId
+    )
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -75,7 +79,7 @@ public class GameModel(
             return Unauthorized();
         }
 
-        SetModel(tournamentId, gameId);
+        SetModel(tournamentId, gameId, currentPlayerId);
 
         var isAuthorized = await authorizationService.AuthorizeAsync(
             User,

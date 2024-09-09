@@ -35,4 +35,69 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         base.OnModelCreating(modelBuilder);
     }
+
+    public Player? GetCurrentPlayer(string? currentPlayerId)
+    {
+        Guid? currentPlayerGuid = currentPlayerId is null ? null : new Guid(currentPlayerId);
+        var currentPlayer = currentPlayerGuid is null
+            ? null
+            : Players.Single(p => p.Id == currentPlayerGuid);
+        return currentPlayer;
+    }
+
+    private int GetPlayerScoreFromGame(Game game, Guid playerId)
+    {
+        int score = 0;
+
+        var teammate = Teammates
+            .Include(t => t.Team)
+            .ThenInclude(t => t.Result)
+            .SingleOrDefault(t => t.Team.GameId == game.Id && t.PlayerId == playerId);
+        if (teammate == null)
+        {
+            return score;
+        }
+
+        score += teammate.Team.Bonus;
+        score -= teammate.Team.Malus;
+
+        score += teammate.Bonus;
+        score -= teammate.Malus;
+
+        if (teammate.Team.Result == null)
+        {
+            return score;
+        }
+
+        var teams = Teams
+            .Include(t => t.Result)
+            .Where(t => t.GameId == game.Id && t.Result != null);
+        var sortedTeams = game.ShouldMaximizeScore
+            ? teams.OrderByDescending(t => t.Result!.Value)
+            : teams.OrderBy(t => t.Result!.Value);
+
+        var index = sortedTeams.ToList().IndexOf(teammate.Team);
+        var reward = Rewards
+            .Where(r => r.GameId == game.Id)
+            .OrderByDescending(r => r.Value)
+            .ToList()[index];
+
+        score += reward.Value;
+
+        return score;
+    }
+
+    public int GetPlayerScore(Tournament tournament, Guid playerId)
+    {
+        int score = 0;
+
+        var games = Games.Where(g => g.TournamentId == tournament.Id).ToArray();
+
+        foreach (var game in games)
+        {
+            score += GetPlayerScoreFromGame(game, playerId);
+        }
+
+        return score;
+    }
 }

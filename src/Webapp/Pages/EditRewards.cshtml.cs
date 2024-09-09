@@ -25,10 +25,7 @@ public class EditRewardsModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
-    [ViewData]
     public Tournament Tournament { get; set; } = null!;
-
-    [ViewData]
     public Game Game { get; set; } = null!;
 
     [BindProperty]

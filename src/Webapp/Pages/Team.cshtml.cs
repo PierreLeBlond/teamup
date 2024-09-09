@@ -21,18 +21,19 @@ public class TeamModel(
     [TempData]
     public string FormResult { get; set; } = "";
 
-    [ViewData]
     public Tournament Tournament { get; set; } = null!;
-
-    [ViewData]
     public Game Game { get; set; } = null!;
-
-    [ViewData]
+    public Player? CurrentPlayer { get; set; } = null;
     public Team Team { get; set; } = null!;
     public IList<Teammate> Teammates { get; set; } = [];
     public bool IsOwner { get; set; } = false;
 
-    private void SetModel(string tournamentId, string gameId, string teamId)
+    private void SetModel(
+        string tournamentId,
+        string gameId,
+        string teamId,
+        string? currentPlayerId
+    )
     {
         var tournamentGuid = new Guid(tournamentId);
         Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
@@ -40,6 +41,8 @@ public class TeamModel(
         Game = context.Games.Single(g => g.Id == gameGuid);
         var teamGuid = new Guid(teamId);
         Team = context.Teams.Single(t => t.Id == teamGuid);
+
+        CurrentPlayer = context.GetCurrentPlayer(currentPlayerId);
 
         Teammates =
         [
@@ -53,9 +56,14 @@ public class TeamModel(
         IsOwner = Tournament.OwnerId == currentUserId;
     }
 
-    public IActionResult OnGet(string tournamentId, string gameId, string teamId)
+    public IActionResult OnGet(
+        string tournamentId,
+        string gameId,
+        string teamId,
+        string? currentPlayerId
+    )
     {
-        SetModel(tournamentId, gameId, teamId);
+        SetModel(tournamentId, gameId, teamId, currentPlayerId);
         return Page();
     }
 }

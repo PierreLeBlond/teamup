@@ -1,14 +1,5 @@
 ﻿@using Webapp.Models
 
-@{
-    var Tournament = ViewData["Tournament"] as Tournament;
-    Guid? tournamentId = Tournament is not null ? Tournament.Id : null;
-    var Game = ViewData["Game"] as Game;
-    Guid? gameId = Game is not null ? Game.Id : null;
-    var Team = ViewData["Team"] as Team;
-    Guid? teamId = Team is not null ? Team.Id : null;
-}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,45 +13,11 @@
 <body>
     <header>
         <nav>
-            <div>
-                <ul>
-                    <li>
-                        <a asp-area="" asp-page="/Index">Home</a>
-                    </li>
-                    @if (tournamentId is not null)
-                    {
-                        <li>
-                            <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@tournamentId>Tournament</a>
-                        </li>
-                    }
-                    @if (gameId is not null)
-                    {
-                        <li>
-                            <a asp-area="" asp-page="/Game" asp-route-tournamentId=@tournamentId
-                                asp-route-gameId=@gameId>Game</a>
-                        </li>
-                    }
-                    @if (teamId is not null)
-                    {
-                        <li>
-                            <a asp-area="" asp-page="/Team" asp-route-tournamentId=@tournamentId asp-route-gameId=@gameId
-                                asp-route-teamId=@teamId>Team</a>
-                        </li>
-                    }
-                </ul>
-                <partial name="_LoginPartial" />
-                @if (tournamentId is not null)
-                {
-                    @await Component.InvokeAsync("PlayerList",
-                             new
-                             {
-                                 tournamentId = tournamentId
-                             }
-                             )
-                }
-
-            </div>
+            @await Component.InvokeAsync("Navigation")
         </nav>
+        <partial name="_LoginPartial" />
+        @await Component.InvokeAsync("PlayerList")
+
     </header>
     <div>
         <main role="main">

@@ -36,7 +36,6 @@ public class CreatePlayersModel(
     [BindProperty]
     public CreatePlayerInput Input { get; set; } = null!;
 
-    [ViewData]
     public Tournament Tournament { get; set; } = null!;
     public IList<Player> Players { get; set; } = [];
     public bool IsOwner { get; set; } = false;

@@ -35,14 +35,10 @@ public class EditTeamModel(
     [BindProperty]
     public EditTeamInput Input { get; set; } = null!;
 
-    [ViewData]
     public Tournament Tournament { get; set; } = null!;
-
-    [ViewData]
     public Game Game { get; set; } = null!;
-
-    [ViewData]
     public Team Team { get; set; } = null!;
+
     public Result? Result { get; set; } = null;
     public bool IsOwner { get; set; } = false;
 

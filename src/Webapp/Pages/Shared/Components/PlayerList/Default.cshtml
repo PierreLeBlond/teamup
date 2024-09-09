@@ -1,13 +1,30 @@
 @using Webapp.Models;
 @using System.Web;
-@using Microsoft.AspNetCore.Http.Extensions
-@model IEnumerable<Player>
+@using Microsoft.AspNetCore.Http.Extensions;
+
+@namespace Webapp.Pages.Components
+@model PlayerListViewComponentModel
 
 <ul>
   <li>Choose a player</li>
-  @foreach (var player in Model)
+  @foreach (var player in Model.Players)
   {
     var url = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}?currentPlayerId={player.Id}";
     <li><a href="@url">@player.Name</a></li>
   }
 </ul>
+
+@if (Model.Bonus is not null)
+{
+  <p aria-label="current player bonus">+@Model.Bonus</p>
+}
+
+@if (Model.Malus is not null)
+{
+  <p aria-label="current player malus">-@Model.Malus</p>
+}
+
+@if (Model.Score is not null)
+{
+  <p aria-label="current player score">@Model.Score</p>
+}
