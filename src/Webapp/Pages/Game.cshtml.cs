@@ -1,8 +1,5 @@
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
@@ -40,6 +37,15 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
         else
         {
             Teams = [.. teams.OrderBy(t => t.Result == null ? int.MaxValue : t.Result.Value)];
+        }
+
+        foreach (var team in Teams)
+        {
+            team.Score = context.GetTeamScore(Game, team);
+            foreach (var teammate in team.Teammates)
+            {
+                teammate.Player.Score = context.GetPlayerScore(Tournament, teammate.Player.Id);
+            }
         }
     }
 

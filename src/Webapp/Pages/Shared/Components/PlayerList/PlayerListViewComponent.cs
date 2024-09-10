@@ -9,9 +9,7 @@ namespace Webapp.Pages.Components;
 public class PlayerListViewComponentModel
 {
     public IEnumerable<Player> Players { get; set; } = [];
-    public int? Bonus { get; set; } = null;
-    public int? Malus { get; set; } = null;
-    public int? Score { get; set; } = null;
+    public Player? Player { get; set; } = null;
 }
 
 public class PlayerListViewComponent(ApplicationDbContext context) : ViewComponent
@@ -42,21 +40,10 @@ public class PlayerListViewComponent(ApplicationDbContext context) : ViewCompone
         }
 
         var currentPlayerGuid = Guid.Parse(currentPlayerId.ToString());
+        model.Player = context.Players.Single(p => p.Id == currentPlayerGuid);
+
         var tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-        model.Score = context.GetPlayerScore(tournament, currentPlayerGuid);
-
-        var gameId = HttpContext.Request.RouteValues["gameId"];
-        if (gameId is null)
-        {
-            return View(model);
-        }
-
-        var gameGuid = Guid.Parse((string)gameId);
-        var teammate = context
-            .Teammates.Include(t => t.Team)
-            .SingleOrDefault(t => t.Team.GameId == gameGuid && t.PlayerId == currentPlayerGuid);
-        model.Bonus = teammate?.Bonus;
-        model.Malus = teammate?.Malus;
+        model.Player.Score = context.GetPlayerScore(tournament, currentPlayerGuid);
 
         return View(model);
     }

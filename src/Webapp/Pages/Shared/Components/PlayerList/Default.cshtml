@@ -14,17 +14,12 @@
   }
 </ul>
 
-@if (Model.Bonus is not null)
+@if (Model.Player is not null)
 {
-  <p aria-label="current player bonus">+@Model.Bonus</p>
-}
 
-@if (Model.Malus is not null)
+  @await Html.PartialAsync("_PlayerPartial", new PlayerPartial
 {
-  <p aria-label="current player malus">-@Model.Malus</p>
-}
-
-@if (Model.Score is not null)
-{
-  <p aria-label="current player score">@Model.Score</p>
+  Player = Model.Player,
+  CurrentPlayer = Model.Player
+})
 }

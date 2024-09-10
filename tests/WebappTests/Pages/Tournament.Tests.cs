@@ -1,6 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using Webapp.Data;
-using Webapp.Models;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
@@ -42,11 +39,17 @@ public class TournamentTests(CustomWebApplicationFactory<Program> factory)
 
         var title = HtmlHelpers.FindElementByText(content, "Players");
         var player1 = HtmlHelpers.FindElementByText(content, "player1");
+        var score1 = HtmlHelpers.FindElementByAriaLabel(content, "player player1 score");
         var player2 = HtmlHelpers.FindElementByText(content, "player2");
+        var score2 = HtmlHelpers.FindElementByAriaLabel(content, "player player2 score");
 
         Assert.NotNull(title);
         Assert.NotNull(player1);
+        Assert.NotNull(score1);
+        Assert.Equal("10", score1.TextContent);
         Assert.NotNull(player2);
+        Assert.NotNull(score2);
+        Assert.Equal("0", score2.TextContent);
     }
 
     [Fact]

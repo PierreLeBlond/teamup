@@ -33,7 +33,7 @@ public class TeamTests(CustomWebApplicationFactory<Program> factory, ITestOutput
     }
 
     [Fact]
-    public async Task Get_Unauthenticated_ShowGame()
+    public async Task Get_Unauthenticated_ShowTeam()
     {
         var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
 
@@ -41,8 +41,18 @@ public class TeamTests(CustomWebApplicationFactory<Program> factory, ITestOutput
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Team 1");
+        var bonus = HtmlHelpers.FindElementByAriaLabel(content, "team 1 bonus");
+        var malus = HtmlHelpers.FindElementByAriaLabel(content, "team 1 malus");
+        var score = HtmlHelpers.FindElementByAriaLabel(content, "team 1 score");
 
         Assert.NotNull(title);
+        Assert.NotNull(bonus);
+        Assert.NotNull(malus);
+        Assert.NotNull(score);
+
+        Assert.Equal("+100", bonus.TextContent);
+        Assert.Equal("-200", malus.TextContent);
+        Assert.Equal("0", score.TextContent);
     }
 
     [Fact]
@@ -54,11 +64,16 @@ public class TeamTests(CustomWebApplicationFactory<Program> factory, ITestOutput
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var teammate = HtmlHelpers.FindElementByText(content, "player1");
-        var bonus = HtmlHelpers.FindElementByText(content, "Bonus: 20");
-        var malus = HtmlHelpers.FindElementByText(content, "Malus: 10");
+        var bonus = HtmlHelpers.FindElementByAriaLabel(content, "player player1 bonus");
+        var malus = HtmlHelpers.FindElementByAriaLabel(content, "player player1 malus");
+        var score = HtmlHelpers.FindElementByAriaLabel(content, "player player1 score");
 
         Assert.NotNull(teammate);
         Assert.NotNull(bonus);
+        Assert.Equal("+20", bonus.TextContent);
         Assert.NotNull(malus);
+        Assert.Equal("-10", malus.TextContent);
+        Assert.NotNull(score);
+        Assert.Equal("10", score.TextContent);
     }
 }

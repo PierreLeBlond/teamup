@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Webapp.Models;
 
 public class Team
@@ -12,6 +14,9 @@ public class Team
     public int Malus { get; set; } = 0;
 
     public Result? Result { get; set; } = null;
+
+    [NotMapped]
+    public int Score { get; set; } = 0;
 
     public ICollection<Teammate> Teammates { get; set; } = [];
 }

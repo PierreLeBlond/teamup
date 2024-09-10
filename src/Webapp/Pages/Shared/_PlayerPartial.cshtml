@@ -1,0 +1,5 @@
+@namespace Webapp.Pages
+@model PlayerPartial
+
+<h2 aria-label="@(Model.Player.Id == Model.CurrentPlayer?.Id ? "current player" : null)">@Model.Player.Name</h2>
+<p aria-label="player @Model.Player.Name score">@Model.Player.Score</p>

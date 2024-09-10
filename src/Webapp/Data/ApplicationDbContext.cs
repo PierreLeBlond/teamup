@@ -58,31 +58,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             return score;
         }
 
-        score += teammate.Team.Bonus;
-        score -= teammate.Team.Malus;
-
         score += teammate.Bonus;
         score -= teammate.Malus;
 
-        if (teammate.Team.Result == null)
-        {
-            return score;
-        }
-
-        var teams = Teams
-            .Include(t => t.Result)
-            .Where(t => t.GameId == game.Id && t.Result != null);
-        var sortedTeams = game.ShouldMaximizeScore
-            ? teams.OrderByDescending(t => t.Result!.Value)
-            : teams.OrderBy(t => t.Result!.Value);
-
-        var index = sortedTeams.ToList().IndexOf(teammate.Team);
-        var reward = Rewards
-            .Where(r => r.GameId == game.Id)
-            .OrderByDescending(r => r.Value)
-            .ToList()[index];
-
-        score += reward.Value;
+        score += GetTeamScore(game, teammate.Team);
 
         return score;
     }
@@ -97,6 +76,41 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             score += GetPlayerScoreFromGame(game, playerId);
         }
+
+        return score;
+    }
+
+    public int GetTeamScore(Game game, Team team)
+    {
+        int score = 0;
+
+        score += team.Bonus;
+        score -= team.Malus;
+
+        if (team.Result == null)
+        {
+            return score;
+        }
+
+        var teams = Teams
+            .Include(t => t.Result)
+            .Where(t => t.GameId == game.Id && t.Result != null);
+        var sortedTeams = game.ShouldMaximizeScore
+            ? teams.OrderByDescending(t => t.Result!.Value)
+            : teams.OrderBy(t => t.Result!.Value);
+
+        var index = sortedTeams.ToList().IndexOf(team);
+        var rewards = Rewards
+            .Where(r => r.GameId == game.Id)
+            .OrderByDescending(r => r.Value)
+            .ToList();
+
+        if (index < 0 || index >= rewards.Count)
+        {
+            return score;
+        }
+
+        score += rewards[index].Value;
 
         return score;
     }

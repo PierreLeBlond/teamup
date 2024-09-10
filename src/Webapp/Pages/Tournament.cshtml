@@ -23,7 +23,11 @@
 <ul>
   @foreach (var player in Model.Players)
   {
-    <li aria-label="@(player.Id == Model.CurrentPlayer?.Id ? "current player" : null)">@player.Name</li>
+    <li>@await Html.PartialAsync("_PlayerPartial", new PlayerPartial
+ {
+   CurrentPlayer = Model.CurrentPlayer,
+   Player = player
+ })</li>
   }
 </ul>
 

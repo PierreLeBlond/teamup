@@ -23,6 +23,11 @@ public class TournamentModel(ApplicationDbContext context, UserManager<User> use
             .. context.Players.Where(p => p.TournamentId == Tournament.Id).OrderBy(p => p.Name)
         ];
 
+        foreach (var player in Players)
+        {
+            player.Score = context.GetPlayerScore(Tournament, player.Id);
+        }
+
         Games = [.. context.Games.Where(g => g.TournamentId == Tournament.Id).OrderBy(g => g.Name)];
     }
 

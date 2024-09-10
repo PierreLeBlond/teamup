@@ -31,6 +31,11 @@ public class TeamModel(ApplicationDbContext context, UserManager<User> userManag
                 .Where(t => t.TeamId == Team.Id)
                 .OrderBy(t => t.Player.Name)
         ];
+
+        foreach (var teammate in Teammates)
+        {
+            teammate.Player.Score = context.GetPlayerScore(Tournament, teammate.Player.Id);
+        }
     }
 
     public IActionResult OnGet(

@@ -60,26 +60,9 @@ public class PlayerTests(CustomWebApplicationFactory<Program> factory)
         var response = await GetResponse(client, path1);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        var playerScore = HtmlHelpers.FindElementByAriaLabel(content, "current player score");
+        var playerScore = HtmlHelpers.FindElementByAriaLabel(content, "player player1 score");
 
         Assert.NotNull(playerScore);
         Assert.Equal("10", playerScore.TextContent);
-    }
-
-    [Fact]
-    public async Task Get_WithCurrentplayer_ShowBonusMalus()
-    {
-        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
-
-        var response = await GetResponse(client, gamePath);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var playerBonus = HtmlHelpers.FindElementByAriaLabel(content, "current player bonus");
-        var playerMalus = HtmlHelpers.FindElementByAriaLabel(content, "current player malus");
-
-        Assert.NotNull(playerBonus);
-        Assert.NotNull(playerMalus);
-        Assert.Equal("+20", playerBonus.TextContent);
-        Assert.Equal("-10", playerMalus.TextContent);
     }
 }

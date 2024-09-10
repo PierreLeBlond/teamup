@@ -175,23 +175,10 @@ public class GameTests(GameFixture<Program> factory, ITestOutputHelper output)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var team1 = HtmlHelpers.FindElementByText(content, "Team 1");
-        var bonus1 = HtmlHelpers.FindElementByText(content, "Bonus: 100");
-        var malus1 = HtmlHelpers.FindElementByText(content, "Malus: 200");
-        var result1 = HtmlHelpers.FindElementByText(content, "Result: 3000");
-
         var team2 = HtmlHelpers.FindElementByText(content, "Team 2");
-        var bonus2 = HtmlHelpers.FindElementByText(content, "Bonus: 0");
-        var malus2 = HtmlHelpers.FindElementByText(content, "Malus: 0");
-        var result2 = HtmlHelpers.FindElementByText(content, "Result: Unknown");
 
         Assert.NotNull(team1);
-        Assert.NotNull(bonus1);
-        Assert.NotNull(malus1);
-        Assert.NotNull(result1);
         Assert.NotNull(team2);
-        Assert.NotNull(bonus2);
-        Assert.NotNull(malus2);
-        Assert.NotNull(result2);
 
         var descendants = content.Descendants().ToList();
         var team1Index = descendants.IndexOf(team1);

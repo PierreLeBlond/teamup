@@ -1,17 +1,18 @@
 @namespace Webapp.Pages
 @model TeammatePartial
 
+@await Html.PartialAsync("_PlayerPartial", new PlayerPartial
+{
+  Player = Model.Player,
+  CurrentPlayer = Model.CurrentPlayer
+})
+<p aria-label="player @Model.Player.Name bonus">+@Model.Teammate.Bonus</p>
+<p aria-label="player @Model.Player.Name malus">-@Model.Teammate.Malus</p>
 @if (Model.IsOwner)
 {
   <a asp-area="" asp-page="/EditTeammate" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
   asp-route-teamId=@Model.Team.Id asp-route-teammateId=@Model.Teammate.Id
   asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
-  @Model.Teammate.Player.Name
+  Edit @Model.Player.Name
 </a>
 }
-else
-{
-  <p>@Model.Teammate.Player.Name</p>
-}
-<p>Bonus: @Model.Teammate.Bonus</p>
-<p>Malus: @Model.Teammate.Malus</p>

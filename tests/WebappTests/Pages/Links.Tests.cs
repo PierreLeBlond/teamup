@@ -1,8 +1,4 @@
-using System.Collections;
 using System.Net.Http.Headers;
-using System.Web;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using NuGet.Packaging.Licenses;
 using Webapp.Tests.Helpers;
 
 namespace Webapp.Tests.Pages;
@@ -77,7 +73,7 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
             ],
             [
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}",
-                "player1",
+                "Edit player1",
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}/teammates/{teammateId}/edit",
             ],
         ];

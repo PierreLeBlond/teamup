@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
 
@@ -8,8 +9,6 @@ public class TeamPageModel(ApplicationDbContext context, UserManager<User> userM
     : GamePageModel(context, userManager)
 {
     public Team Team { get; set; } = null!;
-
-    public int Score { get; set; } = 0;
 
     protected virtual void SetModel(
         string tournamentId,
@@ -21,8 +20,8 @@ public class TeamPageModel(ApplicationDbContext context, UserManager<User> userM
         base.SetModel(tournamentId, gameId, currentPlayerId);
 
         var teamGuid = new Guid(teamId);
-        Team = context.Teams.Single(t => t.Id == teamGuid);
+        Team = context.Teams.Include(t => t.Result).Single(t => t.Id == teamGuid);
 
-        Score = context.GetTeamScore(Game, Team);
+        Team.Score = context.GetTeamScore(Game, Team);
     }
 }

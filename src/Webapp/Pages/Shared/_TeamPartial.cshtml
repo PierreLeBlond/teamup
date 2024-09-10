@@ -2,9 +2,11 @@
 @model TeamPartial
 
 <h2> <a asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
-    asp-route-teamId=@Model.Team.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>Team @Model.Team.Number</a> </h2>
-<p>Bonus: @Model.Team.Bonus</p>
-<p>Malus: @Model.Team.Malus</p>
+    asp-route-teamId=@Model.Team.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
+    Team @Model.Team.Number</a> </h2>
+<p aria-label="team @Model.Team.Number bonus">+@Model.Team.Bonus</p>
+<p aria-label="team @Model.Team.Number malus">-@Model.Team.Malus</p>
+<p aria-label="team @Model.Team.Number score">@Model.Team.Score</p>
 <p>Result: @(Model.Team.Result?.Value.ToString() ?? "Unknown")</p>
 
 <h2>Team mates</h2>
@@ -20,6 +22,7 @@
   Game = Model.Game,
   Team = Model.Team,
   CurrentPlayer = Model.CurrentPlayer,
+  Player = teammate.Player,
   Teammate = teammate
 })
     </li>

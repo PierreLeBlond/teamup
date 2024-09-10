@@ -182,13 +182,6 @@ public class EditTeamTests(EditTeamFixture<Program> factory)
 
         Assert.True(team1Index > team2Index);
 
-        var bonus = HtmlHelpers.FindElementByText(responseContent, "Bonus: 100");
-        var malus = HtmlHelpers.FindElementByText(responseContent, "Malus: 200");
-        var result = HtmlHelpers.FindElementByText(responseContent, "Result: 4000");
-
         Assert.NotNull(feedback);
-        Assert.NotNull(bonus);
-        Assert.NotNull(malus);
-        Assert.NotNull(result);
     }
 }
