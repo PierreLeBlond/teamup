@@ -2,11 +2,14 @@
 @model Webapp.Pages.TeamModel
 @{
   ViewData["Title"] = "Team";
+  Layout = "_MainLayout";
 }
+
+@await Html.PartialAsync("_TitlePartial", $"Team {Model.Team.Number}")
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/EditTeam" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
+  <a class="btn" asp-area="" asp-page="/EditTeam" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
   asp-route-teamId=@Model.Team.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
   Edit team
 </a>
@@ -19,5 +22,43 @@
   Game = Model.Game,
   Team = Model.Team,
   CurrentPlayer = Model.CurrentPlayer,
-  Teammates = Model.Teammates
 })
+
+<p class="separator"></p>
+
+<h2 class="section-title">Teammates</h2>
+
+<ul class="w-64 flex flex-col gap-2">
+  @foreach (var teammate in Model.Teammates)
+  {
+    <li>
+      @if (Model.IsOwner)
+      {
+        <a asp-area="" asp-page="/EditTeammate" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
+          asp-route-teamId=@Model.Team.Id asp-route-teammateId=@teammate.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
+        @await Html.PartialAsync("_TeammatePartial", new TeammatePartial
+          {
+            IsOwner = Model.IsOwner,
+            Tournament = Model.Tournament,
+            Game = Model.Game,
+            Team = Model.Team,
+            Teammate = teammate,
+            Player = teammate.Player,
+            CurrentPlayer = Model.CurrentPlayer
+          })
+        </a>
+      } else {
+        @await Html.PartialAsync("_TeammatePartial", new TeammatePartial
+          {
+            IsOwner = Model.IsOwner,
+            Tournament = Model.Tournament,
+            Game = Model.Game,
+            Team = Model.Team,
+            Teammate = teammate,
+            Player = teammate.Player,
+            CurrentPlayer = Model.CurrentPlayer
+          })
+      }
+    </li>
+  }
+</ul>

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
 
@@ -9,11 +10,15 @@ public class GamePageModel(ApplicationDbContext context, UserManager<User> userM
 {
     public Game Game { get; set; } = null!;
 
+    public Team? CurrentTeam { get; set; } = null;
+
     protected virtual void SetModel(string tournamentId, string gameId, string? currentPlayerId)
     {
         base.SetModel(tournamentId, currentPlayerId);
 
         var gameGuid = new Guid(gameId);
-        Game = context.Games.Single(g => g.Id == gameGuid);
+        Game = context.Games.Include(g => g.Teams).Single(g => g.Id == gameGuid);
+
+        CurrentTeam = context.GetCurrentTeam(Game, CurrentPlayer);
     }
 }

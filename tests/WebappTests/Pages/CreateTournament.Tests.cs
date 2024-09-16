@@ -83,12 +83,7 @@ public class CreateTournamentTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, "jane tournament");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "A tournament by the name of 'jane tournament' doth already exists."
-            )
-        );
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "Name already taken."));
     }
 
     [Fact]

@@ -1,18 +1,16 @@
 @namespace Webapp.Pages
 @model TeammatePartial
 
-@await Html.PartialAsync("_PlayerPartial", new PlayerPartial
-{
-  Player = Model.Player,
-  CurrentPlayer = Model.CurrentPlayer
-})
-<p aria-label="player @Model.Player.Name bonus">+@Model.Teammate.Bonus</p>
-<p aria-label="player @Model.Player.Name malus">-@Model.Teammate.Malus</p>
-@if (Model.IsOwner)
-{
-  <a asp-area="" asp-page="/EditTeammate" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
-  asp-route-teamId=@Model.Team.Id asp-route-teammateId=@Model.Teammate.Id
-  asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
-  Edit @Model.Player.Name
-</a>
-}
+<div class="col-start-2 grid grid-cols-2 gap-4 items-center w-full border border-stone-900 @(Model.CurrentPlayer?.Id == Model.Player.Id ? "bg-stone-900 text-stone-100" : "") px-2 rounded-md">
+  <h2 class="flex items-center justify-start"> 
+    @Model.Player.Name
+  </h2>
+
+  <div class="flex gap-2 justify-end items-center">
+    <div class="flex flex-col text-xs justify-center items-end">
+      <p aria-label="player @Model.Player.Name bonus">+@Model.Teammate.Bonus</p>
+      <p aria-label="player @Model.Player.Name malus">-@Model.Teammate.Malus</p>
+    </div>
+    <p class="text-4xl font-bold" aria-label="player @Model.Player.Name score">@Model.Player.Score</p>
+  </div>
+</div>

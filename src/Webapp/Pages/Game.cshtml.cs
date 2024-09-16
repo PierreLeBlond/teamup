@@ -39,9 +39,11 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
             Teams = [.. teams.OrderBy(t => t.Result == null ? int.MaxValue : t.Result.Value)];
         }
 
-        foreach (var team in Teams)
+        for (var i = 0; i < Teams.Count; i++)
         {
+            var team = Teams[i];
             team.Score = context.GetTeamScore(Game, team);
+            team.Rank = i + 1;
             foreach (var teammate in team.Teammates)
             {
                 teammate.Player.Score = context.GetPlayerScore(Tournament, teammate.Player.Id);

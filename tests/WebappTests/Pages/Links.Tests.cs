@@ -73,7 +73,7 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
             ],
             [
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}",
-                "Edit player1",
+                "player1",
                 $"/tournaments/{tournamentId}/games/{gameId}/teams/{teamId}/teammates/{teammateId}/edit",
             ],
         ];

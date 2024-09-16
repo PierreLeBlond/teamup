@@ -52,9 +52,12 @@ public class CreateGameTests(CustomWebApplicationFactory<Program> factory)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Create a new game");
-        var nameInput = HtmlHelpers.FindInputByLabel(content, "Name");
-        var numbersOfTeamsInput = HtmlHelpers.FindInputByLabel(content, "NumberOfTeams");
-        var shouldMaximizeScoreInput = HtmlHelpers.FindInputByLabel(content, "ShouldMaximizeScore");
+        var nameInput = HtmlHelpers.FindInputByLabel(content, "name");
+        var numbersOfTeamsInput = HtmlHelpers.FindInputByLabel(content, "number of teams");
+        var shouldMaximizeScoreInput = HtmlHelpers.FindInputByLabel(
+            content,
+            "should maximize score"
+        );
         var button = content.QuerySelector("button");
 
         Assert.NotNull(title);

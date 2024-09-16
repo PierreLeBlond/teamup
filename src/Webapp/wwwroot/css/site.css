@@ -1,22 +1,70 @@
-html {
-  font-size: 14px;
-}
+/*! @import */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
+@layer components {
+  .btn {
+    @apply p-2 border border-stone-900 rounded-md shadow-hard -translate-x-[5px] translate-y-[3px] w-40 flex justify-center;
   }
-}
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
+  .section-title {
+    @apply relative mb-4 p-2 border-b-2 border-stone-900 after:translate-y-1/2 after:-translate-x-1/2 after:absolute after:content-[''] after:w-4 after:h-4 after:rotate-45 after:border-r-2 after:border-b-2 after:bottom-[-1px] after:border-stone-900 after:bg-stone-100 after:left-1/2
+  }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+  .title {
+    @apply text-3xl text-nowrap transition-transform duration-1000 translate-y-0 bg-stone-900 text-stone-100 py-2 min-w-[300px]
+  }
 
-body {
-  margin-bottom: 60px;
+  .title:hover, .title:focus, .title:active {
+    transform: translate(calc(-100% + 300px));
+  }
+
+  .form {
+    @apply flex flex-col gap-4
+  }
+
+  .input-wrapper {
+    @apply flex flex-col gap-2
+  }
+
+  .input-label {
+    @apply text-sm
+  }
+
+  .input {
+    @apply p-2 rounded-md focus-visible:shadow-focus focus-visible:outline-none
+  }
+
+  .input-error {
+    @apply text-red-600 text-xs h-4
+  }
+
+  .separator {
+    @apply h-1 border-b border-stone-400 w-64
+  }
+
+    @keyframes slideIn {
+      0% {
+        transform: translateY(64px);
+      }
+  
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+      }
+  
+      100% {
+        opacity: 0;
+      }
+    }
+
+  .toast {
+    animation: 200ms ease-out 0s 1 slideIn, 300ms ease-out 3s 1 fadeOut forwards;
+  }
 }

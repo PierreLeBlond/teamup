@@ -89,7 +89,7 @@ public class EditGameTests(EditGameFixture<Program> factory)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Edit game");
-        var nameInput = HtmlHelpers.FindInputByLabel(content, "Name");
+        var nameInput = HtmlHelpers.FindInputByLabel(content, "name");
         var button = content.QuerySelector("button");
 
         Assert.NotNull(title);

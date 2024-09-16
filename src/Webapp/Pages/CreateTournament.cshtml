@@ -2,13 +2,18 @@
 @model Webapp.Pages.CreateTournamentModel
 @{
   ViewData["Title"] = "Create tournament";
+  Layout = "_MainLayout";
 }
 
-<h1>Create a new tournament</h1>
 
-<form method="post">
-  <label asp-for="Input.Name"></label>
-  <input asp-for="Input.Name">
-  <span asp-validation-for="Input.Name"></span>
-  <button type="submit">Create</button>
+<h1 class="section-title">Create a new tournament</h1>
+
+<form method="post" class="form">
+  <div class="input-wrapper">
+    <label asp-for="Input.Name" class="input-label"></label>
+    <input asp-for="Input.Name" class="input">
+
+    <span asp-validation-for="Input.Name" class="input-error"></span>
+  </div>
+  <button type="submit" class="btn self-end">Create</button>
 </form>

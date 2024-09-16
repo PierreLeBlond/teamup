@@ -2,16 +2,19 @@
 @model Webapp.Pages.EditTeammateModel
 @{
   ViewData["Title"] = "Edit Teammate";
+  Layout = "_MainLayout";
 }
 
-<h1>Edit teammate @Model.Teammate.Player.Name</h1>
+@await Html.PartialAsync("_TitlePartial", $"Team {Model.Team.Number}")
 
-<form method="post">
-  <label asp-for="Input.Bonus"></label>
-  <input type="number" asp-for="Input.Bonus">
-  <span asp-validation-for="Input.Bonus"></span>
-  <label asp-for="Input.Malus"></label>
-  <input type="number" asp-for="Input.Malus">
-  <span asp-validation-for="Input.Malus"></span>
-  <button type="submit">Edit</button>
+<h2 class="section-title">Edit teammate @Model.Teammate.Player.Name</h2>
+
+<form method="post" class="form">
+  <label asp-for="Input.Bonus" class="input-label"></label>
+  <input type="number" asp-for="Input.Bonus" class="input">
+  <span asp-validation-for="Input.Bonus" class="input-error"></span>
+  <label asp-for="Input.Malus" class="input-label"></label>
+  <input type="number" asp-for="Input.Malus" class="input">
+  <span asp-validation-for="Input.Malus" class="input-error"></span>
+  <button type="submit" class="btn self-end">Edit</button>
 </form>

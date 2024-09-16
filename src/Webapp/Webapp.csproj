@@ -23,6 +23,21 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
     <PackageReference Include="OpenIddict.AspNetCore" Version="5.7.0" />
     <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.7.0" />
+
+    <UpToDateCheckBuilt Include="wwwroot/css/site.css" Set="Css" />
+    <UpToDateCheckBuilt Include="wwwroot/css/output.css" Set="Css" />
+    <UpToDateCheckBuilt Include="tailwind.config.js" Set="Css" />
   </ItemGroup>
+
+   <!--<Target Name="Static" BeforeTargets="Build">
+    <Exec Command="npm run watch" />
+  </Target>
+-->
+
+  <ItemGroup>
+    <Watch 
+      Include="wwwroot/css/output.css"
+    />
+</ItemGroup>
 
 </Project>

@@ -5,8 +5,7 @@
     ViewData["Title"] = "Log in";
 }
 
-<h1>@ViewData["Title"]</h1>
-
+  <div class="w-full flex flex-col gap-4 items-center">
 @{
     if ((Model.ExternalLogins?.Count ?? 0) == 0)
     {
@@ -21,15 +20,12 @@
     else
     {
         <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <div>
-                <p>
-                    @foreach (var provider in Model.ExternalLogins!)
-                    {
-                        <button type="submit" name="provider" value="@provider.Name"
-                            title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                    }
-                </p>
-            </div>
+            @foreach (var provider in Model.ExternalLogins!)
+            {
+                <button type="submit" name="provider" value="@provider.Name" class="btn"
+                    title="Log in using your @provider.DisplayName account">Log in using @provider.DisplayName</button>
+            }
         </form>
     }
 }
+</div>

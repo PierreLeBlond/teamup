@@ -47,7 +47,7 @@ public class CreatePlayersTests(
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Create new players");
-        var nameInput = HtmlHelpers.FindInputByLabel(content, "Name");
+        var nameInput = HtmlHelpers.FindInputByLabel(content, "name");
         var button = content.QuerySelector("button");
 
         Assert.NotNull(title);

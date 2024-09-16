@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +9,10 @@ namespace Webapp.Pages;
 
 public class EditTeammateInput
 {
+    [Display(Name = "bonus")]
     public required int Bonus { get; set; } = 0;
 
+    [Display(Name = "malus")]
     public required int Malus { get; set; } = 0;
 }
 

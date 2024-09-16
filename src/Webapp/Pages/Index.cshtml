@@ -2,28 +2,38 @@
 @model Webapp.Pages.IndexModel
 @{
   ViewData["Title"] = "Tournament Creation";
+  Layout = "_MainLayout";
 }
 
 @if (Model.User.Identity is null || !Model.User.Identity.IsAuthenticated)
 {
-  <h2>Lo, greetings! Here beginneth the process of creating a tournament, but first thou must log in.</h2>
+  <h2 class="h-64 w-64 btn p-8">
+  Lo, greetings!<br><br>Here beginneth the process of creating a tournament, but first thou must log in.
+</h2>
 }
 else
 {
-  <h2>Greetings, @Model.User.Identity.Name.</h2>
 
-  <a asp-area="" asp-page="/CreateTournament">Create tournament</a>
+  <h2>Greetings, <br> @Model.User.Identity.Name.</h2>
 
-  <h3>My tournaments</h3>
+  <p class="separator"></p>
 
-  <ul>
-  @foreach (var tournament in Model.Tournaments)
-    {
-      <li>
-        <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@tournament.Id>
-          @tournament.Name
-        </a>
-      </li>
-    }
-  </ul>
+  <a asp-area="" asp-page="/CreateTournament" class="btn">
+    Create tournament
+  </a>
+
+  <h3 class="section-title">
+    My tournaments
+  </h3>
+
+  <ul class="w-64 flex flex-col gap-2">
+    @foreach (var tournament in Model.Tournaments)
+      {
+        <li>
+          <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@tournament.Id class="flex justify-center border border-stone-900 rounded-md p-1 w-full">
+            @tournament.Name
+          </a>
+        </li>
+      }
+    </ul>
 }

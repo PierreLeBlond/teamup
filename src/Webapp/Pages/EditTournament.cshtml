@@ -2,13 +2,17 @@
 @model Webapp.Pages.EditTournamentModel
 @{
   ViewData["Title"] = "Edit tournament";
+  Layout = "_MainLayout";
 }
+  @await Html.PartialAsync("_TitlePartial", Model.Tournament.Name)
 
-<h1>Edit tournament</h1>
+  <h2 class="section-title">Edit tournament</h2>
 
-<form method="post">
-  <label asp-for="Input.Name"></label>
-  <input asp-for="Input.Name">
-  <span asp-validation-for="Input.Name"></span>
-  <button type="submit">Edit</button>
-</form>
+  <form method="post" class="form">
+    <div class="input-wrapper">
+      <label asp-for="Input.Name" class="input-label"></label>
+      <input asp-for="Input.Name" class="input">
+      <span asp-validation-for="Input.Name" class="input-error"></span>
+    </div>
+    <button type="submit" class="btn self-end">Edit</button>
+  </form>

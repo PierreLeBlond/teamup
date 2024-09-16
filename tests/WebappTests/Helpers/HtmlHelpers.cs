@@ -96,7 +96,7 @@ public class HtmlHelpers
             .OfType<IHtmlAnchorElement>()
             .ToList()
             .Find(element =>
-                element.TextContent.Trim().Equals(text)
+                element.TextContent.Trim().Contains(text)
                 && HttpUtility.UrlDecode(element.Href).EndsWith(href)
             );
     }

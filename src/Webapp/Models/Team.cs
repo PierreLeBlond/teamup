@@ -18,5 +18,8 @@ public class Team
     [NotMapped]
     public int Score { get; set; } = 0;
 
+    [NotMapped]
+    public int Rank { get; set; } = 0;
+
     public ICollection<Teammate> Teammates { get; set; } = [];
 }

@@ -6,27 +6,32 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Webapp</title>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - teamup</title>
+    <link rel="stylesheet" href="~/css/output.css" />
 </head>
 
-<body>
-    <header>
-        <nav>
-            @await Component.InvokeAsync("Navigation")
+<body class="relative bg-stone-100 text-stone-900 border-stone-900 h-screen w-screen overflow-y-hidden">
+    <header class="fixed z-50 h-16 flex flex-col w-full justify-between border-b border-stone-900 bg-stone-100">
+        <nav class="grid grid-cols-5 gap-2 p-4 h-full">
+            <div class="col-span-4 border-r border-stone-400">
+                @await Component.InvokeAsync("Navigation")
+            </div>
+            <partial name="_LoginPartial" />
         </nav>
-        <partial name="_LoginPartial" />
-        @await Component.InvokeAsync("PlayerList")
-
     </header>
-    <div>
-        <main role="main">
-            <h4>@TempData["FormResult"]</h4>
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main" class="relative w-full overflow-y-auto pb-8 pt-16 h-full">
+        <div class="h-16 w-full">
+            @await Component.InvokeAsync("PlayerList")
+        </div>
+        @await Html.PartialAsync("_ToasterPartial", TempData["FormResult"])
+        @RenderBody()
+    </main>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

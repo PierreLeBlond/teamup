@@ -72,10 +72,7 @@ public class CreateTournamentModel(ApplicationDbContext context, UserManager<Use
         }
         catch (DbUpdateException)
         {
-            ModelState.AddModelError(
-                "Input.Name",
-                $"A tournament by the name of '{tournament.Name}' doth already exists."
-            );
+            ModelState.AddModelError("Input.Name", "Name already taken.");
             return Page();
         }
 

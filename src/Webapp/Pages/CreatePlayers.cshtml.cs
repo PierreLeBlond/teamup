@@ -17,6 +17,7 @@ public class CreatePlayerInput
         MinimumLength = 3,
         ErrorMessage = "Thou must provide a name between 3 and 60 characters."
     )]
+    [Display(Name = "name")]
     public required string Name { get; set; }
 }
 

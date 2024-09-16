@@ -94,8 +94,8 @@ public class EditRewardsTests(EditRewardsFixture<Program> factory)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Edit rewards");
-        var reward1Input = HtmlHelpers.FindInputByLabel(content, "Reward 1");
-        var reward2Input = HtmlHelpers.FindInputByLabel(content, "Reward 2");
+        var reward1Input = HtmlHelpers.FindInputByLabel(content, "reward 1");
+        var reward2Input = HtmlHelpers.FindInputByLabel(content, "reward 2");
         var button = content.QuerySelector("button");
 
         Assert.NotNull(title);
@@ -120,8 +120,8 @@ public class EditRewardsTests(EditRewardsFixture<Program> factory)
             content,
             "A total of 2 reward(s) hath been edited."
         );
-        var reward1Input = HtmlHelpers.FindInputByLabel(content, "Reward 1");
-        var reward2Input = HtmlHelpers.FindInputByLabel(content, "Reward 2");
+        var reward1Input = HtmlHelpers.FindInputByLabel(content, "reward 1");
+        var reward2Input = HtmlHelpers.FindInputByLabel(content, "reward 2");
 
         Assert.NotNull(feedback);
         Assert.NotNull(reward1Input);

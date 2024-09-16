@@ -1,29 +1,29 @@
 @namespace Webapp.Pages.Components
 @model NavigationViewComponentModel
 
-<ul>
-  <li>
-    <a asp-area="" asp-page="/Index">Home</a>
+<ul class="grid grid-cols-4 gap-2 h-full">
+  <li class="flex justify-center items-center">
+    <a asp-area="" asp-page="/Index"><i data-lucide="home"></i></a>
   </li>
   @if (Model.TournamentId is not null)
   {
-    <li>
+    <li class="flex justify-center items-center">
       <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@Model.TournamentId
-        asp-route-currentPlayerId=@Model.CurrentPlayerId>Tournament</a>
+        asp-route-currentPlayerId=@Model.CurrentPlayerId><i data-lucide="trophy"></i></a>
     </li>
   }
   @if (Model.GameId is not null)
   {
-    <li>
+    <li class="flex justify-center items-center">
       <a asp-area="" asp-page="/Game" asp-route-tournamentId=@Model.TournamentId asp-route-gameId=@Model.GameId
-        asp-route-currentPlayerId=@Model.CurrentPlayerId>Game</a>
+        asp-route-currentPlayerId=@Model.CurrentPlayerId><i data-lucide="dices"></i></a>
     </li>
   }
   @if (Model.TeamId is not null)
   {
-    <li>
+    <li class="flex justify-center items-center">
       <a asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.TournamentId asp-route-gameId=@Model.GameId
-        asp-route-teamId=@Model.TeamId asp-route-currentPlayerId=@Model.CurrentPlayerId>Team</a>
+        asp-route-teamId=@Model.TeamId asp-route-currentPlayerId=@Model.CurrentPlayerId><i data-lucide="users"></i></a>
     </li>
   }
 </ul>

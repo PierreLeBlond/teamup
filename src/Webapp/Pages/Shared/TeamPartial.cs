@@ -9,6 +9,5 @@ public class TeamPartial
     public required Game Game { get; set; }
     public required Team Team { get; set; }
     public Player? CurrentPlayer { get; set; } = null;
-
-    public IList<Teammate> Teammates { get; set; } = [];
+    public Team? CurrentTeam { get; set; } = null;
 }

@@ -2,28 +2,32 @@
 @model Webapp.Pages.TournamentModel
 @{
   ViewData["Title"] = "Tournament";
+  Layout = "_MainLayout";
 }
 
-<h1>@Model.Tournament.Name</h1>
+@await Html.PartialAsync("_TitlePartial", Model.Tournament.Name)
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/EditTournament" asp-route-tournamentId=@Model.Tournament.Id
+  <a class="btn" asp-area="" asp-page="/EditTournament" asp-route-tournamentId=@Model.Tournament.Id
   asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>Edit tournament</a>
+
+  <p class="separator"></p>
 }
 
-<h2>Players</h2>
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/CreatePlayers" asp-route-tournamentId=@Model.Tournament.Id
+  <a class="btn" asp-area="" asp-page="/CreatePlayers" asp-route-tournamentId=@Model.Tournament.Id
   asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>Create players</a>
 }
 
-<ul>
+<h2 class="section-title">Players</h2>
+
+<ul class="w-64 flex flex-col gap-2">
   @foreach (var player in Model.Players)
   {
-    <li>@await Html.PartialAsync("_PlayerPartial", new PlayerPartial
+    <li class="w-full">@await Html.PartialAsync("_PlayerPartial", new PlayerPartial
  {
    CurrentPlayer = Model.CurrentPlayer,
    Player = player
@@ -31,19 +35,21 @@
   }
 </ul>
 
-<h2>Games</h2>
+<p class="separator"></p>
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/CreateGame" asp-route-tournamentId=@Model.Tournament.Id
+  <a class="btn" asp-area="" asp-page="/CreateGame" asp-route-tournamentId=@Model.Tournament.Id
   asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>Create game</a>
 }
 
-<ul>
+<h2 class="section-title">Games</h2>
+
+<ul class="relative w-64 flex flex-col gap-2">
   @foreach (var game in Model.Games)
   {
     <li>
-      <a asp-area="" asp-page="/Game" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@game.Id
+      <a class="flex justify-center border border-stone-900 rounded-md p-1 w-full" asp-area="" asp-page="/Game" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@game.Id
         asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>@game.Name</a>
     </li>
   }

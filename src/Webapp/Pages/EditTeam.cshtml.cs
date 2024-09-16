@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Webapp.Data;
@@ -7,10 +8,13 @@ namespace Webapp.Pages;
 
 public class EditTeamInput
 {
+    [Display(Name = "bonus")]
     public required int Bonus { get; set; } = 0;
 
+    [Display(Name = "malus")]
     public required int Malus { get; set; } = 0;
 
+    [Display(Name = "result")]
     public int? ResultValue { get; set; }
 }
 

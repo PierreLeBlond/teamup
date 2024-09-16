@@ -2,22 +2,33 @@
 @model Webapp.Pages.CreatePlayersModel
 @{
   ViewData["Title"] = "Create Players";
+  Layout = "_MainLayout";
 }
 
-<h1>@Model.Tournament.Name</h1>
+@await Html.PartialAsync("_TitlePartial", Model.Tournament.Name)
 
-<h2>Create new players</h2>
-<form method="post">
-  <label asp-for="Input.Name"></label>
-  <input asp-for="Input.Name">
-  <span asp-validation-for="Input.Name"></span>
-  <button type="submit">Create</button>
+<h2 class="section-title">Create new players</h2>
+
+<form method="post" class="form">
+    <div class="input-wrapper">
+  <label asp-for="Input.Name" class="input-label"></label>
+  <input asp-for="Input.Name" class="input">
+  <span asp-validation-for="Input.Name" class="input-error"></span>
+  </div>
+  <button type="submit" class="btn self-end">Create</button>
 </form>
 
-<h2>Players</h2>
-<ul>
+<p class="separator"></p>
+
+<h2 class="section-title">Players</h2>
+
+<ul class="w-64 flex flex-col gap-2">
   @foreach (var player in Model.Players)
   {
-    <li>@player.Name</li>
+    <li class="w-full">@await Html.PartialAsync("_PlayerPartial", new PlayerPartial
+ {
+   CurrentPlayer = Model.CurrentPlayer,
+   Player = player
+ })</li>
   }
 </ul>

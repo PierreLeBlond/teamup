@@ -2,19 +2,28 @@
 @model Webapp.Pages.CreateGameModel
 @{
   ViewData["Title"] = "Create Game";
+  Layout = "_MainLayout";
 }
 
-<h3>Create a new game</h3>
+@await Html.PartialAsync("_TitlePartial", Model.Tournament.Name)
 
-<form method="post">
-  <label asp-for="Input.Name"></label>
-  <input asp-for="Input.Name">
-  <span asp-validation-for="Input.Name"></span>
-  <label asp-for="Input.NumberOfTeams"></label>
-  <input type="number" asp-for="Input.NumberOfTeams">
-  <span asp-validation-for="Input.NumberOfTeams"></span>
-  <label asp-for="Input.ShouldMaximizeScore"></label>
-  <input asp-for="Input.ShouldMaximizeScore">
-  <span asp-validation-for="Input.ShouldMaximizeScore"></span>
-  <button type="submit">Create</button>
+<h2 class="section-title">Create a new game</h2>
+
+<form method="post" class="form">
+    <div class="input-wrapper">
+  <label asp-for="Input.Name" class="input-label"></label>
+  <input asp-for="Input.Name" class="input">
+  <span asp-validation-for="Input.Name" class="input-error"></span>
+    </div>
+    <div class="input-wrapper">
+  <label asp-for="Input.NumberOfTeams" class="input-label"></label>
+  <input type="number" asp-for="Input.NumberOfTeams" class="input">
+  <span asp-validation-for="Input.NumberOfTeams" class="input-error"></span>
+    </div>
+    <div class="input-wrapper">
+  <label asp-for="Input.ShouldMaximizeScore" class="input-label"></label>
+  <input asp-for="Input.ShouldMaximizeScore" class="input self-start">
+  <span asp-validation-for="Input.ShouldMaximizeScore" class="input-error"></span>
+  </div>
+  <button type="submit" class="btn self-end">Create</button>
 </form>

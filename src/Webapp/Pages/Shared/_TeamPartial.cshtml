@@ -1,30 +1,21 @@
 @namespace Webapp.Pages
 @model TeamPartial
 
-<h2> <a asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
+
+<div class="grid grid-cols-[32px_1fr] gap-2">
+  <div class="h-8 w-8 border border-stone-900 rounded-full flex items-center justify-center">@Model.Team.Rank</div>
+  <p class="flex items-center text-xl font-bold">@(Model.Team.Result?.Value.ToString() ?? "0")</p>
+<a class="col-start-2 grid grid-cols-2 gap-4 items-center w-full border border-stone-900 @(Model.CurrentTeam?.Id == Model.Team.Id ? "bg-stone-900 text-stone-100" : "") px-2 rounded-md" asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
     asp-route-teamId=@Model.Team.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
-    Team @Model.Team.Number</a> </h2>
-<p aria-label="team @Model.Team.Number bonus">+@Model.Team.Bonus</p>
-<p aria-label="team @Model.Team.Number malus">-@Model.Team.Malus</p>
-<p aria-label="team @Model.Team.Number score">@Model.Team.Score</p>
-<p>Result: @(Model.Team.Result?.Value.ToString() ?? "Unknown")</p>
+  <h2 class="flex items-center justify-start"> 
+    Team @Model.Team.Number </h2>
 
-<h2>Team mates</h2>
-
-<ul>
-  @foreach (var teammate in Model.Teammates)
-  {
-    <li>
-      @await Html.PartialAsync("_TeammatePartial", new TeammatePartial
-{
-  IsOwner = Model.IsOwner,
-  Tournament = Model.Tournament,
-  Game = Model.Game,
-  Team = Model.Team,
-  CurrentPlayer = Model.CurrentPlayer,
-  Player = teammate.Player,
-  Teammate = teammate
-})
-    </li>
-  }
-</ul>
+  <div class="flex gap-2 justify-end items-center">
+    <div class="flex flex-col text-xs justify-center items-end">
+      <p aria-label="team @Model.Team.Number bonus">+@Model.Team.Bonus</p>
+      <p aria-label="team @Model.Team.Number malus">-@Model.Team.Malus</p>
+    </div>
+    <p class="text-4xl font-bold" aria-label="team @Model.Team.Number score">@Model.Team.Score</p>
+  </div>
+</a>
+</div>

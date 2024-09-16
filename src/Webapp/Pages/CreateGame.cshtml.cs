@@ -16,12 +16,15 @@ public class CreateGameInput
         MinimumLength = 3,
         ErrorMessage = "Thou must provide a name between 3 and 60 characters."
     )]
+    [Display(Name = "name")]
     public required string Name { get; set; }
 
     [Required(ErrorMessage = "Thou must provide a number of teams between 1 and 300.")]
     [Range(1, 300, ErrorMessage = "Thou must provide a number of teams between 1 and 300.")]
+    [Display(Name = "number of teams")]
     public required int NumberOfTeams { get; set; }
 
+    [Display(Name = "should maximize score")]
     public required bool ShouldMaximizeScore { get; set; } = true;
 }
 

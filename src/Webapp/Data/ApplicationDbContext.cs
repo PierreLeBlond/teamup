@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 using Webapp.Models;
 
 namespace Webapp.Data;
@@ -43,6 +44,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             ? null
             : Players.Single(p => p.Id == currentPlayerGuid);
         return currentPlayer;
+    }
+
+    public Team? GetCurrentTeam(Game game, Player? currentPlayer)
+    {
+        if (currentPlayer == null)
+        {
+            return null;
+        }
+        var currentTeammate = Teammates
+            .Include(t => t.Team)
+            .Single(t => t.PlayerId == currentPlayer.Id && t.Team.GameId == game.Id);
+        return currentTeammate?.Team;
     }
 
     private int GetPlayerScoreFromGame(Game game, Guid playerId)

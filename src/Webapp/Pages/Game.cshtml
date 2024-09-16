@@ -2,63 +2,44 @@
 @model Webapp.Pages.GameModel
 @{
   ViewData["Title"] = "Game";
+  Layout = "_MainLayout";
 }
 
-<h1>@Model.Game.Name</h1>
+@await Html.PartialAsync("_TitlePartial", Model.Game.Name)
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/EditGame" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
+  <a class="btn" asp-area="" asp-page="/EditGame" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
   Edit game
 </a>
+
+<p class="separator"></p>
+
 }
 
-<h2>Rewards</h2>
 
 @if (Model.IsOwner)
 {
-  <a asp-area="" asp-page="/EditRewards" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
+  <a class="btn" asp-area="" asp-page="/EditRewards" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
   Edit rewards
 </a>
 }
 
-<ul>
+<h2 class="section-title">Rewards</h2>
+
+<ul class="w-64 flex flex-col gap-2 items-center">
   @foreach (var reward in Model.Rewards)
   {
     <li>@reward.Value</li>
   }
 </ul>
 
-<h2>Teams</h2>
-
-@if (Model.Teams.Count == 0)
-{
-  <p>Teams have not been formed yet.</p>
-}
-else
-{
-  <ul>
-  @foreach (var team in Model.Teams)
-    {
-      <li>
-        @await Html.PartialAsync("_TeamPartial", new TeamPartial
-{
-  IsOwner = Model.IsOwner,
-  Tournament = Model.Tournament,
-  Game = Model.Game,
-  Team = team,
-  CurrentPlayer = Model.CurrentPlayer,
-  Teammates = [ ..team.Teammates ]
-})
-      </li>
-    }
-  </ul>
-}
+<p class="separator"></p>
 
 @if (Model.IsOwner)
 {
   <form method="post">
-  <button type="submit">
+  <button class="btn" type="submit">
     @if (Model.Teams.Count == 0)
       {
         <p>Generate teams</p>
@@ -70,3 +51,30 @@ else
     </button>
   </form>
 }
+
+<h2 class="section-title">Teams</h2>
+
+@if (Model.Teams.Count == 0)
+{
+  <p>Teams have not been formed yet.</p>
+}
+else
+{
+<ul class="w-64 flex flex-col gap-2">
+  @foreach (var team in Model.Teams)
+    {
+      <li>
+        @await Html.PartialAsync("_TeamPartial", new TeamPartial
+{
+  IsOwner = Model.IsOwner,
+  Tournament = Model.Tournament,
+  Game = Model.Game,
+  Team = team,
+  CurrentPlayer = Model.CurrentPlayer,
+  CurrentTeam = Model.CurrentTeam
+})
+      </li>
+    }
+  </ul>
+}
+

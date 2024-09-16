@@ -102,8 +102,8 @@ public class EditTeammateTests(EditTeammateFixture<Program> factory)
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
         var title = HtmlHelpers.FindElementByText(content, "Edit teammate teammate player");
-        var bonusInput = HtmlHelpers.FindInputByLabel(content, "Bonus");
-        var malusInput = HtmlHelpers.FindInputByLabel(content, "Malus");
+        var bonusInput = HtmlHelpers.FindInputByLabel(content, "bonus");
+        var malusInput = HtmlHelpers.FindInputByLabel(content, "malus");
         var button = content.QuerySelector("button");
 
         Assert.NotNull(title);

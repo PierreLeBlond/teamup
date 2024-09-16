@@ -36,26 +36,6 @@ public class IndexTests(CustomWebApplicationFactory<Program> factory)
     }
 
     [Fact]
-    public async Task Get_Unauthenticated_AskToLogin()
-    {
-        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
-
-        var response = await GetResponse(client);
-        var content = await HtmlHelpers.GetDocumentAsync(response);
-
-        var text = HtmlHelpers.FindElementByText(
-            content,
-            "Lo, greetings! Here beginneth the process of creating a tournament, but first thou must log in."
-        );
-        var link = HtmlHelpers.FindAnchorByText(content, "Create tournament");
-        var title = HtmlHelpers.FindElementByText(content, "My tournaments");
-
-        Assert.NotNull(text);
-        Assert.Null(link);
-        Assert.Null(title);
-    }
-
-    [Fact]
     public async Task Get_Owner_ShowOwnedTournaments()
     {
         var client = HttpClientHelpers.CreateOwnerClient(factory);

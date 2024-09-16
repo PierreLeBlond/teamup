@@ -5,21 +5,24 @@
 @namespace Webapp.Pages.Components
 @model PlayerListViewComponentModel
 
-<ul>
-  <li>Choose a player</li>
+<div class="w-full grid grid-cols-2 p-2 pt-4 h-12">
+  <div class="relative">
+    <div class="w-32 z-10 absolute group border border-stone-900 rounded-md flex flex-col justify-center items-center overflow-hidden bg-stone-100"
+  role="button" tabIndex="0">
+      <p class="h-8 flex items-center justify-center">@(Model.Player is not null ? Model.Player.Name : "Choose a player")</p>
+      <ul class="hidden group-hover:flex group-focus:flex group-active:flex flex-col w-full border-t border-stone-400 justify-center items-center mt-2 pt-2 gap-1 pb-2">
   @foreach (var player in Model.Players)
   {
     var url = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}?currentPlayerId={player.Id}";
     <li><a href="@url">@player.Name</a></li>
   }
-</ul>
-
-@if (Model.Player is not null)
+      </ul>
+    </div>
+  </div>
+  @if (Model.Player is not null)
 {
-
-  @await Html.PartialAsync("_PlayerPartial", new PlayerPartial
-{
-  Player = Model.Player,
-  CurrentPlayer = Model.Player
-})
+<p aria-label="player @Model.Player.Name score" class="flex items-center justify-end font-bold text-4xl">@Model.Player.Score</p>
 }
+</div>
+
+
