@@ -37,7 +37,7 @@ public class EditTeamModel(ApplicationDbContext context, UserManager<User> userM
     )
     {
         base.SetModel(tournamentId, gameId, teamId, currentPlayerId);
-        Result = context.Results.SingleOrDefault(r => r.TeamId == Team.Id);
+        Result = Team.Result;
     }
 
     public IActionResult OnGet(
@@ -114,8 +114,8 @@ public class EditTeamModel(ApplicationDbContext context, UserManager<User> userM
 
         await context.SaveChangesAsync();
 
-        FormResult = $"team {Team.Number} hath been edited.";
+        FormResult = "team edited";
 
-        return Redirect($"/tournaments/{Tournament.Id}/games/{Game.Id}");
+        return RedirectToTeams();
     }
 }

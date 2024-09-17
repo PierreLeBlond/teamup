@@ -12,11 +12,11 @@ namespace Webapp.Pages;
 
 public class EditTournamentInput
 {
-    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [Required(ErrorMessage = "provide a name between 3 and 60 characters")]
     [StringLength(
         60,
         MinimumLength = 3,
-        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+        ErrorMessage = "provide a name between 3 and 60 characters"
     )]
     public required string Name { get; set; }
 }
@@ -71,7 +71,6 @@ public class EditTournamentModel(ApplicationDbContext context, UserManager<User>
             return Page();
         }
 
-        var previousName = Tournament.Name;
         Tournament.Name = Input.Name;
 
         try
@@ -80,12 +79,12 @@ public class EditTournamentModel(ApplicationDbContext context, UserManager<User>
         }
         catch (DbUpdateException)
         {
-            ModelState.AddModelError("Input.Name", $"Name already taken.");
+            ModelState.AddModelError("Input.Name", $"tournament's name already exists");
             return Page();
         }
 
-        FormResult = $"The tournament '{previousName}' hath been renamed to '{Tournament.Name}'.";
+        FormResult = "tournament renamed";
 
-        return Redirect($"/tournaments/{Tournament.Id}");
+        return RedirectToTournaments();
     }
 }

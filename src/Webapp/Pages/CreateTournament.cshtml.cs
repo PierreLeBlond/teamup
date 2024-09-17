@@ -11,11 +11,11 @@ namespace Webapp.Pages;
 
 public class CreateTournamentInput
 {
-    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [Required(ErrorMessage = "provide a name between 3 and 60 characters")]
     [StringLength(
         60,
         MinimumLength = 3,
-        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+        ErrorMessage = "provide a name between 3 and 60 characters"
     )]
     public required string Name { get; set; }
 }
@@ -72,11 +72,11 @@ public class CreateTournamentModel(ApplicationDbContext context, UserManager<Use
         }
         catch (DbUpdateException)
         {
-            ModelState.AddModelError("Input.Name", "Name already taken.");
+            ModelState.AddModelError("Input.Name", "tournament's name already exists");
             return Page();
         }
 
-        FormResult = $"A tournament named '{tournament.Name}' hath been created.";
+        FormResult = "tournament created";
 
         return Redirect($"/tournaments/{tournament.Id}");
     }

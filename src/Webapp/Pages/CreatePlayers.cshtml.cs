@@ -11,11 +11,11 @@ namespace Webapp.Pages;
 
 public class CreatePlayerInput
 {
-    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [Required(ErrorMessage = "provide a name between 3 and 60 characters")]
     [StringLength(
         60,
         MinimumLength = 3,
-        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+        ErrorMessage = "provide a name between 3 and 60 characters"
     )]
     [Display(Name = "name")]
     public required string Name { get; set; }
@@ -35,10 +35,7 @@ public class CreatePlayersModel(ApplicationDbContext context, UserManager<User> 
     protected override void SetModel(string tournamentId, string? currentPlayerId)
     {
         base.SetModel(tournamentId, currentPlayerId);
-        Players =
-        [
-            .. context.Players.Where(p => p.TournamentId == Tournament.Id).OrderBy(p => p.Name)
-        ];
+        Players = Tournament.Players.ToList();
     }
 
     public IActionResult OnGet(string tournamentId, string? currentPlayerId)
@@ -92,14 +89,11 @@ public class CreatePlayersModel(ApplicationDbContext context, UserManager<User> 
         }
         catch (DbUpdateException)
         {
-            ModelState.AddModelError(
-                "Input.Name",
-                $"A player by the name of '{player.Name}' doth already exists."
-            );
+            ModelState.AddModelError("Input.Name", "player's name already exists");
             return Page();
         }
 
-        FormResult = $"A player named '{Input.Name}' hath been created.";
+        FormResult = "player created";
 
         return RedirectToPage();
     }

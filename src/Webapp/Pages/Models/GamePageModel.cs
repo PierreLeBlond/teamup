@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
@@ -17,8 +18,13 @@ public class GamePageModel(ApplicationDbContext context, UserManager<User> userM
         base.SetModel(tournamentId, currentPlayerId);
 
         var gameGuid = new Guid(gameId);
-        Game = context.Games.Include(g => g.Teams).Single(g => g.Id == gameGuid);
+        Game = Tournament.Games.Single(g => g.Id == gameGuid);
 
         CurrentTeam = context.GetCurrentTeam(Game, CurrentPlayer);
+    }
+
+    protected RedirectResult RedirectToGames()
+    {
+        return Redirect($"/tournaments/{Tournament.Id}/games/{Game.Id}{GetQueryString()}");
     }
 }

@@ -125,10 +125,7 @@ public class EditTeammateTests(EditTeammateFixture<Program> factory)
             $"/tournaments/{EditTeamFixture<Program>.TournamentId}/games/{EditTeamFixture<Program>.GameId}/teams/{EditTeamFixture<Program>.TeamId}";
         Assert.Equal(responsePath, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
-        var feedback = HtmlHelpers.FindElementByText(
-            responseContent,
-            "teammate teammate player hath been edited."
-        );
+        var feedback = HtmlHelpers.FindElementByText(responseContent, "teammate edited");
 
         Assert.NotNull(feedback);
     }

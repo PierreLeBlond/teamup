@@ -114,19 +114,12 @@ public class EditRewardsTests(EditRewardsFixture<Program> factory)
         var response = await PostResponse(client, ["200", "100"]);
         var content = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.EndsWith(path, HttpUtility.UrlDecode(content.BaseUrl?.PathName));
-
-        var feedback = HtmlHelpers.FindElementByText(
-            content,
-            "A total of 2 reward(s) hath been edited."
+        Assert.EndsWith(
+            $"/tournaments/{EditRewardsFixture<Program>.TournamentId}/games/{EditRewardsFixture<Program>.EditGameId}",
+            HttpUtility.UrlDecode(content.BaseUrl?.PathName)
         );
-        var reward1Input = HtmlHelpers.FindInputByLabel(content, "reward 1");
-        var reward2Input = HtmlHelpers.FindInputByLabel(content, "reward 2");
 
+        var feedback = HtmlHelpers.FindElementByText(content, "2 reward(s) have been edited");
         Assert.NotNull(feedback);
-        Assert.NotNull(reward1Input);
-        Assert.NotNull(reward2Input);
-        Assert.Equal("200", reward1Input.Value);
-        Assert.Equal("100", reward2Input.Value);
     }
 }

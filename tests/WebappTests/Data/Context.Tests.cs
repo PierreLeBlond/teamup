@@ -71,8 +71,9 @@ public class ContextTest(TestDatabaseFixture fixture) : IClassFixture<TestDataba
 
         context.ChangeTracker.Clear();
 
-        var score = context.GetPlayerScore(tournament, player1.Id);
+        var t = context.GetTournament(tournament.Id);
+        var player = t.Players.Single(p => p.Name == "player1");
 
-        Assert.Equal(150, score);
+        Assert.Equal(150, player.Score);
     }
 }

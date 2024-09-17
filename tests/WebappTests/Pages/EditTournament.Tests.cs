@@ -113,7 +113,7 @@ public class EditTournamentTests(EditTournamentFixture<Program> factory)
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "Thou must provide a name between 3 and 60 characters."
+                "provide a name between 3 and 60 characters"
             )
         );
     }
@@ -127,7 +127,9 @@ public class EditTournamentTests(EditTournamentFixture<Program> factory)
         var response = await PostResponse(client, "jane tournament");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "Name already taken."));
+        Assert.NotNull(
+            HtmlHelpers.FindElementByText(responseContent, "tournament's name already exists")
+        );
     }
 
     [Fact]
@@ -140,11 +142,6 @@ public class EditTournamentTests(EditTournamentFixture<Program> factory)
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "edited tournament"));
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "The tournament 'editable tournament' hath been renamed to 'edited tournament'."
-            )
-        );
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "tournament renamed"));
     }
 }

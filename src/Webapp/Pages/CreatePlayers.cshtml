@@ -23,6 +23,9 @@
 <h2 class="section-title">Players</h2>
 
 <ul class="w-64 flex flex-col gap-2">
+  @if (Model.Players.Count() == 0) {
+    <li class="w-full text-stone-400">No players</li>
+  }
   @foreach (var player in Model.Players)
   {
     <li class="w-full">@await Html.PartialAsync("_PlayerPartial", new PlayerPartial

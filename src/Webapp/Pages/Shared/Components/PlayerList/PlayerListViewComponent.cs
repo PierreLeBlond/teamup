@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Webapp.Data;
 using Webapp.Models;
@@ -16,7 +15,7 @@ public class PlayerListViewComponent(ApplicationDbContext context) : ViewCompone
 {
     private readonly ApplicationDbContext context = context;
 
-    public async Task<IViewComponentResult> InvokeAsync()
+    public IViewComponentResult Invoke()
     {
         var tournamentId = HttpContext.Request.RouteValues["tournamentId"];
         if (tournamentId is null)
@@ -25,8 +24,9 @@ public class PlayerListViewComponent(ApplicationDbContext context) : ViewCompone
         }
 
         var tournamentGuid = Guid.Parse((string)tournamentId);
+        var tournament = context.GetTournament(tournamentGuid);
 
-        var players = await GetPlayersAsync(tournamentGuid);
+        var players = tournament.Players.ToList();
         var model = new PlayerListViewComponentModel { Players = players };
 
         if (
@@ -40,16 +40,8 @@ public class PlayerListViewComponent(ApplicationDbContext context) : ViewCompone
         }
 
         var currentPlayerGuid = Guid.Parse(currentPlayerId.ToString());
-        model.Player = context.Players.Single(p => p.Id == currentPlayerGuid);
-
-        var tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
-        model.Player.Score = context.GetPlayerScore(tournament, currentPlayerGuid);
+        model.Player = players.Single(p => p.Id == currentPlayerGuid);
 
         return View(model);
-    }
-
-    private Task<List<Player>> GetPlayersAsync(Guid tournamentId)
-    {
-        return context.Players.Where(p => p.TournamentId == tournamentId).ToListAsync();
     }
 }

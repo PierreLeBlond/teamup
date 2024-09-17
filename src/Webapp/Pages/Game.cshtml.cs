@@ -18,37 +18,8 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
     protected override void SetModel(string tournamentId, string gameId, string? currentPlayerId)
     {
         base.SetModel(tournamentId, gameId, currentPlayerId);
-        Rewards =
-        [
-            .. context.Rewards.Where(r => r.GameId == Game.Id).OrderByDescending(r => r.Value)
-        ];
-        var teams = context
-            .Teams.Include(t => t.Result)
-            .Include(t => t.Teammates)
-            .ThenInclude(t => t.Player)
-            .Where(t => t.GameId == Game.Id);
-        if (Game.ShouldMaximizeScore)
-        {
-            Teams =
-            [
-                .. teams.OrderByDescending(t => t.Result == null ? int.MinValue : t.Result.Value)
-            ];
-        }
-        else
-        {
-            Teams = [.. teams.OrderBy(t => t.Result == null ? int.MaxValue : t.Result.Value)];
-        }
-
-        for (var i = 0; i < Teams.Count; i++)
-        {
-            var team = Teams[i];
-            team.Score = context.GetTeamScore(Game, team);
-            team.Rank = i + 1;
-            foreach (var teammate in team.Teammates)
-            {
-                teammate.Player.Score = context.GetPlayerScore(Tournament, teammate.Player.Id);
-            }
-        }
+        Rewards = Game.Rewards.ToList();
+        Teams = Game.Teams.ToList();
     }
 
     public IActionResult OnGet(string tournamentId, string gameId, string? currentPlayerId)
@@ -99,7 +70,7 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
 
         await context.SaveChangesAsync();
 
-        FormResult = $"Teams for game '{Game.Name}' have been generated !";
+        FormResult = $"teams generated";
 
         return RedirectToPage();
     }

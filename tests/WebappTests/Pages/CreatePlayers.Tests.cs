@@ -71,7 +71,7 @@ public class CreatePlayersTests(
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "Thou must provide a name between 3 and 60 characters."
+                "provide a name between 3 and 60 characters"
             )
         );
     }
@@ -86,10 +86,7 @@ public class CreatePlayersTests(
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "A player by the name of 'player1' doth already exists."
-            )
+            HtmlHelpers.FindElementByText(responseContent, "player's name already exists")
         );
     }
 
@@ -111,11 +108,6 @@ public class CreatePlayersTests(
         Assert.EndsWith(path, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "valid player"));
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "A player named 'valid player' hath been created."
-            )
-        );
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "player created"));
     }
 }

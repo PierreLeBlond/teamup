@@ -21,7 +21,7 @@
   }
 
   .form {
-    @apply flex flex-col gap-4
+    @apply flex flex-col gap-4 w-64
   }
 
   .input-wrapper {
@@ -37,7 +37,7 @@
   }
 
   .input-error {
-    @apply text-red-600 text-xs h-4
+    @apply text-red-600 text-xs h-4 overflow-hidden
   }
 
   .separator {
@@ -46,21 +46,25 @@
 
     @keyframes slideIn {
       0% {
+        opacity: 0;
         transform: translateY(64px);
       }
   
       100% {
         transform: translateY(0);
+        opacity: 1;
       }
     }
 
     @keyframes fadeOut {
       0% {
         opacity: 1;
+        transform: translateY(0);
       }
   
       100% {
         opacity: 0;
+        transform: translateY(64px);
       }
     }
 

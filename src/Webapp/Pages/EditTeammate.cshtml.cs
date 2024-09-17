@@ -38,7 +38,7 @@ public class EditTeammateModel(ApplicationDbContext context, UserManager<User> u
         base.SetModel(tournamentId, gameId, teamId, currentPlayerId);
 
         var teammateGuid = new Guid(teammateId);
-        Teammate = context.Teammates.Include(t => t.Player).Single(t => t.Id == teammateGuid);
+        Teammate = Team.Teammates.Single(t => t.Id == teammateGuid);
     }
 
     public IActionResult OnGet(
@@ -100,8 +100,8 @@ public class EditTeammateModel(ApplicationDbContext context, UserManager<User> u
 
         await context.SaveChangesAsync();
 
-        FormResult = $"teammate {Teammate.Player.Name} hath been edited.";
+        FormResult = "teammate edited";
 
-        return Redirect($"/tournaments/{Tournament.Id}/games/{Game.Id}/teams/{Team.Id}");
+        return RedirectToTeams();
     }
 }

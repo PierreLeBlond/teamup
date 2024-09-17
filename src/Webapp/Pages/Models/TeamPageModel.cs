@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
@@ -20,8 +21,13 @@ public class TeamPageModel(ApplicationDbContext context, UserManager<User> userM
         base.SetModel(tournamentId, gameId, currentPlayerId);
 
         var teamGuid = new Guid(teamId);
-        Team = context.Teams.Include(t => t.Result).Single(t => t.Id == teamGuid);
+        Team = Game.Teams.Single(t => t.Id == teamGuid);
+    }
 
-        Team.Score = context.GetTeamScore(Game, Team);
+    protected RedirectResult RedirectToTeams()
+    {
+        return Redirect(
+            $"/tournaments/{Tournament.Id}/games/{Game.Id}/teams/{Team.Id}{GetQueryString()}"
+        );
     }
 }

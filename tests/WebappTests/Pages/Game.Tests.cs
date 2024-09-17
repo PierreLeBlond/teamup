@@ -69,6 +69,17 @@ public class GameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
                         }
                     );
 
+                    context.Rewards.AddRange(
+                        [
+                            new Reward { GameId = NotGeneratedGameId, Value = 100 },
+                            new Reward { GameId = NotGeneratedGameId, Value = 50 },
+                            new Reward { GameId = ToGenerateGameId, Value = 100 },
+                            new Reward { GameId = ToGenerateGameId, Value = 50 },
+                            new Reward { GameId = MinimizedGameId, Value = 100 },
+                            new Reward { GameId = MinimizedGameId, Value = 50 },
+                        ]
+                    );
+
                     Team[] teams =
                     [
                         new Team { GameId = MinimizedGameId, Number = 1 },
@@ -251,10 +262,7 @@ public class GameTests(GameFixture<Program> factory, ITestOutputHelper output)
         var player1 = HtmlHelpers.FindElementByText(content, "player1");
         var team2 = HtmlHelpers.FindElementByText(content, "Team 2");
         var player2 = HtmlHelpers.FindElementByText(content, "player2");
-        var feedback = HtmlHelpers.FindElementByText(
-            content,
-            "Teams for game 'to generate game' have been generated !"
-        );
+        var feedback = HtmlHelpers.FindElementByText(content, "teams generated");
 
         Assert.NotNull(team1);
         Assert.NotNull(player1);

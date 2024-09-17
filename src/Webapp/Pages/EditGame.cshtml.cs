@@ -12,11 +12,11 @@ namespace Webapp.Pages;
 
 public class EditGameInput
 {
-    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [Required(ErrorMessage = "provide a name between 3 and 60 characters")]
     [StringLength(
         60,
         MinimumLength = 3,
-        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+        ErrorMessage = "provide a name between 3 and 60 characters"
     )]
     [Display(Name = "name")]
     public required string Name { get; set; }
@@ -76,7 +76,6 @@ public class EditGameModel(ApplicationDbContext context, UserManager<User> userM
             return Page();
         }
 
-        var previousName = Game.Name;
         Game.Name = Input.Name;
 
         try
@@ -85,15 +84,12 @@ public class EditGameModel(ApplicationDbContext context, UserManager<User> userM
         }
         catch (DbUpdateException)
         {
-            ModelState.AddModelError(
-                "Input.Name",
-                $"A game by the name of '{Game.Name}' doth already exists."
-            );
+            ModelState.AddModelError("Input.Name", "game's name already exists");
             return Page();
         }
 
-        FormResult = $"The game '{previousName}' hath been renamed to '{Game.Name}'.";
+        FormResult = "game renamed";
 
-        return Redirect($"/tournaments/{Tournament.Id}/games/{Game.Id}");
+        return RedirectToGames();
     }
 }

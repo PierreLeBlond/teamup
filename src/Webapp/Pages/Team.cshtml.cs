@@ -24,18 +24,7 @@ public class TeamModel(ApplicationDbContext context, UserManager<User> userManag
     )
     {
         base.SetModel(tournamentId, gameId, teamId, currentPlayerId);
-        Teammates =
-        [
-            .. context
-                .Teammates.Include(t => t.Player)
-                .Where(t => t.TeamId == Team.Id)
-                .OrderBy(t => t.Player.Name)
-        ];
-
-        foreach (var teammate in Teammates)
-        {
-            teammate.Player.Score = context.GetPlayerScore(Tournament, teammate.Player.Id);
-        }
+        Teammates = Team.Teammates.ToList();
     }
 
     public IActionResult OnGet(

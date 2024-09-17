@@ -113,7 +113,7 @@ public class EditGameTests(EditGameFixture<Program> factory)
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "Thou must provide a name between 3 and 60 characters."
+                "provide a name between 3 and 60 characters"
             )
         );
     }
@@ -128,10 +128,7 @@ public class EditGameTests(EditGameFixture<Program> factory)
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "A game by the name of 'game' doth already exists."
-            )
+            HtmlHelpers.FindElementByText(responseContent, "game's name already exists")
         );
     }
 
@@ -145,11 +142,6 @@ public class EditGameTests(EditGameFixture<Program> factory)
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "edited game"));
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "The game 'editable game' hath been renamed to 'edited game'."
-            )
-        );
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "game renamed"));
     }
 }

@@ -10,11 +10,11 @@ namespace Webapp.Pages;
 
 public class CreateGameInput
 {
-    [Required(ErrorMessage = "Thou must provide a name between 3 and 60 characters.")]
+    [Required(ErrorMessage = "provide a name between 3 and 60 characters")]
     [StringLength(
         60,
         MinimumLength = 3,
-        ErrorMessage = "Thou must provide a name between 3 and 60 characters."
+        ErrorMessage = "provide a name between 3 and 60 characters"
     )]
     [Display(Name = "name")]
     public required string Name { get; set; }
@@ -105,15 +105,12 @@ public class CreateGameModel(ApplicationDbContext context, UserManager<User> use
         }
         catch (DbUpdateException)
         {
-            ModelState.AddModelError(
-                "Input.Name",
-                $"A game by the name of '{game.Name}' doth already exists."
-            );
+            ModelState.AddModelError("Input.Name", "game's name already exists");
             return Page();
         }
 
-        FormResult = $"A game named '{Input.Name}' hath been created.";
+        FormResult = "game created";
 
-        return Redirect($"/tournaments/{Tournament.Id}");
+        return RedirectToTournaments();
     }
 }

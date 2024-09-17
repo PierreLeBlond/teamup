@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Polly;
@@ -37,94 +38,113 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         base.OnModelCreating(modelBuilder);
     }
 
-    public Player? GetCurrentPlayer(string? currentPlayerId)
+    public List<Tournament> GetTournaments(string? currentUserId)
     {
-        Guid? currentPlayerGuid = currentPlayerId is null ? null : new Guid(currentPlayerId);
-        var currentPlayer = currentPlayerGuid is null
-            ? null
-            : Players.Single(p => p.Id == currentPlayerGuid);
-        return currentPlayer;
+        return Tournaments
+            .Where(tournament => tournament.OwnerId == currentUserId)
+            .OrderBy(tournament => tournament.Name.ToLower())
+            .ToList();
     }
 
-    public Team? GetCurrentTeam(Game game, Player? currentPlayer)
+    public Tournament GetTournament(Guid tournamentId)
     {
-        if (currentPlayer == null)
+        var tournament = Tournaments
+            .Include(t => t.Games.OrderBy(game => game.Name.ToLower()))
+            .ThenInclude(g => g.Rewards.OrderByDescending(r => r.Value))
+            .Include(t => t.Players)
+            .Single(tournament => tournament.Id == tournamentId);
+
+        var players = tournament.Players.ToList();
+
+        foreach (var player in players)
+        {
+            player.Score = 0;
+        }
+
+        foreach (var game in tournament.Games)
+        {
+            game.Teams = GetTeams(game);
+            foreach (var team in game.Teams)
+            {
+                foreach (var teammate in team.Teammates)
+                {
+                    var player = players.Single(p => p.Id == teammate.PlayerId);
+                    player.Score += teammate.Bonus;
+                    player.Score -= teammate.Malus;
+                    player.Score += team.Score;
+
+                    teammate.Player = player;
+                }
+            }
+        }
+
+        players.Sort(
+            (p1, p2) =>
+            {
+                var compare = p2.Score.CompareTo(p1.Score);
+                if (compare != 0)
+                {
+                    return compare;
+                }
+                return p1.Name.CompareTo(p2.Name);
+            }
+        );
+
+        tournament.Players = players;
+
+        return tournament;
+    }
+
+    public Player? GetCurrentPlayer(Tournament tournament, string? currentPlayerId)
+    {
+        Guid? currentPlayerGuid = currentPlayerId is null ? null : new Guid(currentPlayerId);
+
+        if (currentPlayerGuid is null)
         {
             return null;
         }
-        var currentTeammate = Teammates
-            .Include(t => t.Team)
-            .Single(t => t.PlayerId == currentPlayer.Id && t.Team.GameId == game.Id);
-        return currentTeammate?.Team;
+        var currentPlayer = tournament.Players.Single(p => p.Id == currentPlayerGuid);
+
+        return currentPlayer;
     }
 
-    private int GetPlayerScoreFromGame(Game game, Guid playerId)
+    public Team? GetCurrentTeam(Game game, Player? CurrentPlayer)
     {
-        int score = 0;
-
-        var teammate = Teammates
-            .Include(t => t.Team)
-            .ThenInclude(t => t.Result)
-            .SingleOrDefault(t => t.Team.GameId == game.Id && t.PlayerId == playerId);
-        if (teammate == null)
+        if (CurrentPlayer is null)
         {
-            return score;
+            return null;
         }
-
-        score += teammate.Bonus;
-        score -= teammate.Malus;
-
-        score += GetTeamScore(game, teammate.Team);
-
-        return score;
+        return game.Teams.Single(t => t.Teammates.Any(t => t.PlayerId == CurrentPlayer.Id));
     }
 
-    public int GetPlayerScore(Tournament tournament, Guid playerId)
+    public List<Team> GetTeams(Game game)
     {
-        int score = 0;
-
-        var games = Games.Where(g => g.TournamentId == tournament.Id).ToArray();
-
-        foreach (var game in games)
-        {
-            score += GetPlayerScoreFromGame(game, playerId);
-        }
-
-        return score;
-    }
-
-    public int GetTeamScore(Game game, Team team)
-    {
-        int score = 0;
-
-        score += team.Bonus;
-        score -= team.Malus;
-
-        if (team.Result == null)
-        {
-            return score;
-        }
-
-        var teams = Teams
+        var queryableTeams = Teams
             .Include(t => t.Result)
-            .Where(t => t.GameId == game.Id && t.Result != null);
-        var sortedTeams = game.ShouldMaximizeScore
-            ? teams.OrderByDescending(t => t.Result!.Value)
-            : teams.OrderBy(t => t.Result!.Value);
+            .Include(t => t.Teammates)
+            .Where(t => t.GameId == game.Id);
+        var sortedQueryableTeams = game.ShouldMaximizeScore
+            ? queryableTeams
+                .OrderByDescending(t => t.Result != null ? t.Result.Value : int.MinValue)
+                .ThenBy(t => t.Number)
+            : queryableTeams
+                .OrderBy(t => t.Result != null ? t.Result.Value : int.MaxValue)
+                .ThenBy(t => t.Number);
 
-        var index = sortedTeams.ToList().IndexOf(team);
-        var rewards = Rewards
-            .Where(r => r.GameId == game.Id)
-            .OrderByDescending(r => r.Value)
-            .ToList();
+        var teams = sortedQueryableTeams.ToList();
 
-        if (index < 0 || index >= rewards.Count)
+        for (var i = 0; i < teams.Count; i++)
         {
-            return score;
+            var team = teams[i];
+            team.Score = team.Bonus;
+            team.Score -= team.Malus;
+
+            var rewardValue = game.Rewards.ElementAt(i).Value;
+            team.Score += rewardValue;
+
+            team.Rank = i + 1;
         }
 
-        score += rewards[index].Value;
-
-        return score;
+        return teams;
     }
 }

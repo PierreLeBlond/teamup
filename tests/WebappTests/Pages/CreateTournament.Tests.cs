@@ -69,7 +69,7 @@ public class CreateTournamentTests(CustomWebApplicationFactory<Program> factory)
         Assert.NotNull(
             HtmlHelpers.FindElementByText(
                 responseContent,
-                "Thou must provide a name between 3 and 60 characters."
+                "provide a name between 3 and 60 characters"
             )
         );
     }
@@ -83,7 +83,9 @@ public class CreateTournamentTests(CustomWebApplicationFactory<Program> factory)
         var response = await PostResponse(client, "jane tournament");
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
-        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "Name already taken."));
+        Assert.NotNull(
+            HtmlHelpers.FindElementByText(responseContent, "tournament's name already exists")
+        );
     }
 
     [Fact]
@@ -96,11 +98,6 @@ public class CreateTournamentTests(CustomWebApplicationFactory<Program> factory)
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "new tournament"));
-        Assert.NotNull(
-            HtmlHelpers.FindElementByText(
-                responseContent,
-                "A tournament named 'new tournament' hath been created."
-            )
-        );
+        Assert.NotNull(HtmlHelpers.FindElementByText(responseContent, "tournament created"));
     }
 }

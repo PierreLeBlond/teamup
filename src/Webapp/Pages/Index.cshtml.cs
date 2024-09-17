@@ -20,9 +20,6 @@ public class IndexModel(ApplicationDbContext context, UserManager<User> userMana
     {
         var currentUserId = userManager.GetUserId(User);
 
-        Tournaments =
-        [
-            .. context.Tournaments.Where(tournament => tournament.OwnerId == currentUserId)
-        ];
+        Tournaments = context.GetTournaments(currentUserId);
     }
 }

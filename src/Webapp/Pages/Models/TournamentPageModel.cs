@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Webapp.Data;
 using Webapp.Models;
@@ -18,11 +19,25 @@ public class TournamentPageModel(ApplicationDbContext context, UserManager<User>
     protected virtual void SetModel(string tournamentId, string? currentPlayerId)
     {
         var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.Tournaments.Single(t => t.Id == tournamentGuid);
+        Tournament = context.GetTournament(tournamentGuid);
 
-        CurrentPlayer = context.GetCurrentPlayer(currentPlayerId);
+        CurrentPlayer = context.GetCurrentPlayer(Tournament, currentPlayerId);
 
         var currentUserId = userManager.GetUserId(User);
         IsOwner = Tournament.OwnerId == currentUserId;
+    }
+
+    protected string GetQueryString()
+    {
+        if (CurrentPlayer is null)
+        {
+            return "";
+        }
+        return $"?currentPlayerId={CurrentPlayer.Id}";
+    }
+
+    protected RedirectResult RedirectToTournaments()
+    {
+        return Redirect($"/tournaments/{Tournament.Id}{GetQueryString()}");
     }
 }

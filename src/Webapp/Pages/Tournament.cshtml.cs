@@ -18,26 +18,8 @@ public class TournamentModel(ApplicationDbContext context, UserManager<User> use
     {
         base.SetModel(tournamentId, currentPlayerId);
 
-        Players = [.. context.Players.Where(p => p.TournamentId == Tournament.Id)];
-
-        foreach (var player in Players)
-        {
-            player.Score = context.GetPlayerScore(Tournament, player.Id);
-        }
-
-        Players.Sort(
-            (p1, p2) =>
-            {
-                var compare = p1.Score.CompareTo(p2.Score);
-                if (compare != 0)
-                {
-                    return compare;
-                }
-                return p1.Name.CompareTo(p2.Name);
-            }
-        );
-
-        Games = [.. context.Games.Where(g => g.TournamentId == Tournament.Id).OrderBy(g => g.Name)];
+        Players = Tournament.Players.ToList();
+        Games = Tournament.Games.ToList();
     }
 
     public void OnGet(string tournamentId, string? currentPlayerId)

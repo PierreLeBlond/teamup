@@ -21,15 +21,15 @@ public class EditRewardsModel(ApplicationDbContext context, UserManager<User> us
     [BindProperty]
     public EditRewardsInput[] Input { get; set; } = [];
 
-    public IQueryable<Reward> Rewards { get; set; } = null!;
+    public IList<Reward> Rewards { get; set; } = null!;
 
     protected override void SetModel(string tournamentId, string gameId, string? currentPlayerId)
     {
         base.SetModel(tournamentId, gameId, currentPlayerId);
-        Rewards = context.Rewards.Where(r => r.GameId == Game.Id).OrderByDescending(r => r.Value);
+        Rewards = Game.Rewards.ToList();
     }
 
-    public IActionResult OnGetAsync(string tournamentId, string gameId, string? currentPlayerId)
+    public IActionResult OnGet(string tournamentId, string gameId, string? currentPlayerId)
     {
         var currentUserId = userManager.GetUserId(User);
 
@@ -81,8 +81,8 @@ public class EditRewardsModel(ApplicationDbContext context, UserManager<User> us
 
         var count = await context.SaveChangesAsync();
 
-        FormResult = $"A total of {count} reward(s) hath been edited.";
+        FormResult = $"{count} reward(s) have been edited";
 
-        return RedirectToPage();
+        return RedirectToGames();
     }
 }

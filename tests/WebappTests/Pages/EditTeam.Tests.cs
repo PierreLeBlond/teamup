@@ -46,6 +46,13 @@ public class EditTeamFixture<TProgram> : CustomWebApplicationFactory<TProgram>
                         }
                     );
 
+                    context.Rewards.AddRange(
+                        [
+                            new Reward { GameId = EditGameId, Value = 100 },
+                            new Reward { GameId = EditGameId, Value = 50 }
+                        ]
+                    );
+
                     context.Teams.Add(
                         new Team
                         {
@@ -148,10 +155,10 @@ public class EditTeamTests(EditTeamFixture<Program> factory)
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         var responsePath =
-            $"/tournaments/{EditTeamFixture<Program>.TournamentId}/games/{EditTeamFixture<Program>.EditGameId}";
+            $"/tournaments/{EditTeamFixture<Program>.TournamentId}/games/{EditTeamFixture<Program>.EditGameId}/teams/{EditTeamFixture<Program>.EditWithoutResultTeamId}";
         Assert.Equal(responsePath, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
-        var feedback = HtmlHelpers.FindElementByText(responseContent, "team 1 hath been edited.");
+        var feedback = HtmlHelpers.FindElementByText(responseContent, "team edited");
 
         Assert.NotNull(feedback);
     }
@@ -165,22 +172,16 @@ public class EditTeamTests(EditTeamFixture<Program> factory)
         var responseContent = await HtmlHelpers.GetDocumentAsync(response);
 
         var responsePath =
-            $"/tournaments/{EditTeamFixture<Program>.TournamentId}/games/{EditTeamFixture<Program>.EditGameId}";
+            $"/tournaments/{EditTeamFixture<Program>.TournamentId}/games/{EditTeamFixture<Program>.EditGameId}/teams/{EditTeamFixture<Program>.EditTeamId}";
         Assert.Equal(responsePath, HttpUtility.UrlDecode(responseContent.BaseUrl?.PathName));
 
-        var feedback = HtmlHelpers.FindElementByText(responseContent, "team 2 hath been edited.");
+        var feedback = HtmlHelpers.FindElementByText(responseContent, "team edited");
 
-        var team1 = HtmlHelpers.FindElementByText(responseContent, "Team 1");
-        var team2 = HtmlHelpers.FindElementByText(responseContent, "Team 2");
+        var rank = HtmlHelpers.FindElementByAriaLabel(responseContent, "team 2 rank");
 
-        Assert.NotNull(team1);
-        Assert.NotNull(team2);
+        Assert.NotNull(rank);
 
-        var descendants = responseContent.Descendants().ToList();
-        var team1Index = descendants.IndexOf(team1);
-        var team2Index = descendants.IndexOf(team2);
-
-        Assert.True(team1Index > team2Index);
+        Assert.Equal("1", rank.TextContent);
 
         Assert.NotNull(feedback);
     }
