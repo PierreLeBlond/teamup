@@ -30,7 +30,7 @@ else
     @foreach (var tournament in Model.Tournaments)
       {
         <li>
-          <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@tournament.Id class="flex justify-center border border-stone-900 rounded-md p-1 w-full">
+          <a asp-area="" asp-page="/Tournament" asp-route-tournamentId=@tournament.Id class="flex justify-center border border-stone-900 hover:bg-stone-200 rounded-md p-1 w-full">
             @tournament.Name
           </a>
         </li>

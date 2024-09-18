@@ -12,7 +12,7 @@
       <p class="flex items-center text-xl font-bold">@(Model.Team.Result?.Value.ToString() ?? "0")</p>
     }
   }
-<a class="col-start-2 grid grid-cols-2 gap-4 items-center w-full border border-stone-900 @(Model.CurrentTeam?.Id == Model.Team.Id ? "bg-stone-900 text-stone-100" : "") px-2 rounded-md" asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
+<a class="col-start-2 grid grid-cols-2 gap-4 items-center w-full border border-stone-900 hover:bg-stone-200 @(Model.CurrentTeam?.Id == Model.Team.Id ? "bg-stone-900 text-stone-100 hover:bg-stone-700" : "") px-2 rounded-md" asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
     asp-route-teamId=@Model.Team.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
   <h2 class="flex items-center justify-start"> 
     Team @Model.Team.Number </h2>

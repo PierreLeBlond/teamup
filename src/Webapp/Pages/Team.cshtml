@@ -35,7 +35,7 @@
     <li>
       @if (Model.IsOwner)
       {
-        <a asp-area="" asp-page="/EditTeammate" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
+        <a class="hover:bg-stone-200" asp-area="" asp-page="/EditTeammate" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
           asp-route-teamId=@Model.Team.Id asp-route-teammateId=@teammate.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
         @await Html.PartialAsync("_TeammatePartial", new TeammatePartial
           {

@@ -55,7 +55,7 @@
   @foreach (var game in Model.Games)
   {
     <li>
-      <a class="flex justify-center border border-stone-900 rounded-md p-1 w-full" asp-area="" asp-page="/Game" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@game.Id
+      <a class="flex justify-center border border-stone-900 hover:bg-stone-200 rounded-md p-1 w-full" asp-area="" asp-page="/Game" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@game.Id
         asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>@game.Name</a>
     </li>
   }
