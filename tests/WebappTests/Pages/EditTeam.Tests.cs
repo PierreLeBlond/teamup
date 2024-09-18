@@ -177,12 +177,6 @@ public class EditTeamTests(EditTeamFixture<Program> factory)
 
         var feedback = HtmlHelpers.FindElementByText(responseContent, "team edited");
 
-        var rank = HtmlHelpers.FindElementByAriaLabel(responseContent, "team 2 rank");
-
-        Assert.NotNull(rank);
-
-        Assert.Equal("1", rank.TextContent);
-
         Assert.NotNull(feedback);
     }
 }

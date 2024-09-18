@@ -1,7 +1,5 @@
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Polly;
 using Webapp.Models;
 
 namespace Webapp.Data;
@@ -114,7 +112,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             return null;
         }
-        return game.Teams.Single(t => t.Teammates.Any(t => t.PlayerId == CurrentPlayer.Id));
+        return game.Teams.SingleOrDefault(t =>
+            t.Teammates.Any(t => t.PlayerId == CurrentPlayer.Id)
+        );
     }
 
     public List<Team> GetTeams(Game game)
@@ -133,16 +133,28 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         var teams = sortedQueryableTeams.ToList();
 
+        int? lastResult = null;
+        var rank = -1;
+
         for (var i = 0; i < teams.Count; i++)
         {
             var team = teams[i];
             team.Score = team.Bonus;
             team.Score -= team.Malus;
 
-            var rewardValue = game.Rewards.ElementAt(i).Value;
-            team.Score += rewardValue;
+            if (team.Result?.Value != lastResult)
+            {
+                rank++;
+            }
 
-            team.Rank = i + 1;
+            if (team.Result is not null)
+            {
+                var rewardValue = game.Rewards.ElementAt(rank).Value;
+                team.Score += rewardValue;
+                team.Rank = rank + 1;
+            }
+
+            lastResult = team.Result?.Value;
         }
 
         return teams;

@@ -19,7 +19,7 @@ public class Team
     public int Score { get; set; } = 0;
 
     [NotMapped]
-    public int Rank { get; set; } = 0;
+    public int? Rank { get; set; } = null;
 
     public ICollection<Teammate> Teammates { get; set; } = [];
 }

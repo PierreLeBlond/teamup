@@ -60,20 +60,23 @@
 }
 else
 {
-<ul class="w-64 flex flex-col gap-2">
-  @foreach (var team in Model.Teams)
+  int? previousRank = -1;
+  <ul class="w-64 flex flex-col gap-2">
+    @foreach (var team in Model.Teams)
     {
       <li>
         @await Html.PartialAsync("_TeamPartial", new TeamPartial
-{
-  IsOwner = Model.IsOwner,
-  Tournament = Model.Tournament,
-  Game = Model.Game,
-  Team = team,
-  CurrentPlayer = Model.CurrentPlayer,
-  CurrentTeam = Model.CurrentTeam
-})
+        {
+          IsOwner = Model.IsOwner,
+          Tournament = Model.Tournament,
+          Game = Model.Game,
+          Team = team,
+          CurrentPlayer = Model.CurrentPlayer,
+          CurrentTeam = Model.CurrentTeam,
+          PreviousRank = previousRank
+        })
       </li>
+      previousRank = team.Rank;
     }
   </ul>
 }

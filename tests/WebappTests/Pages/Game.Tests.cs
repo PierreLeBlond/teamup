@@ -21,6 +21,7 @@ public class GameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
     public static readonly Guid NotGeneratedGameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b64");
     public static readonly Guid ToGenerateGameId = new("543f6a09-90af-4fba-9b4b-9e86f30b6b65");
     public static readonly Guid MinimizedGameId = new("543f6a09-90af-4fba-9b4b-9e86f30b6665");
+    public static readonly Guid SameResultGameId = new("543f3a09-94af-4fba-984b-9e86630b6665");
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -36,37 +37,41 @@ public class GameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
                     using var scope = serviceProvider.CreateScope();
                     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                    context.Games.Add(
-                        new Game
-                        {
-                            Id = NotGeneratedGameId,
-                            Name = "not generated game",
-                            TournamentId = TournamentId,
-                            ShouldMaximizeScore = true,
-                            NumberOfTeams = 2
-                        }
-                    );
-
-                    context.Games.Add(
-                        new Game
-                        {
-                            Id = ToGenerateGameId,
-                            Name = "to generate game",
-                            TournamentId = TournamentId,
-                            ShouldMaximizeScore = true,
-                            NumberOfTeams = 2
-                        }
-                    );
-
-                    context.Games.Add(
-                        new Game
-                        {
-                            Id = MinimizedGameId,
-                            Name = "minimized game",
-                            TournamentId = TournamentId,
-                            ShouldMaximizeScore = false,
-                            NumberOfTeams = 2
-                        }
+                    context.Games.AddRange(
+                        [
+                            new Game
+                            {
+                                Id = NotGeneratedGameId,
+                                Name = "not generated game",
+                                TournamentId = TournamentId,
+                                ShouldMaximizeScore = true,
+                                NumberOfTeams = 2
+                            },
+                            new Game
+                            {
+                                Id = ToGenerateGameId,
+                                Name = "to generate game",
+                                TournamentId = TournamentId,
+                                ShouldMaximizeScore = true,
+                                NumberOfTeams = 2
+                            },
+                            new Game
+                            {
+                                Id = MinimizedGameId,
+                                Name = "minimized game",
+                                TournamentId = TournamentId,
+                                ShouldMaximizeScore = false,
+                                NumberOfTeams = 2
+                            },
+                            new Game
+                            {
+                                Id = SameResultGameId,
+                                Name = "same result game",
+                                TournamentId = TournamentId,
+                                ShouldMaximizeScore = true,
+                                NumberOfTeams = 3
+                            }
+                        ]
                     );
 
                     context.Rewards.AddRange(
@@ -76,14 +81,19 @@ public class GameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
                             new Reward { GameId = ToGenerateGameId, Value = 100 },
                             new Reward { GameId = ToGenerateGameId, Value = 50 },
                             new Reward { GameId = MinimizedGameId, Value = 100 },
-                            new Reward { GameId = MinimizedGameId, Value = 50 },
+                            new Reward { GameId = MinimizedGameId, Value = 150 },
+                            new Reward { GameId = SameResultGameId, Value = 100 },
+                            new Reward { GameId = SameResultGameId, Value = 50 },
                         ]
                     );
 
                     Team[] teams =
                     [
                         new Team { GameId = MinimizedGameId, Number = 1 },
-                        new Team { GameId = MinimizedGameId, Number = 2 }
+                        new Team { GameId = MinimizedGameId, Number = 2 },
+                        new Team { GameId = SameResultGameId, Number = 1 },
+                        new Team { GameId = SameResultGameId, Number = 2 },
+                        new Team { GameId = SameResultGameId, Number = 3 },
                     ];
 
                     context.Teams.AddRange(teams);
@@ -91,6 +101,9 @@ public class GameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
                         [
                             new Result { TeamId = teams[0].Id, Value = 3000 },
                             new Result { TeamId = teams[1].Id, Value = 2000 },
+                            new Result { TeamId = teams[2].Id, Value = 3000 },
+                            new Result { TeamId = teams[3].Id, Value = 3000 },
+                            new Result { TeamId = teams[4].Id, Value = 1000 },
                         ]
                     );
                     context.SaveChanges();
@@ -116,6 +129,8 @@ public class GameTests(GameFixture<Program> factory, ITestOutputHelper output)
         $"/tournaments/{GameFixture<Program>.TournamentId}/games/{GameFixture<Program>.ToGenerateGameId}";
     private static readonly string minimizedPath =
         $"/tournaments/{GameFixture<Program>.TournamentId}/games/{GameFixture<Program>.MinimizedGameId}";
+    private static readonly string sameResultPath =
+        $"/tournaments/{GameFixture<Program>.TournamentId}/games/{GameFixture<Program>.SameResultGameId}";
 
     private static async Task<HttpResponseMessage> GetResponse(HttpClient client, string path)
     {
@@ -217,6 +232,39 @@ public class GameTests(GameFixture<Program> factory, ITestOutputHelper output)
         var team2Index = descendants.IndexOf(team2);
 
         Assert.True(team1Index > team2Index);
+    }
+
+    [Fact]
+    public async Task Get_Unhauthenticated_TeamsGenerated_GroupTeamsWithSameResult()
+    {
+        var client = HttpClientHelpers.CreateUnauthenticatedClient(factory);
+
+        var response = await GetResponse(client, sameResultPath);
+        var content = await HtmlHelpers.GetDocumentAsync(response);
+
+        var rank1 = HtmlHelpers.FindElementByAriaLabel(content, "rank 1");
+        var team1 = HtmlHelpers.FindElementByText(content, "Team 1");
+        var team2 = HtmlHelpers.FindElementByText(content, "Team 2");
+        var rank2 = HtmlHelpers.FindElementByAriaLabel(content, "rank 2");
+        var team3 = HtmlHelpers.FindElementByText(content, "Team 3");
+
+        Assert.NotNull(rank1);
+        Assert.NotNull(team1);
+        Assert.NotNull(team2);
+        Assert.NotNull(rank2);
+        Assert.NotNull(team3);
+
+        var descendants = content.Descendants().ToList();
+        var rank1Index = descendants.IndexOf(rank1);
+        var team1Index = descendants.IndexOf(team1);
+        var team2Index = descendants.IndexOf(team2);
+        var rank2Index = descendants.IndexOf(rank2);
+        var team3Index = descendants.IndexOf(team3);
+
+        Assert.True(rank1Index < team1Index);
+        Assert.True(team1Index < team2Index);
+        Assert.True(team2Index < rank2Index);
+        Assert.True(rank2Index < team3Index);
     }
 
     [Fact]

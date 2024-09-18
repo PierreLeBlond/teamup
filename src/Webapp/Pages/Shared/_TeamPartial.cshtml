@@ -3,8 +3,15 @@
 
 
 <div class="grid grid-cols-[32px_1fr] gap-2">
-  <div class="h-8 w-8 border border-stone-900 rounded-full flex items-center justify-center" aria-label="team @Model.Team.Number rank">@Model.Team.Rank</div>
-  <p class="flex items-center text-xl font-bold">@(Model.Team.Result?.Value.ToString() ?? "0")</p>
+  @if (Model.Team.Rank != Model.PreviousRank) {
+    @if (Model.Team.Rank is null) {
+      <div class="h-8 w-8 border border-stone-900 rounded-full flex items-center justify-center" aria-label="unranked team"><i class="w-4 h-4" data-lucide="circle-slash-2"></i></div>
+      <p class="flex items-center text-xl font-bold">unranked</p>
+    } else {
+      <div class="h-8 w-8 border border-stone-900 rounded-full flex items-center justify-center" aria-label="rank @Model.Team.Rank">@Model.Team.Rank</div>
+      <p class="flex items-center text-xl font-bold">@(Model.Team.Result?.Value.ToString() ?? "0")</p>
+    }
+  }
 <a class="col-start-2 grid grid-cols-2 gap-4 items-center w-full border border-stone-900 @(Model.CurrentTeam?.Id == Model.Team.Id ? "bg-stone-900 text-stone-100" : "") px-2 rounded-md" asp-area="" asp-page="/Team" asp-route-tournamentId=@Model.Tournament.Id asp-route-gameId=@Model.Game.Id
     asp-route-teamId=@Model.Team.Id asp-route-currentPlayerId=@Model.CurrentPlayer?.Id>
   <h2 class="flex items-center justify-start"> 
