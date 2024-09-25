@@ -5,7 +5,7 @@ namespace Webapp.Tests.Data;
 
 public class TestDatabaseFixture
 {
-    private const string ConnectionString = @"Data Source=webapp.db";
+    private const string ConnectionString = @"Data Source=data.db";
 
     private static readonly object _lock = new();
     private static bool _databaseInitialized;

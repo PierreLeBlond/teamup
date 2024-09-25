@@ -1,7 +1,7 @@
 .vscode/
 
-**/obj
-**/bin
+**/obj/
+**/bin/
 
-webapp.db
+**/webapp.db
 
