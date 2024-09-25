@@ -16,7 +16,11 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Test with the dotnet CLI
-        run: dotnet test
+        run: |
+          dotnet user-secrets init
+          dotnet user-secrets set githubClientId ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          dotnet user-secrets set githubClientSecret ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+          dotnet test
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only ./src/Webapp
         env:
