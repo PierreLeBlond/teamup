@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Webapp.Data;
 using Webapp.Models;
+using Webapp.Utils;
 
 namespace Webapp.Pages;
 
@@ -48,24 +49,18 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
             return Forbid();
         }
 
-        var players = context.Players.Where(p => p.TournamentId == Tournament.Id);
+        context.Teams.RemoveRange(Teams);
 
-        // There is an issue if using some kind of array generation with Select, where team ids became all 0's
-        var teams = new Team[Game.NumberOfTeams];
-        for (var i = 0; i < Game.NumberOfTeams; i++)
+        var teamsPlayers = TeamGenerator.GenerateTeams([.. Tournament.Players], Game.NumberOfTeams);
+
+        for (var i = 0; i < teamsPlayers.Count; i++)
         {
             var team = new Team { GameId = Game.Id, Number = i + 1 };
-            teams[i] = team;
-        }
-
-        context.Teams.RemoveRange(Teams);
-        context.Teams.AddRange(teams);
-
-        for (var i = 0; i < players.Count(); i++)
-        {
-            var player = players.ElementAt(i);
-            var team = teams.ElementAt(i % Game.NumberOfTeams);
-            context.Teammates.Add(new Teammate { TeamId = team.Id, PlayerId = player.Id });
+            context.Teams.Add(team);
+            foreach (var teamPlayer in teamsPlayers.ElementAt(i))
+            {
+                context.Teammates.Add(new Teammate { TeamId = team.Id, PlayerId = teamPlayer.Id });
+            }
         }
 
         await context.SaveChangesAsync();
