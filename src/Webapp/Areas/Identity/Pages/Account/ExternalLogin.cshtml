@@ -3,27 +3,28 @@
 @{
     ViewData["Title"] = "Register";
 }
+<div class="flex flex-col gap-4 items-center">
 
-<h1>@ViewData["Title"]</h1>
-<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
+<h2 class="section-title">Associate your @Model.ProviderDisplayName account.</h2>
 <hr />
 
-<p id="external-login-description">
-    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
+<p class="p-4 text-center">
+    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.<br>
     Please enter an email address for this site below and click the Register button to finish
     logging in.
 </p>
 
 <div>
     <div>
-        <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <form class="form" asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div asp-validation-summary="ModelOnly" role="alert"></div>
-            <div>
-                <input asp-for="Input.Email" autocomplete="email" placeholder="Please enter your email." />
-                <label asp-for="Input.Email"></label>
-                <span asp-validation-for="Input.Email"></span>
+            <div class="input-wrapper">
+                <label class="input-label" asp-for="Input.Email"></label>
+                <input class="input" asp-for="Input.Email" autocomplete="email" placeholder="Please enter your email." />
+                <span class="input-error" asp-validation-for="Input.Email"></span>
             </div>
-            <button type="submit">Register</button>
+            <button type="submit" class="btn self-end">Register</button>
         </form>
     </div>
+</div>
 </div>
