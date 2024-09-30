@@ -32,4 +32,23 @@ public class TeamGeneratorTest
 
         Assert.Equal(expectedTeams, teams);
     }
+
+    [Fact]
+    public void ShoulGenerateTeamsWhenPlayersHaveNoScoreYet()
+    {
+        var players = new List<Player>();
+        for (int i = 0; i < 4; i++)
+        {
+            players.Add(new Player { Name = $"player{i + 1}", Score = 0 });
+        }
+        var teams = TeamGenerator.GenerateTeams(players, 2);
+
+        var expectedTeams = new List<List<Player>>
+        {
+            new List<Player> { players.ElementAt(0), players.ElementAt(2) },
+            new List<Player> { players.ElementAt(1), players.ElementAt(3) },
+        };
+
+        Assert.Equal(expectedTeams, teams);
+    }
 }

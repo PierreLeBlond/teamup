@@ -27,22 +27,48 @@ class Comparer : IComparer<Player>
 
 public class TeamGenerator
 {
-    private static List<Player> GetLeastScoringTeam(List<List<Player>> teams)
+    private static bool IsNextTeamLeast(
+        List<Player>? currentTeam,
+        int currentScore,
+        List<Player> nextTeam,
+        int nextScore,
+        int maxTeamSize
+    )
     {
-        if (teams.Count == 0)
+        if (currentTeam == null)
         {
-            throw new ArgumentException("teams must not be empty");
+            return true;
         }
 
-        List<Player> leastScoringTeam = null!;
-        var leastScore = int.MaxValue;
-        foreach (var team in teams)
+        if (nextTeam.Count == maxTeamSize)
         {
-            var score = team.Aggregate(0, (current, player) => current + player.Score);
-            if (score < leastScore)
+            return false;
+        }
+
+        if (nextScore > currentScore)
+        {
+            return false;
+        }
+
+        if (nextScore == currentScore && nextTeam.Count >= currentTeam.Count)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static List<Player>? GetLeastScoringTeam(List<List<Player>> teams, int maxTeamSize)
+    {
+        List<Player>? leastScoringTeam = null;
+        var leastScore = int.MaxValue;
+        foreach (var nextTeam in teams)
+        {
+            var nextScore = nextTeam.Aggregate(0, (current, player) => current + player.Score);
+            if (IsNextTeamLeast(leastScoringTeam, leastScore, nextTeam, nextScore, maxTeamSize))
             {
-                leastScore = score;
-                leastScoringTeam = team;
+                leastScore = nextScore;
+                leastScoringTeam = nextTeam;
             }
         }
         return leastScoringTeam;
@@ -50,6 +76,7 @@ public class TeamGenerator
 
     public static List<List<Player>> GenerateTeams(List<Player> players, int numberOfTeams)
     {
+        var maxTeamSize = (int)Math.Ceiling((float)players.Count / numberOfTeams);
         var teams = new List<List<Player>>();
         for (int i = 0; i < numberOfTeams; i++)
         {
@@ -60,7 +87,9 @@ public class TeamGenerator
 
         foreach (var player in sortedPlayers)
         {
-            var team = GetLeastScoringTeam(teams);
+            var team =
+                GetLeastScoringTeam(teams, maxTeamSize)
+                ?? throw new Exception("Couldn't fond a least scoring team");
             team.Add(player);
         }
 
