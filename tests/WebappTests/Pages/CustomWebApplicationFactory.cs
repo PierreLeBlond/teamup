@@ -40,12 +40,12 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                         {
                             Id = TournamentId,
                             Name = "jane tournament",
-                            OwnerId = "JaneId"
+                            OwnerName = "Jane"
                         };
                         context.Tournaments.Add(tournament);
 
                         context.Tournaments.Add(
-                            new Tournament { Name = "john tournament", OwnerId = "JohnId" }
+                            new Tournament { Name = "john tournament", OwnerName = "John" }
                         );
 
                         var player = new Player

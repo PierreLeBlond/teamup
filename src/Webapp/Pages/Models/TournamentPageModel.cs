@@ -23,8 +23,8 @@ public class TournamentPageModel(ApplicationDbContext context, UserManager<User>
 
         CurrentPlayer = context.GetCurrentPlayer(Tournament, currentPlayerId);
 
-        var currentUserId = userManager.GetUserId(User);
-        IsOwner = Tournament.OwnerId == currentUserId;
+        var currentUserName = userManager.GetUserName(User);
+        IsOwner = Tournament.OwnerName == currentUserName;
     }
 
     protected string GetQueryString()

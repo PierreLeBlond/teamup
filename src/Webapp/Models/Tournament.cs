@@ -6,7 +6,7 @@ public class Tournament
 
     public required string Name { get; set; }
 
-    public required string OwnerId { get; set; }
+    public required string OwnerName { get; set; }
 
     public ICollection<Player> Players { get; set; } = [];
     public ICollection<Game> Games { get; set; } = [];

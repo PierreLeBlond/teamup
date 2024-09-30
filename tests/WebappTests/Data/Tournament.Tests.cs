@@ -12,7 +12,9 @@ public class TournamentTest(TestDatabaseFixture fixture) : IClassFixture<TestDat
         using var context = Fixture.CreateContext();
         context.Database.BeginTransaction();
 
-        context.Tournaments.Add(new Tournament { Name = "tournamentName", OwnerId = "ownerId" });
+        context.Tournaments.Add(
+            new Tournament { Name = "tournamentName", OwnerName = "ownerName" }
+        );
         context.SaveChanges();
 
         context.ChangeTracker.Clear();

@@ -99,6 +99,15 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 
+using (
+    var context = app
+        .Services.CreateScope()
+        .ServiceProvider.GetRequiredService<ApplicationDbContext>()
+)
+{
+    context.Database.EnsureCreated();
+}
+
 app.Run();
 
 public partial class Program { }

@@ -37,7 +37,7 @@ public class EditTournamentFixture<TProgram> : CustomWebApplicationFactory<TProg
                         {
                             Id = EditTournamentId,
                             Name = "editable tournament",
-                            OwnerId = "JaneId"
+                            OwnerName = "Jane"
                         }
                     );
 

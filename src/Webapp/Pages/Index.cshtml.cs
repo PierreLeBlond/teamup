@@ -18,8 +18,8 @@ public class IndexModel(ApplicationDbContext context, UserManager<User> userMana
 
     public void OnGet()
     {
-        var currentUserId = userManager.GetUserId(User);
+        var currentUserName = userManager.GetUserName(User);
 
-        Tournaments = context.GetTournaments(currentUserId);
+        Tournaments = context.GetTournaments(currentUserName);
     }
 }

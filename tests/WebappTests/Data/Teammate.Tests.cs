@@ -14,7 +14,7 @@ public class TeammateTest(TestDatabaseFixture fixture) : IClassFixture<TestDatab
         using var context = Fixture.CreateContext();
         context.Database.BeginTransaction();
 
-        var tournament = new Tournament { Name = "tournamentName", OwnerId = "ownerId" };
+        var tournament = new Tournament { Name = "tournamentName", OwnerName = "ownerName" };
         context.Tournaments.Add(tournament);
         var player = new Player { Name = "playerName", TournamentId = tournament.Id };
         context.Players.Add(player);

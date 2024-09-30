@@ -13,7 +13,7 @@ public class PlayerTest(TestDatabaseFixture fixture) : IClassFixture<TestDatabas
         using var context = Fixture.CreateContext();
         context.Database.BeginTransaction();
 
-        var tournament = new Tournament { Name = "tournamentName", OwnerId = "ownerId" };
+        var tournament = new Tournament { Name = "tournamentName", OwnerName = "ownerName" };
         context.Tournaments.Add(tournament);
         context.Players.Add(new Player { Name = "playerName", TournamentId = tournament.Id });
         context.SaveChanges();
@@ -30,7 +30,7 @@ public class PlayerTest(TestDatabaseFixture fixture) : IClassFixture<TestDatabas
         using var context = Fixture.CreateContext();
         context.Database.BeginTransaction();
 
-        var tournament = new Tournament { Name = "tournamentName", OwnerId = "ownerId" };
+        var tournament = new Tournament { Name = "tournamentName", OwnerName = "ownerName" };
         context.Tournaments.Add(tournament);
         context.Players.Add(new Player { Name = "playerName", TournamentId = tournament.Id });
         context.Players.Add(new Player { Name = "playerName", TournamentId = tournament.Id });

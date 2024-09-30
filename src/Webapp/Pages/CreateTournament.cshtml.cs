@@ -50,9 +50,9 @@ public class CreateTournamentModel(ApplicationDbContext context, UserManager<Use
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var currentUserId = userManager.GetUserId(User);
+        var currentUserName = userManager.GetUserName(User);
 
-        if (currentUserId is null)
+        if (currentUserName is null)
         {
             return Unauthorized();
         }
@@ -62,7 +62,7 @@ public class CreateTournamentModel(ApplicationDbContext context, UserManager<Use
             return Page();
         }
 
-        var tournament = new Tournament { Name = Input.Name, OwnerId = currentUserId };
+        var tournament = new Tournament { Name = Input.Name, OwnerName = currentUserName };
 
         context.Tournaments.Add(tournament);
 
