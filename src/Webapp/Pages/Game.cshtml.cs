@@ -55,11 +55,11 @@ public class GameModel(ApplicationDbContext context, UserManager<User> userManag
 
         for (var i = 0; i < teamsPlayers.Count; i++)
         {
-            var team = new Team { GameId = Game.Id, Number = i + 1 };
+            var team = new Team { Game = Game, Number = i + 1 };
             context.Teams.Add(team);
             foreach (var teamPlayer in teamsPlayers.ElementAt(i))
             {
-                context.Teammates.Add(new Teammate { TeamId = team.Id, PlayerId = teamPlayer.Id });
+                context.Teammates.Add(new Teammate { Team = team, Player = teamPlayer });
             }
         }
 

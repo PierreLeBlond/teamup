@@ -18,10 +18,12 @@ public class TournamentPageModel(ApplicationDbContext context, UserManager<User>
 
     protected virtual void SetModel(string tournamentId, string? currentPlayerId)
     {
-        var tournamentGuid = new Guid(tournamentId);
-        Tournament = context.GetTournament(tournamentGuid);
+        Tournament = context.GetTournament(int.Parse(tournamentId));
 
-        CurrentPlayer = context.GetCurrentPlayer(Tournament, currentPlayerId);
+        CurrentPlayer = context.GetCurrentPlayer(
+            Tournament,
+            currentPlayerId is not null ? int.Parse(currentPlayerId) : null
+        );
 
         var currentUserName = userManager.GetUserName(User);
         IsOwner = Tournament.OwnerName == currentUserName;

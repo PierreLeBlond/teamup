@@ -105,7 +105,7 @@ public class EditTeamModel(ApplicationDbContext context, UserManager<User> userM
         {
             if (Result == null)
             {
-                Result = new Result { TeamId = Team.Id };
+                Result = new Result { Team = Team };
                 context.Results.Add(Result);
             }
 

@@ -3,7 +3,6 @@ using System.Web;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Webapp.Data;
 using Webapp.Models;
@@ -18,10 +17,10 @@ public class GameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
-    public static readonly Guid NotGeneratedGameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b64");
-    public static readonly Guid ToGenerateGameId = new("543f6a09-90af-4fba-9b4b-9e86f30b6b65");
-    public static readonly Guid MinimizedGameId = new("543f6a09-90af-4fba-9b4b-9e86f30b6665");
-    public static readonly Guid SameResultGameId = new("543f3a09-94af-4fba-984b-9e86630b6665");
+    public static readonly int NotGeneratedGameId = 70;
+    public static readonly int ToGenerateGameId = 71;
+    public static readonly int MinimizedGameId = 72;
+    public static readonly int SameResultGameId = 73;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -76,34 +75,124 @@ public class GameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
 
                     context.Rewards.AddRange(
                         [
-                            new Reward { GameId = NotGeneratedGameId, Value = 100 },
-                            new Reward { GameId = NotGeneratedGameId, Value = 50 },
-                            new Reward { GameId = ToGenerateGameId, Value = 100 },
-                            new Reward { GameId = ToGenerateGameId, Value = 50 },
-                            new Reward { GameId = MinimizedGameId, Value = 100 },
-                            new Reward { GameId = MinimizedGameId, Value = 150 },
-                            new Reward { GameId = SameResultGameId, Value = 100 },
-                            new Reward { GameId = SameResultGameId, Value = 50 },
+                            new Reward
+                            {
+                                Id = 70,
+                                GameId = NotGeneratedGameId,
+                                Value = 100
+                            },
+                            new Reward
+                            {
+                                Id = 71,
+                                GameId = NotGeneratedGameId,
+                                Value = 50
+                            },
+                            new Reward
+                            {
+                                Id = 72,
+                                GameId = ToGenerateGameId,
+                                Value = 100
+                            },
+                            new Reward
+                            {
+                                Id = 73,
+                                GameId = ToGenerateGameId,
+                                Value = 50
+                            },
+                            new Reward
+                            {
+                                Id = 74,
+                                GameId = MinimizedGameId,
+                                Value = 100
+                            },
+                            new Reward
+                            {
+                                Id = 75,
+                                GameId = MinimizedGameId,
+                                Value = 150
+                            },
+                            new Reward
+                            {
+                                Id = 76,
+                                GameId = SameResultGameId,
+                                Value = 100
+                            },
+                            new Reward
+                            {
+                                Id = 77,
+                                GameId = SameResultGameId,
+                                Value = 50
+                            },
                         ]
                     );
 
                     Team[] teams =
                     [
-                        new Team { GameId = MinimizedGameId, Number = 1 },
-                        new Team { GameId = MinimizedGameId, Number = 2 },
-                        new Team { GameId = SameResultGameId, Number = 1 },
-                        new Team { GameId = SameResultGameId, Number = 2 },
-                        new Team { GameId = SameResultGameId, Number = 3 },
+                        new Team
+                        {
+                            Id = 70,
+                            GameId = MinimizedGameId,
+                            Number = 1
+                        },
+                        new Team
+                        {
+                            Id = 71,
+                            GameId = MinimizedGameId,
+                            Number = 2
+                        },
+                        new Team
+                        {
+                            Id = 72,
+                            GameId = SameResultGameId,
+                            Number = 1
+                        },
+                        new Team
+                        {
+                            Id = 73,
+                            GameId = SameResultGameId,
+                            Number = 2
+                        },
+                        new Team
+                        {
+                            Id = 74,
+                            GameId = SameResultGameId,
+                            Number = 3
+                        },
                     ];
 
                     context.Teams.AddRange(teams);
                     context.Results.AddRange(
                         [
-                            new Result { TeamId = teams[0].Id, Value = 3000 },
-                            new Result { TeamId = teams[1].Id, Value = 2000 },
-                            new Result { TeamId = teams[2].Id, Value = 3000 },
-                            new Result { TeamId = teams[3].Id, Value = 3000 },
-                            new Result { TeamId = teams[4].Id, Value = 1000 },
+                            new Result
+                            {
+                                Id = 70,
+                                Team = teams[0],
+                                Value = 3000
+                            },
+                            new Result
+                            {
+                                Id = 71,
+                                Team = teams[1],
+                                Value = 2000
+                            },
+                            new Result
+                            {
+                                Id = 72,
+                                Team = teams[2],
+                                Value = 3000
+                            },
+                            new Result
+                            {
+                                Id = 73,
+                                Team = teams[3],
+                                Value = 3000
+                            },
+                            new Result
+                            {
+                                Id = 74,
+                                Team = teams[4],
+                                Value = 1000
+                            },
                         ]
                     );
                     context.SaveChanges();

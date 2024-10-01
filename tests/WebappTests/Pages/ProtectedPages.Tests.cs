@@ -7,9 +7,9 @@ public class ProtectedPagesTests(CustomWebApplicationFactory<Program> factory)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
-    private static readonly Guid tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
-    private static readonly Guid gameId = CustomWebApplicationFactory<Program>.GameId;
-    private static readonly Guid teamId = CustomWebApplicationFactory<Program>.TeamId;
+    private static readonly int tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
+    private static readonly int gameId = CustomWebApplicationFactory<Program>.GameId;
+    private static readonly int teamId = CustomWebApplicationFactory<Program>.TeamId;
 
     private static async Task<HttpResponseMessage> GetResponse(HttpClient client, string path)
     {

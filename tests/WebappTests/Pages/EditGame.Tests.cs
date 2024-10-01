@@ -14,7 +14,7 @@ public class EditGameFixture<TProgram> : CustomWebApplicationFactory<TProgram>
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
-    public static readonly Guid EditGameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b66");
+    public static readonly int EditGameId = 20;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

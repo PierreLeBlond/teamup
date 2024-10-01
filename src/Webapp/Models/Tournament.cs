@@ -2,7 +2,7 @@ namespace Webapp.Models;
 
 public class Tournament
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public required string Name { get; set; }
 

@@ -16,10 +16,9 @@ public class EditTeamFixture<TProgram> : CustomWebApplicationFactory<TProgram>
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
-    public static readonly Guid EditGameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b62");
-    public static readonly Guid EditWithoutResultTeamId =
-        new("543f6a09-90af-4fba-9b4b-9e863e0b6b63");
-    public static readonly Guid EditTeamId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b63");
+    public static readonly int EditGameId = 40;
+    public static readonly int EditWithoutResultTeamId = 40;
+    public static readonly int EditTeamId = 41;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

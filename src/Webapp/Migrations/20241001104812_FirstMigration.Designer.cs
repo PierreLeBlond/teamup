@@ -11,8 +11,8 @@ using Webapp.Data;
 namespace Webapp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240930204120_ChangeTournamentUserForeignKeyToName")]
-    partial class ChangeTournamentUserForeignKeyToName
+    [Migration("20241001104812_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -362,9 +362,9 @@ namespace Webapp.Migrations
 
             modelBuilder.Entity("Webapp.Models.Game", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -376,8 +376,8 @@ namespace Webapp.Migrations
                     b.Property<bool>("ShouldMaximizeScore")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("TournamentId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -391,34 +391,34 @@ namespace Webapp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("c0c0c0c0-c0c0-c0c0-c0c0-c0c0c0c0c0c0"),
+                            Id = 1,
                             Name = "Hide and Seek",
                             NumberOfTeams = 2,
                             ShouldMaximizeScore = true,
-                            TournamentId = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0")
+                            TournamentId = 1
                         },
                         new
                         {
-                            Id = new Guid("c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1"),
+                            Id = 2,
                             Name = "Red lights, Green lights",
                             NumberOfTeams = 2,
                             ShouldMaximizeScore = true,
-                            TournamentId = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0")
+                            TournamentId = 1
                         });
                 });
 
             modelBuilder.Entity("Webapp.Models.Player", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("TournamentId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -432,38 +432,38 @@ namespace Webapp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3"),
+                            Id = 1,
                             Name = "Achilles",
-                            TournamentId = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0")
+                            TournamentId = 1
                         },
                         new
                         {
-                            Id = new Guid("b0b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b0"),
+                            Id = 2,
                             Name = "Antigone",
-                            TournamentId = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0")
+                            TournamentId = 1
                         },
                         new
                         {
-                            Id = new Guid("b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1"),
+                            Id = 3,
                             Name = "Bellerophon",
-                            TournamentId = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0")
+                            TournamentId = 1
                         },
                         new
                         {
-                            Id = new Guid("b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2"),
+                            Id = 4,
                             Name = "Nausica",
-                            TournamentId = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0")
+                            TournamentId = 1
                         });
                 });
 
             modelBuilder.Entity("Webapp.Models.Result", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("TeamId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TeamId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -478,38 +478,38 @@ namespace Webapp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e0e0e0e0-e0e0-e0e0-e0e0-e0e0e0e0e0e0"),
-                            TeamId = new Guid("d0d0d0d0-d0d0-d0d0-d0d0-d0d0d0d0d0d0"),
+                            Id = 1,
+                            TeamId = 1,
                             Value = 24
                         },
                         new
                         {
-                            Id = new Guid("e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1"),
-                            TeamId = new Guid("d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1"),
+                            Id = 2,
+                            TeamId = 2,
                             Value = 16
                         },
                         new
                         {
-                            Id = new Guid("e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2"),
-                            TeamId = new Guid("d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2"),
+                            Id = 3,
+                            TeamId = 3,
                             Value = 3
                         },
                         new
                         {
-                            Id = new Guid("e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e3e3"),
-                            TeamId = new Guid("d3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d3d3"),
+                            Id = 4,
+                            TeamId = 4,
                             Value = 4
                         });
                 });
 
             modelBuilder.Entity("Webapp.Models.Reward", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("GameId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -523,41 +523,41 @@ namespace Webapp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0"),
-                            GameId = new Guid("c0c0c0c0-c0c0-c0c0-c0c0-c0c0c0c0c0c0"),
+                            Id = 1,
+                            GameId = 1,
                             Value = 200
                         },
                         new
                         {
-                            Id = new Guid("f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"),
-                            GameId = new Guid("c0c0c0c0-c0c0-c0c0-c0c0-c0c0c0c0c0c0"),
+                            Id = 2,
+                            GameId = 1,
                             Value = 100
                         },
                         new
                         {
-                            Id = new Guid("f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2"),
-                            GameId = new Guid("c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1"),
+                            Id = 3,
+                            GameId = 2,
                             Value = 400
                         },
                         new
                         {
-                            Id = new Guid("f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f3f3"),
-                            GameId = new Guid("c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1"),
+                            Id = 4,
+                            GameId = 2,
                             Value = 200
                         });
                 });
 
             modelBuilder.Entity("Webapp.Models.Team", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Bonus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("GameId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Malus")
                         .HasColumnType("INTEGER");
@@ -574,33 +574,33 @@ namespace Webapp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d0d0d0d0-d0d0-d0d0-d0d0-d0d0d0d0d0d0"),
+                            Id = 1,
                             Bonus = 0,
-                            GameId = new Guid("c0c0c0c0-c0c0-c0c0-c0c0-c0c0c0c0c0c0"),
+                            GameId = 1,
                             Malus = 50,
                             Number = 1
                         },
                         new
                         {
-                            Id = new Guid("d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1"),
+                            Id = 2,
                             Bonus = 0,
-                            GameId = new Guid("c0c0c0c0-c0c0-c0c0-c0c0-c0c0c0c0c0c0"),
+                            GameId = 1,
                             Malus = 0,
                             Number = 2
                         },
                         new
                         {
-                            Id = new Guid("d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2"),
+                            Id = 3,
                             Bonus = 100,
-                            GameId = new Guid("c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1"),
+                            GameId = 2,
                             Malus = 0,
                             Number = 1
                         },
                         new
                         {
-                            Id = new Guid("d3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d3d3"),
+                            Id = 4,
                             Bonus = 0,
-                            GameId = new Guid("c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1"),
+                            GameId = 2,
                             Malus = 0,
                             Number = 2
                         });
@@ -608,9 +608,9 @@ namespace Webapp.Migrations
 
             modelBuilder.Entity("Webapp.Models.Teammate", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Bonus")
                         .HasColumnType("INTEGER");
@@ -618,11 +618,11 @@ namespace Webapp.Migrations
                     b.Property<int>("Malus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("PlayerId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("TeamId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TeamId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -635,75 +635,75 @@ namespace Webapp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("aaaa0000-0000-0000-0000-000000000000"),
+                            Id = 1,
                             Bonus = 10,
                             Malus = 0,
-                            PlayerId = new Guid("b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3"),
-                            TeamId = new Guid("d0d0d0d0-d0d0-d0d0-d0d0-d0d0d0d0d0d0")
+                            PlayerId = 1,
+                            TeamId = 1
                         },
                         new
                         {
-                            Id = new Guid("bbbb0000-0000-0000-0000-000000000000"),
+                            Id = 2,
                             Bonus = 0,
                             Malus = 20,
-                            PlayerId = new Guid("b0b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b0"),
-                            TeamId = new Guid("d0d0d0d0-d0d0-d0d0-d0d0-d0d0d0d0d0d0")
+                            PlayerId = 2,
+                            TeamId = 1
                         },
                         new
                         {
-                            Id = new Guid("cccc0000-0000-0000-0000-000000000000"),
+                            Id = 3,
                             Bonus = 0,
                             Malus = 0,
-                            PlayerId = new Guid("b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1"),
-                            TeamId = new Guid("d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1")
+                            PlayerId = 3,
+                            TeamId = 2
                         },
                         new
                         {
-                            Id = new Guid("dddd0000-0000-0000-0000-000000000000"),
+                            Id = 4,
                             Bonus = 0,
                             Malus = 0,
-                            PlayerId = new Guid("b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2"),
-                            TeamId = new Guid("d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1")
+                            PlayerId = 4,
+                            TeamId = 2
                         },
                         new
                         {
-                            Id = new Guid("eeee0000-0000-0000-0000-000000000000"),
+                            Id = 5,
                             Bonus = 0,
                             Malus = 0,
-                            PlayerId = new Guid("b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3"),
-                            TeamId = new Guid("d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2")
+                            PlayerId = 1,
+                            TeamId = 3
                         },
                         new
                         {
-                            Id = new Guid("ffff0000-0000-0000-0000-000000000000"),
+                            Id = 6,
                             Bonus = 10,
                             Malus = 0,
-                            PlayerId = new Guid("b0b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b0"),
-                            TeamId = new Guid("d3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d3d3")
+                            PlayerId = 2,
+                            TeamId = 4
                         },
                         new
                         {
-                            Id = new Guid("aaaaaaaa-0000-0000-0000-000000000000"),
+                            Id = 7,
                             Bonus = 0,
                             Malus = 0,
-                            PlayerId = new Guid("b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1"),
-                            TeamId = new Guid("d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2")
+                            PlayerId = 3,
+                            TeamId = 3
                         },
                         new
                         {
-                            Id = new Guid("bbbbbbbb-0000-0000-0000-000000000000"),
+                            Id = 8,
                             Bonus = 0,
                             Malus = 5,
-                            PlayerId = new Guid("b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2"),
-                            TeamId = new Guid("d3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d3d3")
+                            PlayerId = 4,
+                            TeamId = 4
                         });
                 });
 
             modelBuilder.Entity("Webapp.Models.Tournament", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -723,7 +723,7 @@ namespace Webapp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0"),
+                            Id = 1,
                             Name = "The Great Olympiad",
                             OwnerName = "pierre.lespingal@gmail.com"
                         });

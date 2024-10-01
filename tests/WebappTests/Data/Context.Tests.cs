@@ -21,50 +21,47 @@ public class ContextTest(TestDatabaseFixture fixture) : IClassFixture<TestDataba
         using var context = Fixture.CreateContext();
         context.Database.BeginTransaction();
 
-        var tournament = new Tournament { Name = "tournamentName", OwnerId = "ownerId" };
+        var tournament = new Tournament { Name = "tournamentName", OwnerName = "ownerId" };
         context.Tournaments.Add(tournament);
-        var player1 = new Player { Name = "player1", TournamentId = tournament.Id };
-        var player2 = new Player { Name = "player2", TournamentId = tournament.Id };
+        var player1 = new Player { Name = "player1", Tournament = tournament };
+        var player2 = new Player { Name = "player2", Tournament = tournament };
         context.Players.Add(player1);
         context.Players.Add(player2);
 
         var game1 = new Game
         {
             Name = "game1",
-            TournamentId = tournament.Id,
+            Tournament = tournament,
             ShouldMaximizeScore = true,
             NumberOfTeams = 2
         };
         context.Games.Add(game1);
         context.Rewards.AddRange(
-            [
-                new Reward { GameId = game1.Id, Value = 100 },
-                new Reward { GameId = game1.Id, Value = 50 }
-            ]
+            [new Reward { Game = game1, Value = 100 }, new Reward { Game = game1, Value = 50 }]
         );
         var team1 = new Team
         {
-            GameId = game1.Id,
+            Game = game1,
             Number = 1,
             Bonus = 200,
             Malus = 100
         };
         context.Teams.Add(team1);
-        var result1 = new Result { TeamId = team1.Id, Value = 3000 };
+        var result1 = new Result { Team = team1, Value = 3000 };
         context.Results.Add(result1);
         var teammate1 = new Teammate
         {
-            TeamId = team1.Id,
-            PlayerId = player1.Id,
+            Team = team1,
+            Player = player1,
             Bonus = 450,
             Malus = 500
         };
         context.Teammates.Add(teammate1);
-        var team2 = new Team { GameId = game1.Id, Number = 2 };
+        var team2 = new Team { Game = game1, Number = 2 };
         context.Teams.Add(team2);
-        var result2 = new Result { TeamId = team2.Id, Value = 2000 };
+        var result2 = new Result { Team = team2, Value = 2000 };
         context.Results.Add(result2);
-        var teammate2 = new Teammate { TeamId = team2.Id, PlayerId = player2.Id };
+        var teammate2 = new Teammate { Team = team2, Player = player2 };
         context.Teammates.Add(teammate2);
 
         context.SaveChanges();

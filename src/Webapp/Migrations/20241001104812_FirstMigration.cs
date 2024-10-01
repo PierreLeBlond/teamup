@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Webapp.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -99,9 +101,10 @@ namespace Webapp.Migrations
                 name: "Tournaments",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 60, nullable: false),
-                    OwnerId = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    OwnerName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -242,9 +245,10 @@ namespace Webapp.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    TournamentId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 60, nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TournamentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     ShouldMaximizeScore = table.Column<bool>(type: "INTEGER", nullable: false),
                     NumberOfTeams = table.Column<int>(type: "INTEGER", nullable: false)
                 },
@@ -263,9 +267,10 @@ namespace Webapp.Migrations
                 name: "Players",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 60, nullable: false),
-                    TournamentId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    TournamentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -315,8 +320,9 @@ namespace Webapp.Migrations
                 name: "Rewards",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    GameId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GameId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -328,6 +334,149 @@ namespace Webapp.Migrations
                         principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Teams",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GameId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Number = table.Column<int>(type: "INTEGER", nullable: false),
+                    Bonus = table.Column<int>(type: "INTEGER", nullable: false),
+                    Malus = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teams_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Results",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TeamId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Results", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Results_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Teammates",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TeamId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlayerId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Bonus = table.Column<int>(type: "INTEGER", nullable: false),
+                    Malus = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teammates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teammates_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Teammates_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Tournaments",
+                columns: new[] { "Id", "Name", "OwnerName" },
+                values: new object[] { 1, "The Great Olympiad", "pierre.lespingal@gmail.com" });
+
+            migrationBuilder.InsertData(
+                table: "Games",
+                columns: new[] { "Id", "Name", "NumberOfTeams", "ShouldMaximizeScore", "TournamentId" },
+                values: new object[,]
+                {
+                    { 1, "Hide and Seek", 2, true, 1 },
+                    { 2, "Red lights, Green lights", 2, true, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Players",
+                columns: new[] { "Id", "Name", "TournamentId" },
+                values: new object[,]
+                {
+                    { 1, "Achilles", 1 },
+                    { 2, "Antigone", 1 },
+                    { 3, "Bellerophon", 1 },
+                    { 4, "Nausica", 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Rewards",
+                columns: new[] { "Id", "GameId", "Value" },
+                values: new object[,]
+                {
+                    { 1, 1, 200 },
+                    { 2, 1, 100 },
+                    { 3, 2, 400 },
+                    { 4, 2, 200 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Teams",
+                columns: new[] { "Id", "Bonus", "GameId", "Malus", "Number" },
+                values: new object[,]
+                {
+                    { 1, 0, 1, 50, 1 },
+                    { 2, 0, 1, 0, 2 },
+                    { 3, 100, 2, 0, 1 },
+                    { 4, 0, 2, 0, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Results",
+                columns: new[] { "Id", "TeamId", "Value" },
+                values: new object[,]
+                {
+                    { 1, 1, 24 },
+                    { 2, 2, 16 },
+                    { 3, 3, 3 },
+                    { 4, 4, 4 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Teammates",
+                columns: new[] { "Id", "Bonus", "Malus", "PlayerId", "TeamId" },
+                values: new object[,]
+                {
+                    { 1, 10, 0, 1, 1 },
+                    { 2, 0, 20, 2, 1 },
+                    { 3, 0, 0, 3, 2 },
+                    { 4, 0, 0, 4, 2 },
+                    { 5, 0, 0, 1, 3 },
+                    { 6, 10, 0, 2, 4 },
+                    { 7, 0, 0, 3, 3 },
+                    { 8, 0, 5, 4, 4 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -365,6 +514,12 @@ namespace Webapp.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_Name_TournamentId",
+                table: "Games",
+                columns: new[] { "Name", "TournamentId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -417,8 +572,29 @@ namespace Webapp.Migrations
                 column: "TournamentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Results_TeamId",
+                table: "Results",
+                column: "TeamId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rewards_GameId",
                 table: "Rewards",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Teammates_PlayerId",
+                table: "Teammates",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Teammates_TeamId",
+                table: "Teammates",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Teams_GameId",
+                table: "Teams",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
@@ -453,10 +629,13 @@ namespace Webapp.Migrations
                 name: "OpenIddictTokens");
 
             migrationBuilder.DropTable(
-                name: "Players");
+                name: "Results");
 
             migrationBuilder.DropTable(
                 name: "Rewards");
+
+            migrationBuilder.DropTable(
+                name: "Teammates");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -468,10 +647,16 @@ namespace Webapp.Migrations
                 name: "OpenIddictAuthorizations");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "Players");
+
+            migrationBuilder.DropTable(
+                name: "Teams");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictApplications");
+
+            migrationBuilder.DropTable(
+                name: "Games");
 
             migrationBuilder.DropTable(
                 name: "Tournaments");

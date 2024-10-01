@@ -15,7 +15,7 @@ public class PlayerTest(TestDatabaseFixture fixture) : IClassFixture<TestDatabas
 
         var tournament = new Tournament { Name = "tournamentName", OwnerName = "ownerName" };
         context.Tournaments.Add(tournament);
-        context.Players.Add(new Player { Name = "playerName", TournamentId = tournament.Id });
+        context.Players.Add(new Player { Name = "playerName", Tournament = tournament });
         context.SaveChanges();
 
         context.ChangeTracker.Clear();
@@ -32,8 +32,8 @@ public class PlayerTest(TestDatabaseFixture fixture) : IClassFixture<TestDatabas
 
         var tournament = new Tournament { Name = "tournamentName", OwnerName = "ownerName" };
         context.Tournaments.Add(tournament);
-        context.Players.Add(new Player { Name = "playerName", TournamentId = tournament.Id });
-        context.Players.Add(new Player { Name = "playerName", TournamentId = tournament.Id });
+        context.Players.Add(new Player { Name = "playerName", Tournament = tournament });
+        context.Players.Add(new Player { Name = "playerName", Tournament = tournament });
 
         Assert.Throws<DbUpdateException>(() => context.SaveChanges());
 

@@ -19,7 +19,7 @@ public class GameTest(TestDatabaseFixture fixture) : IClassFixture<TestDatabaseF
             new Game
             {
                 Name = "gameName",
-                TournamentId = tournament.Id,
+                Tournament = tournament,
                 ShouldMaximizeScore = true,
                 NumberOfTeams = 2
             }

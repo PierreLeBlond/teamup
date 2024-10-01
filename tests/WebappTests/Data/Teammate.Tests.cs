@@ -16,20 +16,20 @@ public class TeammateTest(TestDatabaseFixture fixture) : IClassFixture<TestDatab
 
         var tournament = new Tournament { Name = "tournamentName", OwnerName = "ownerName" };
         context.Tournaments.Add(tournament);
-        var player = new Player { Name = "playerName", TournamentId = tournament.Id };
+        var player = new Player { Name = "playerName", Tournament = tournament };
         context.Players.Add(player);
         var game = new Game
         {
             Name = "gameName",
-            TournamentId = tournament.Id,
+            Tournament = tournament,
             ShouldMaximizeScore = true,
             NumberOfTeams = 2
         };
         context.Games.Add(game);
-        var team = new Team { GameId = game.Id, Number = 1 };
+        var team = new Team { Game = game, Number = 1 };
         context.Teams.Add(team);
 
-        var teammate = new Teammate { TeamId = team.Id, PlayerId = player.Id };
+        var teammate = new Teammate { Team = team, Player = player };
         context.Teammates.Add(teammate);
 
         context.SaveChanges();

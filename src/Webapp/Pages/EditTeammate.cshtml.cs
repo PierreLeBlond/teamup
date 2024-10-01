@@ -37,8 +37,7 @@ public class EditTeammateModel(ApplicationDbContext context, UserManager<User> u
     {
         base.SetModel(tournamentId, gameId, teamId, currentPlayerId);
 
-        var teammateGuid = new Guid(teammateId);
-        Teammate = Team.Teammates.Single(t => t.Id == teammateGuid);
+        Teammate = Team.Teammates.Single(t => t.Id == int.Parse(teammateId));
     }
 
     public IActionResult OnGet(

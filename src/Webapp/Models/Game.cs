@@ -2,9 +2,9 @@ namespace Webapp.Models;
 
 public class Game
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
-    public Guid TournamentId { get; set; }
+    public int TournamentId { get; set; }
 
     public Tournament Tournament { get; set; } = null!;
 

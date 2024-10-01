@@ -79,7 +79,7 @@ public class CreatePlayersModel(ApplicationDbContext context, UserManager<User> 
             return Page();
         }
 
-        var player = new Player { Name = Input.Name, TournamentId = Tournament.Id };
+        var player = new Player { Name = Input.Name, Tournament = Tournament };
 
         context.Players.Add(player);
 

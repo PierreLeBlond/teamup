@@ -19,7 +19,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         var tournament = new Tournament
         {
-            Id = new Guid("a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0"),
+            Id = 1,
             Name = "The Great Olympiad",
             OwnerName = "pierre.lespingal@gmail.com"
         };
@@ -27,25 +27,25 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         var player1 = new Player
         {
-            Id = new Guid("b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3"),
+            Id = 1,
             Name = "Achilles",
             TournamentId = tournament.Id
         };
         var player2 = new Player
         {
-            Id = new Guid("b0b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b0"),
+            Id = 2,
             Name = "Antigone",
             TournamentId = tournament.Id
         };
         var player3 = new Player
         {
-            Id = new Guid("b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1"),
+            Id = 3,
             Name = "Bellerophon",
             TournamentId = tournament.Id
         };
         var player4 = new Player
         {
-            Id = new Guid("b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2"),
+            Id = 4,
             Name = "Nausica",
             TournamentId = tournament.Id
         };
@@ -53,7 +53,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         var game1 = new Game
         {
-            Id = new Guid("c0c0c0c0-c0c0-c0c0-c0c0-c0c0c0c0c0c0"),
+            Id = 1,
             Name = "Hide and Seek",
             TournamentId = tournament.Id,
             ShouldMaximizeScore = true,
@@ -61,7 +61,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         };
         var game2 = new Game
         {
-            Id = new Guid("c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1"),
+            Id = 2,
             Name = "Red lights, Green lights",
             TournamentId = tournament.Id,
             ShouldMaximizeScore = true,
@@ -74,25 +74,25 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasData(
                 new Reward
                 {
-                    Id = new Guid("f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0"),
+                    Id = 1,
                     Value = 200,
                     GameId = game1.Id
                 },
                 new Reward
                 {
-                    Id = new Guid("f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"),
+                    Id = 2,
                     Value = 100,
                     GameId = game1.Id
                 },
                 new Reward
                 {
-                    Id = new Guid("f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2"),
+                    Id = 3,
                     Value = 400,
                     GameId = game2.Id
                 },
                 new Reward
                 {
-                    Id = new Guid("f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f3f3"),
+                    Id = 4,
                     Value = 200,
                     GameId = game2.Id
                 }
@@ -100,27 +100,27 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         var team1 = new Team
         {
-            Id = new Guid("d0d0d0d0-d0d0-d0d0-d0d0-d0d0d0d0d0d0"),
+            Id = 1,
             GameId = game1.Id,
             Number = 1,
             Malus = 50
         };
         var team2 = new Team
         {
-            Id = new Guid("d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d1d1"),
+            Id = 2,
             GameId = game1.Id,
             Number = 2
         };
         var team3 = new Team
         {
-            Id = new Guid("d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d2d2"),
+            Id = 3,
             GameId = game2.Id,
             Number = 1,
             Bonus = 100
         };
         var team4 = new Team
         {
-            Id = new Guid("d3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d3d3"),
+            Id = 4,
             GameId = game2.Id,
             Number = 2
         };
@@ -132,25 +132,25 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasData(
                 new Result
                 {
-                    Id = new Guid("e0e0e0e0-e0e0-e0e0-e0e0-e0e0e0e0e0e0"),
+                    Id = 1,
                     TeamId = team1.Id,
                     Value = 24
                 },
                 new Result
                 {
-                    Id = new Guid("e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1"),
+                    Id = 2,
                     TeamId = team2.Id,
                     Value = 16
                 },
                 new Result
                 {
-                    Id = new Guid("e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e2e2"),
+                    Id = 3,
                     TeamId = team3.Id,
                     Value = 3
                 },
                 new Result
                 {
-                    Id = new Guid("e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e3e3"),
+                    Id = 4,
                     TeamId = team4.Id,
                     Value = 4
                 }
@@ -161,52 +161,52 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasData(
                 new Teammate
                 {
-                    Id = new Guid("aaaa0000-0000-0000-0000-000000000000"),
+                    Id = 1,
                     TeamId = team1.Id,
                     PlayerId = player1.Id,
                     Bonus = 10
                 },
                 new Teammate
                 {
-                    Id = new Guid("bbbb0000-0000-0000-0000-000000000000"),
+                    Id = 2,
                     TeamId = team1.Id,
                     PlayerId = player2.Id,
                     Malus = 20
                 },
                 new Teammate
                 {
-                    Id = new Guid("cccc0000-0000-0000-0000-000000000000"),
+                    Id = 3,
                     TeamId = team2.Id,
                     PlayerId = player3.Id
                 },
                 new Teammate
                 {
-                    Id = new Guid("dddd0000-0000-0000-0000-000000000000"),
+                    Id = 4,
                     TeamId = team2.Id,
                     PlayerId = player4.Id
                 },
                 new Teammate
                 {
-                    Id = new Guid("eeee0000-0000-0000-0000-000000000000"),
+                    Id = 5,
                     TeamId = team3.Id,
                     PlayerId = player1.Id
                 },
                 new Teammate
                 {
-                    Id = new Guid("ffff0000-0000-0000-0000-000000000000"),
+                    Id = 6,
                     TeamId = team4.Id,
                     PlayerId = player2.Id,
                     Bonus = 10
                 },
                 new Teammate
                 {
-                    Id = new Guid("aaaaaaaa-0000-0000-0000-000000000000"),
+                    Id = 7,
                     TeamId = team3.Id,
                     PlayerId = player3.Id
                 },
                 new Teammate
                 {
-                    Id = new Guid("bbbbbbbb-0000-0000-0000-000000000000"),
+                    Id = 8,
                     TeamId = team4.Id,
                     PlayerId = player4.Id,
                     Malus = 5
@@ -245,7 +245,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .ToList();
     }
 
-    public Tournament GetTournament(Guid tournamentId)
+    public Tournament GetTournament(int tournamentId)
     {
         var tournament = Tournaments
             .Include(t => t.Games.OrderBy(game => game.Name.ToLower()))
@@ -294,15 +294,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         return tournament;
     }
 
-    public Player? GetCurrentPlayer(Tournament tournament, string? currentPlayerId)
+    public Player? GetCurrentPlayer(Tournament tournament, int? currentPlayerId)
     {
-        Guid? currentPlayerGuid = currentPlayerId is null ? null : new Guid(currentPlayerId);
-
-        if (currentPlayerGuid is null)
+        if (currentPlayerId is null)
         {
             return null;
         }
-        var currentPlayer = tournament.Players.Single(p => p.Id == currentPlayerGuid);
+        var currentPlayer = tournament.Players.Single(p => p.Id == currentPlayerId);
 
         return currentPlayer;
     }

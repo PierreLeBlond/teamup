@@ -86,7 +86,7 @@ public class CreateGameModel(ApplicationDbContext context, UserManager<User> use
         var game = new Game
         {
             Name = Input.Name,
-            TournamentId = Tournament.Id,
+            Tournament = Tournament,
             NumberOfTeams = Input.NumberOfTeams,
             ShouldMaximizeScore = Input.ShouldMaximizeScore
         };
@@ -95,7 +95,7 @@ public class CreateGameModel(ApplicationDbContext context, UserManager<User> use
 
         for (var i = 0; i < Input.NumberOfTeams; i++)
         {
-            var reward = new Reward { Value = 0, GameId = game.Id };
+            var reward = new Reward { Value = 0, Game = game };
             context.Rewards.Add(reward);
         }
 

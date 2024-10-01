@@ -16,8 +16,8 @@ public class EditTeammateFixture<TProgram> : CustomWebApplicationFactory<TProgra
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
-    public static readonly Guid EditTeammatePlayerId = new("543f4a09-90a3-4fba-9b4b-9e86fe0b6b63");
-    public static readonly Guid EditTeammateId = new("543f4a09-90a3-4fba-9b4b-9e86fe0b6b63");
+    public static readonly int EditTeammatePlayerId = 50;
+    public static readonly int EditTeammateId = 50;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

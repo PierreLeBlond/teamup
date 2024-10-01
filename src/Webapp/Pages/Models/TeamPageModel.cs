@@ -20,8 +20,7 @@ public class TeamPageModel(ApplicationDbContext context, UserManager<User> userM
     {
         base.SetModel(tournamentId, gameId, currentPlayerId);
 
-        var teamGuid = new Guid(teamId);
-        Team = Game.Teams.Single(t => t.Id == teamGuid);
+        Team = Game.Teams.Single(t => t.Id == int.Parse(teamId));
     }
 
     protected RedirectResult RedirectToTeams()

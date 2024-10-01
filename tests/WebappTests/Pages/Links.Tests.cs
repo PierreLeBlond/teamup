@@ -8,10 +8,10 @@ public class LinksTests(CustomWebApplicationFactory<Program> factory)
 {
     private readonly CustomWebApplicationFactory<Program> factory = factory;
 
-    private static readonly Guid tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
-    private static readonly Guid gameId = CustomWebApplicationFactory<Program>.GameId;
-    private static readonly Guid teamId = CustomWebApplicationFactory<Program>.TeamId;
-    private static readonly Guid teammateId = CustomWebApplicationFactory<Program>.TeammateId;
+    private static readonly int tournamentId = CustomWebApplicationFactory<Program>.TournamentId;
+    private static readonly int gameId = CustomWebApplicationFactory<Program>.GameId;
+    private static readonly int teamId = CustomWebApplicationFactory<Program>.TeamId;
+    private static readonly int teammateId = CustomWebApplicationFactory<Program>.TeammateId;
 
     public static async Task<HttpResponseMessage> GetResponse(HttpClient client, string path)
     {

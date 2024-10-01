@@ -23,8 +23,7 @@ public class PlayerListViewComponent(ApplicationDbContext context) : ViewCompone
             return Content(string.Empty);
         }
 
-        var tournamentGuid = Guid.Parse((string)tournamentId);
-        var tournament = context.GetTournament(tournamentGuid);
+        var tournament = context.GetTournament(int.Parse((string)tournamentId));
 
         var players = tournament.Players.ToList();
         var model = new PlayerListViewComponentModel { Players = players };
@@ -39,8 +38,7 @@ public class PlayerListViewComponent(ApplicationDbContext context) : ViewCompone
             return View(model);
         }
 
-        var currentPlayerGuid = Guid.Parse(currentPlayerId.ToString());
-        model.Player = players.Single(p => p.Id == currentPlayerGuid);
+        model.Player = players.Single(p => p.Id == int.Parse(currentPlayerId));
 
         return View(model);
     }

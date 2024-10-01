@@ -17,8 +17,7 @@ public class GamePageModel(ApplicationDbContext context, UserManager<User> userM
     {
         base.SetModel(tournamentId, currentPlayerId);
 
-        var gameGuid = new Guid(gameId);
-        Game = Tournament.Games.Single(g => g.Id == gameGuid);
+        Game = Tournament.Games.Single(g => g.Id == int.Parse(gameId));
 
         CurrentTeam = context.GetCurrentTeam(Game, CurrentPlayer);
     }

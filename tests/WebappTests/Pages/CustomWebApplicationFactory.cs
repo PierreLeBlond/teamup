@@ -12,12 +12,12 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     private static readonly object _lock = new();
     private static bool _databaseInitialized;
 
-    public static readonly Guid TeammateId = new("543f6a09-90af-4fba-9b4b-93864e0b6b6d");
-    public static readonly Guid TeamId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b6d");
-    public static readonly Guid GameId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b6f");
-    public static readonly Guid Player1Id = new("543f6309-90af-42ba-9b4b-9e86fe0e6b72");
-    public static readonly Guid Player2Id = new("543f6309-92af-42ba-9b4b-9e86fe6e6b72");
-    public static readonly Guid TournamentId = new("543f6a09-90af-4fba-9b4b-9e86fe0b6b72");
+    public static readonly int TeammateId = 10;
+    public static readonly int TeamId = 10;
+    public static readonly int GameId = 10;
+    public static readonly int Player1Id = 10;
+    public static readonly int Player2Id = 11;
+    public static readonly int TournamentId = 10;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -52,7 +52,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                         {
                             Id = Player1Id,
                             Name = "player1",
-                            TournamentId = tournament.Id
+                            Tournament = tournament
                         };
                         context.Players.Add(player);
                         context.Players.Add(
@@ -60,7 +60,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                             {
                                 Id = Player2Id,
                                 Name = "player2",
-                                TournamentId = tournament.Id
+                                Tournament = tournament
                             }
                         );
 
@@ -68,38 +68,37 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
                         {
                             Id = GameId,
                             Name = "game",
-                            TournamentId = tournament.Id,
+                            Tournament = tournament,
                             NumberOfTeams = 2,
                             ShouldMaximizeScore = true
                         };
                         context.Games.Add(game);
-                        context.Rewards.Add(new Reward { GameId = game.Id, Value = 100 });
-                        context.Rewards.Add(new Reward { GameId = game.Id, Value = 50 });
+                        context.Rewards.Add(new Reward { Game = game, Value = 100 });
+                        context.Rewards.Add(new Reward { Game = game, Value = 50 });
 
                         var team = new Team
                         {
                             Id = TeamId,
-                            GameId = game.Id,
+                            Game = game,
                             Number = 1,
                             Bonus = 100,
                             Malus = 200
                         };
                         context.Teams.Add(team);
-                        var result = new Result { TeamId = team.Id, Value = 3000 };
+                        var result = new Result { Team = team, Value = 3000 };
                         context.Results.Add(result);
-                        context.Teams.Add(new Team { GameId = game.Id, Number = 2 });
+                        context.Teams.Add(new Team { Game = game, Number = 2 });
 
                         context.Teammates.Add(
                             new Teammate
                             {
                                 Id = TeammateId,
-                                TeamId = team.Id,
-                                PlayerId = player.Id,
+                                Team = team,
+                                Player = player,
                                 Bonus = 20,
                                 Malus = 10
                             }
                         );
-
                         context.SaveChanges();
                     }
                     _databaseInitialized = true;
